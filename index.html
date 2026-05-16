@@ -74,39 +74,10 @@
   .preview-box { background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13px;color:var(--text2); }
   .preview-box.pos { color:var(--green);border-color:rgba(61,255,160,.2); }
   .preview-box.neg { color:var(--red);border-color:rgba(255,94,107,.2); }
-
-  /* ── FORM ACTIONS (centralizado) ── */
-  .btn-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  .btn-actions .btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .btn {
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: var(--font-m);
-    font-weight: 600;
-    font-size: 12px;
-    padding: 10px 20px;
-    transition: transform .15s, box-shadow .15s, background .2s;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
+  .btn { border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s,box-shadow .15s;white-space:nowrap;width:100%; }
   .btn:hover { transform:translateY(-2px); }
-  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25); }
-  .btn-primary:hover { box-shadow:0 6px 28px rgba(255,185,70,.4); }
+  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25);margin-bottom:8px; }
   .btn-cancel { background:var(--surface2);color:var(--text2);border:1px solid var(--border2); }
-  .btn-print { background:var(--surface2);color:var(--text2);border:1px solid var(--border2); margin-top:8px; }
-  .btn-print:hover { background:var(--gold);color:var(--bg);border-color:var(--gold); }
   #cancelEdit { display:none; }
 
   .loading-overlay { display:none;position:fixed;inset:0;background:rgba(5,8,15,.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px; }
@@ -143,28 +114,6 @@
   .act-btn.del:hover { background:var(--red);border-color:var(--red);color:#fff; }
 
   .footer { text-align:center;margin-top:32px;font-size:10px;color:var(--muted);letter-spacing:1px; }
-
-  /* ── ESTILOS PARA IMPRESSÃO ── */
-  @media print {
-    body { background: white; color: black; }
-    .ticker-wrap, .form-card, .filter-row, .action-cell, .btn, .db-status, .tip-bar, .header, .footer { display: none; }
-    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
-    .stat { background: #f5f5f5; border: 1px solid #ccc; color: black; }
-    .stat-value { color: #333; }
-    .stat-value.pos { color: #2e7d32; }
-    .stat-value.neg { color: #c62828; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #999; padding: 8px; text-align: left; }
-    .table-wrap { background: none; box-shadow: none; }
-    .print-header { display: block; text-align: center; margin-bottom: 20px; font-family: var(--font-h); }
-    .print-footer { display: block; text-align: center; margin-top: 30px; font-size: 10px; color: #666; }
-    @page { margin: 1.5cm; size: A4; }
-    tr { page-break-inside: avoid; }
-  }
-  .print-header, .print-footer { display: none; }
-  @media print {
-    .print-header, .print-footer { display: block; }
-  }
 
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   @media(max-width:600px) { .form-group.wider{grid-column:span 1} .brand-name{font-size:16px} .stat-value{font-size:20px} }
@@ -244,10 +193,9 @@
     <div class="form-grid">
       <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
       <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
-      <div class="form-group btn-actions">
+      <div class="form-group" style="justify-content:flex-end;">
         <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
         <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
-        <button class="btn btn-print" id="btnPrint">🖨️ Imprimir Relatório</button>
       </div>
     </div>
   </div>
@@ -263,11 +211,9 @@
 
   <div class="table-wrap">
     <div class="table-scroll">
-      <table id="tradesTable">
-        <thead>
-          <tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr>
-        </thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr>
+      <table>
+        <thead><tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr></thead>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -462,7 +408,7 @@ const fAtivo=$('fAtivo'), fOutro=$('outroAtivo'), fLado=$('fLado');
 const fEntrada=$('fEntrada'), fStop=$('fStop');
 const fTp1=$('fTp1'), fTp2=$('fTp2'), fTp3=$('fTp3');
 const fQtd=$('fQtd'), fFator=$('fFator'), fObs=$('fObs'), fDT=$('fDateTime');
-const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('btnCancel');
+const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('cancelEdit');
 
 fAtivo.addEventListener('change', () => {
   fOutro.style.display = fAtivo.value==='Outro'?'block':'none';
@@ -531,106 +477,6 @@ function resetForm() {
   fQtd.value='1'; fDT.value=nowLocal(); fAtivo.value='GOLD (XAUUSD)'; fFator.value='10';
   fOutro.style.display='none'; previewBox.textContent='aguardando dados...'; previewBox.className='preview-box';
 }
-
-// ── FUNÇÃO PARA IMPRIMIR RELATÓRIO ────────────────────────────────
-function printReport() {
-  const originalTitle = document.title;
-  document.title = "Relatório Edge Trader Pro - " + new Date().toLocaleDateString('pt-BR');
-  
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Relatório Edge Trader Pro</title>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'JetBrains Mono', monospace; padding: 30px; background: white; color: #111; }
-        .report-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ffb946; padding-bottom: 20px; }
-        .report-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; color: #ffb946; }
-        .report-header .date { color: #666; font-size: 12px; margin-top: 8px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: #f5f5f5; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #ddd; }
-        .stat-card .label { font-size: 10px; text-transform: uppercase; color: #666; letter-spacing: 2px; }
-        .stat-card .value { font-size: 24px; font-weight: bold; font-family: 'Syne', sans-serif; margin-top: 5px; }
-        .stat-card .value.pos { color: #2e7d32; }
-        .stat-card .value.neg { color: #c62828; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 10px; }
-        th { background: #f0f0f0; text-transform: uppercase; }
-        .summary { margin-top: 30px; padding: 15px; background: #f9f9f9; border-radius: 8px; }
-        .summary h3 { margin-bottom: 10px; color: #ffb946; }
-        .footer { text-align: center; margin-top: 30px; font-size: 9px; color: #999; border-top: 1px solid #eee; padding-top: 15px; }
-        .obs-text { max-width: 200px; white-space: pre-wrap; word-break: break-word; }
-        @media print {
-          body { padding: 0; }
-          .no-print { display: none; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="report-header">
-        <h1>📊 EDGE TRADER PRO</h1>
-        <div class="date">RELATÓRIO DE PERFORMANCE • ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
-      </div>
-      
-      <div class="stats-grid">
-        <div class="stat-card"><div class="label">Operações</div><div class="value" id="printTotalOps">${trades.length}</div></div>
-        <div class="stat-card"><div class="label">Win Rate</div><div class="value ${parseFloat($('sWinRate').textContent)>=50?'pos':'neg'}" id="printWinRate">${$('sWinRate').textContent}</div></div>
-        <div class="stat-card"><div class="label">Payoff</div><div class="value ${parseFloat($('sPayoff').textContent)>=1?'pos':'neg'}">${$('sPayoff').textContent}</div></div>
-        <div class="stat-card"><div class="label">Expectativa</div><div class="value ${parseFloat($('sExpect').textContent.replace('R$ ',''))>=0?'pos':'neg'}">${$('sExpect').textContent}</div></div>
-        <div class="stat-card"><div class="label">Resultado Líq.</div><div class="value ${parseFloat($('sNet').textContent.replace('R$ ',''))>=0?'pos':'neg'}">${$('sNet').textContent}</div></div>
-      </div>
-      
-      <h3 style="margin: 20px 0 10px;">📋 LISTA DE OPERAÇÕES</h3>
-      <table>
-        <thead>
-          <tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>TP1</th><th>TP2</th><th>TP3</th><th>Resultado</th><th>Observação</th></tr>
-        </thead>
-        <tbody>
-          ${trades.map(t => {
-            const rClass = t.resultado >= 0 ? 'pos' : 'neg';
-            const rSinal = t.resultado >= 0 ? '+ ' : '';
-            const dt = t.date_time_raw ? fmtDate(t.date_time_raw) : fmtDate(t.created_at);
-            return `<tr>
-              <td>${dt}</td>
-              <td>${t.ativo}</td>
-              <td>${t.lado === 'compra' ? 'LONG' : 'SHORT'}</td>
-              <td>${Number(t.entrada).toFixed(2)}</td>
-              <td>${Number(t.stop).toFixed(2)}</td>
-              <td>${t.tp1 ? Number(t.tp1).toFixed(2) : '-'}</td>
-              <td>${t.tp2 ? Number(t.tp2).toFixed(2) : '-'}</td>
-              <td>${t.tp3 ? Number(t.tp3).toFixed(2) : '-'}</td>
-              <td style="color: ${t.resultado>=0?'#2e7d32':'#c62828'}; font-weight:bold;">${rSinal}R$ ${Number(t.resultado).toFixed(2)}</td>
-              <td class="obs-text">${t.observacao || '-'}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-      
-      <div class="summary">
-        <h3>📈 RESUMO ESTATÍSTICO</h3>
-        <p>▪️ Média de Ganho: R$ ${(trades.filter(t=>t.resultado>0).reduce((a,b)=>a+b.resultado,0)/(trades.filter(t=>t.resultado>0).length||1)).toFixed(2)}</p>
-        <p>▪️ Média de Perda: R$ ${Math.abs(trades.filter(t=>t.resultado<0).reduce((a,b)=>a+b.resultado,0)/(trades.filter(t=>t.resultado<0).length||1)).toFixed(2)}</p>
-        <p>▪️ Maior Ganho: R$ ${Math.max(...trades.map(t=>t.resultado),0).toFixed(2)}</p>
-        <p>▪️ Maior Perda: R$ ${Math.min(...trades.map(t=>t.resultado),0).toFixed(2)}</p>
-        <p>▪️ Total de Trades: ${trades.length} | Ganhos: ${trades.filter(t=>t.resultado>0).length} | Perdas: ${trades.filter(t=>t.resultado<0).length}</p>
-      </div>
-      
-      <div class="footer">
-        <p>Edge Trader Pro • Relatório gerado automaticamente • Dados confidenciais</p>
-        <p>Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
-      </div>
-    </body>
-    </html>
-  `);
-  printWindow.document.close();
-  printWindow.print();
-}
-
-document.getElementById('btnPrint').addEventListener('click', printReport);
 
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
