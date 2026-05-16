@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Edge Trader Pro — Diário de Trading</title>
+<title>Edge Trader Pro — Diário de Trading + Relatórios</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -65,6 +65,19 @@
   .form-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:12px; }
   .form-group { display:flex;flex-direction:column;gap:5px; }
   .form-group.wider { grid-column:span 3; }
+  
+  /* ── FORM ACTIONS (centralizado) ── */
+  .btn-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .btn-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
   label { font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2); }
   input,select,textarea { background:var(--bg);border:1px solid rgba(255,185,70,.15);border-radius:10px;color:var(--text);font-family:var(--font-m);font-size:12px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;outline:none;width:100%;-webkit-appearance:none; }
   input:focus,select:focus,textarea:focus { border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,185,70,.1); }
@@ -74,13 +87,30 @@
   .preview-box { background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13px;color:var(--text2); }
   .preview-box.pos { color:var(--green);border-color:rgba(61,255,160,.2); }
   .preview-box.neg { color:var(--red);border-color:rgba(255,94,107,.2); }
-  .btn { border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s,box-shadow .15s;white-space:nowrap;width:100%; }
-  .btn:hover { transform:translateY(-2px); }
-  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25);margin-bottom:8px; }
+  
+  .btn {
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: var(--font-m);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 10px 20px;
+    transition: transform .15s, box-shadow .15s, background .2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25);margin-bottom:0; }
+  .btn-secondary { background:var(--surface2);color:var(--gold);border:1px solid var(--border); }
   .btn-cancel { background:var(--surface2);color:var(--text2);border:1px solid var(--border2); }
-  #cancelEdit { display:none; }
+  .btn-report { background:transparent;border:1px solid var(--gold);color:var(--gold);margin-top:0; }
+  .btn-report:hover { background:rgba(255,185,70,.15);transform:translateY(-2px); }
+  .btn:hover { transform:translateY(-2px); }
 
-  .loading-overlay { display:none;position:fixed;inset:0;background:rgba(5,8,15,.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px; }
+  .loading-overlay { display:none;position:fixed;inset:0;background:rgba(5,8,15,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(2px); }
   .loading-overlay.show { display:flex; }
   .spinner { width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
@@ -116,7 +146,17 @@
   .footer { text-align:center;margin-top:32px;font-size:10px;color:var(--muted);letter-spacing:1px; }
 
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  @media(max-width:600px) { .form-group.wider{grid-column:span 1} .brand-name{font-size:16px} .stat-value{font-size:20px} }
+  @media(max-width:600px) { .form-group.wider{grid-column:span 1} .brand-name{font-size:16px} .stat-value{font-size:20px} .btn-actions{justify-content:flex-start} }
+  
+  @media print {
+    body { background: white; --bg: white; --surface: white; --text: black; --text2: #555; --border: #ccc; --border2: #eee; --gold: #b87c00; --green: #2c6e2c; --red: #b33; }
+    .ticker-wrap, .tip-bar, .form-card, .filter-row, .btn-actions, .action-cell, .db-status, .header .db-status, #cancelEdit, .btn-report, .act-btn { display: none !important; }
+    .stats-row, .table-wrap { break-inside: avoid; }
+    .stat { border: 1px solid #ccc; background: #f9f9f9; }
+    .shell { padding: 0; margin: 0; }
+    .header { border-bottom: 2px solid #333; margin-bottom: 20px; }
+    .brand-name, .stat-value { color: #000; }
+  }
 </style>
 </head>
 <body>
@@ -127,7 +167,6 @@
 </div>
 
 <div class="shell">
-
   <header class="header">
     <div class="brand">
       <div class="brand-icon">📊</div>
@@ -193,9 +232,12 @@
     <div class="form-grid">
       <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
       <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
-      <div class="form-group" style="justify-content:flex-end;">
+      
+      <!-- Área de ações com botões centralizados (estrutura solicitada) -->
+      <div class="form-group btn-actions">
         <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
         <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
+        <button class="btn btn-report" id="btnPrintReport">🖨️ Imprimir Relatório</button>
       </div>
     </div>
   </div>
@@ -228,7 +270,7 @@
 // ── SUPABASE ──────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── CONSTANTS ─────────────────────────────────────────────────────
 const TIPS = [
@@ -292,7 +334,7 @@ function showLoading(v) { $('loadingOverlay').classList.toggle('show', v); }
 async function fetchTrades() {
   showLoading(true);
   try {
-    const { data, error } = await db.from('trades').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabaseClient.from('trades').select('*').order('created_at', { ascending: false });
     if (error) throw error;
     trades = data || [];
     setDbStatus('ok', '● banco conectado');
@@ -310,7 +352,7 @@ async function fetchTrades() {
 async function insertTrade(payload) {
   showLoading(true);
   try {
-    const { error } = await db.from('trades').insert([payload]);
+    const { error } = await supabaseClient.from('trades').insert([payload]);
     if (error) throw error;
   } catch(e) {
     alert('❌ Erro ao salvar: ' + e.message);
@@ -320,7 +362,7 @@ async function insertTrade(payload) {
 async function updateTradeDB(id, payload) {
   showLoading(true);
   try {
-    const { error } = await db.from('trades').update(payload).eq('id', id);
+    const { error } = await supabaseClient.from('trades').update(payload).eq('id', id);
     if (error) throw error;
   } catch(e) {
     alert('❌ Erro ao atualizar: ' + e.message);
@@ -331,7 +373,7 @@ async function deleteTradeDB(id) {
   if (!confirm('Confirmar exclusão deste trade?')) return;
   showLoading(true);
   try {
-    const { error } = await db.from('trades').delete().eq('id', id);
+    const { error } = await supabaseClient.from('trades').delete().eq('id', id);
     if (error) throw error;
     await fetchTrades();
   } catch(e) {
@@ -344,7 +386,6 @@ async function deleteTradeDB(id) {
 function updateStats() {
   const total = trades.length;
   $('sTotalOps').textContent = total;
-  $('sTotalOps').className = 'stat-value';
   if (!total) {
     ['sWinRate','sPayoff','sExpect','sNet'].forEach(id => { $(id).textContent='—'; $(id).className='stat-value'; });
     return;
@@ -382,24 +423,25 @@ function renderTable() {
     const dC  = t.lado==='compra'?'dir-long':'dir-short';
     const dL  = t.lado==='compra'?'LONG':'SHORT';
     const tps = [['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]]
-      .filter(([,v])=>v!=null&&!isNaN(v))
+      .filter(([,v])=>v!=null && !isNaN(v) && v>0)
       .map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
     const obs = t.observacao?(t.observacao.length>40?t.observacao.slice(0,38)+'…':t.observacao):'—';
     const dt  = t.date_time_raw ? fmtDate(t.date_time_raw) : fmtDate(t.created_at);
     return `<tr>
-      <td>${dt}</td><td>${t.ativo}</td>
+      <td>${dt}</td>
+      <td>${t.ativo}</td>
       <td><span class="dir-badge ${dC}">${dL}</span></td>
       <td>${Number(t.entrada).toFixed(2)}</td>
       <td>${Number(t.stop).toFixed(2)}</td>
       <td><div class="tp-wrap">${tps}</div></td>
       <td>${t.qtd}</td><td>${t.fator}</td>
       <td class="${rC}">${rS}R$ ${Number(t.resultado).toFixed(2)}</td>
-      <td><div class="obs-short" title="${t.observacao||''}">${obs}</div></td>
+      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g, '&quot;')}">${obs}</div></td>
       <td><div class="action-cell">
         <button class="act-btn" onclick="startEdit(${t.id})">✏️ Editar</button>
         <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
       </div></td>
-    </tr>`;
+     </tr>`;
   }).join('');
 }
 
@@ -412,7 +454,7 @@ const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('cancelEdit');
 
 fAtivo.addEventListener('change', () => {
   fOutro.style.display = fAtivo.value==='Outro'?'block':'none';
-  fFator.value = FATOR_MAP[fAtivo.value]??1;
+  if (FATOR_MAP[fAtivo.value]) fFator.value = FATOR_MAP[fAtivo.value];
   updatePreview();
 });
 
@@ -455,7 +497,7 @@ btnAdd.addEventListener('click', async () => {
   await fetchTrades();
 });
 
-function startEdit(id) {
+window.startEdit = function(id) {
   const t=trades.find(x=>x.id===id); if(!t) return;
   editingId=id;
   fDT.value=t.date_time_raw||nowLocal();
@@ -468,7 +510,7 @@ function startEdit(id) {
   updatePreview();
   btnAdd.textContent='✏️ Atualizar Trade'; btnCancel.style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
-}
+};
 
 btnCancel.addEventListener('click', ()=>{ editingId=null; btnAdd.textContent='➕ Registrar Trade'; btnCancel.style.display='none'; resetForm(); });
 
@@ -483,6 +525,11 @@ document.querySelectorAll('.tab').forEach(tab=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active'); currentFilter=tab.dataset.filter; renderTable();
   });
+});
+
+// ── IMPRIMIR RELATÓRIO ─────────────────────────────────────────
+document.getElementById('btnPrintReport').addEventListener('click', () => {
+  window.print();
 });
 
 // ── INIT ──────────────────────────────────────────────────────────
