@@ -193,19 +193,6 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 .act-btn:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .act-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
 
-/* ── SQL MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,.92);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.show{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:28px;max-width:700px;width:95%;max-height:85vh;overflow-y:auto}
-.modal-title{font-family:var(--font-h);font-size:16px;font-weight:800;color:var(--gold);margin-bottom:4px}
-.modal-sub{font-size:11px;color:var(--text2);margin-bottom:20px}
-.sql-block{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:16px;font-size:11px;color:var(--green);line-height:1.7;overflow-x:auto;white-space:pre;font-family:var(--font-m)}
-.copy-btn{margin-top:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--gold);font-family:var(--font-m);font-size:11px;cursor:pointer;transition:all .2s}
-.copy-btn:hover{background:var(--gold);color:var(--bg)}
-.modal-step{margin-bottom:20px}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--bg);font-size:10px;font-weight:800;margin-right:8px;flex-shrink:0}
-.step-label{font-size:12px;color:var(--text);margin-bottom:8px;display:flex;align-items:center}
-
 .footer{text-align:center;margin-top:32px;font-size:10px;color:var(--muted);letter-spacing:1px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.form-group.wider{grid-column:span 1}.brand-name{font-size:16px}.stat-value{font-size:18px}}
@@ -222,47 +209,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div style="color:var(--text2);font-size:12px;letter-spacing:1px;">sincronizando...</div>
-</div>
-
-<!-- SQL MODAL -->
-<div class="modal-overlay" id="sqlModal">
-  <div class="modal">
-    <div class="modal-title">🗄️ Configuração do Banco de Dados</div>
-    <div class="modal-sub">Execute estes SQLs no Supabase → SQL Editor → New Query</div>
-
-    <div class="modal-step">
-      <div class="step-label"><span class="step-num">1</span>Adicionar novas colunas na tabela <code style="color:var(--gold)">trades</code></div>
-      <div class="sql-block" id="sqlBlock1">ALTER TABLE trades
-  ADD COLUMN IF NOT EXISTS tipo_saida TEXT DEFAULT 'pending',
-  ADD COLUMN IF NOT EXISTS resultado_real NUMERIC,
-  ADD COLUMN IF NOT EXISTS regras_quebradas TEXT[] DEFAULT '{}',
-  ADD COLUMN IF NOT EXISTS score INTEGER DEFAULT 1,
-  ADD COLUMN IF NOT EXISTS sessao TEXT DEFAULT 'Nova York',
-  ADD COLUMN IF NOT EXISTS conta_tipo TEXT DEFAULT 'demo';</div>
-      <button class="copy-btn" onclick="copySQL('sqlBlock1')">📋 Copiar SQL</button>
-    </div>
-
-    <div class="modal-step">
-      <div class="step-label"><span class="step-num">2</span>Criar tabela de <code style="color:var(--gold)">capital</code> (Demo e Real)</div>
-      <div class="sql-block" id="sqlBlock2">CREATE TABLE IF NOT EXISTS capital (
-  id SERIAL PRIMARY KEY,
-  conta_tipo TEXT NOT NULL DEFAULT 'demo',
-  valor NUMERIC NOT NULL DEFAULT 0,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Inserir registros iniciais
-INSERT INTO capital (conta_tipo, valor)
-VALUES ('demo', 10000), ('real', 10000)
-ON CONFLICT DO NOTHING;</div>
-      <button class="copy-btn" onclick="copySQL('sqlBlock2')">📋 Copiar SQL</button>
-    </div>
-
-    <div style="margin-top:20px;display:flex;gap:10px;">
-      <button class="btn btn-primary" onclick="closeSQL()">✅ Já executei — Fechar</button>
-      <a href="https://supabase.com/dashboard" target="_blank" style="text-decoration:none"><button class="btn" style="background:var(--surface2);color:var(--blue);border:1px solid var(--border)">🔗 Abrir Supabase</button></a>
-    </div>
-  </div>
 </div>
 
 <div class="shell">
@@ -302,7 +248,6 @@ ON CONFLICT DO NOTHING;</div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px">Rend. Total</div>
         <span id="rendTotal">—%</span>
       </div>
-      <button class="btn" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:11px;padding:8px 14px;" onclick="showSQL()">🗄️ SQL Setup</button>
     </div>
   </div>
 
@@ -491,10 +436,10 @@ ON CONFLICT DO NOTHING;</div>
           <th>Saída</th><th>Est.</th><th>Real</th>
           <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
         </tr></thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/tr><\/tbody>
+      <\/table>
+    <\/div>
+  <\/div>
 
   <div class="footer">
     <p>TRADE WINNER PRO v3 • Demo &amp; Real • Supabase Cloud • Candles Diários</p>
@@ -553,15 +498,6 @@ function calcResultado(e,t1,t2,t3,q,f,lado){
 }
 function setDbStatus(s,t){const el=$('dbStatus');el.className='db-status '+s;$('dbStatusText').textContent=t;}
 function showLoading(v){$('loadingOverlay').classList.toggle('show',v);}
-
-// ── SQL MODAL ─────────────────────────────────────────────────────
-function showSQL(){$('sqlModal').classList.add('show');}
-function closeSQL(){$('sqlModal').classList.remove('show');}
-function copySQL(id){
-  const t=document.getElementById(id).textContent;
-  navigator.clipboard.writeText(t).then(()=>alert('✅ SQL copiado!'));
-}
-$('sqlModal').addEventListener('click',e=>{if(e.target===$('sqlModal'))closeSQL();});
 
 // ── ACCOUNT SWITCH ────────────────────────────────────────────────
 function setAccount(acc){
@@ -861,39 +797,39 @@ function renderTable(acct){
   else if(currentFilter==='regras')filtered=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0);
 
   $('tradeCount').textContent=filtered.length+' operaç'+(filtered.length===1?'ão':'ões');
-  if(!filtered.length){$('tradesBody').innerHTML=`<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>`;return;}
+  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.<\/tr><\/tbody>';return;}
 
   $('tradesBody').innerHTML=filtered.map(t=>{
     const rE=t.resultado??0, rR=t.resultado_real;
     const fnR=rR!=null?rR:rE;
     const rCE=rE>=0?'res-pos':'res-neg', rCR=rR==null?'res-na':(rR>=0?'res-pos':'res-neg');
     const dC=t.lado==='compra'?'dir-long':'dir-short', dL=t.lado==='compra'?'LONG':'SHORT';
-    const tps=[['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]].filter(([,v])=>v!=null&&!isNaN(v)&&v>0).map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
+    const tps=[['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]].filter(([,v])=>v!=null&&!isNaN(v)&&v>0).map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}<\/span>`).join('');
     const obs=t.observacao?(t.observacao.length>35?t.observacao.slice(0,33)+'…':t.observacao):'—';
     const dt=t.date_time_raw?fmtDate(t.date_time_raw):fmtDate(t.created_at);
     const sMap={pending:'⏳ Aberto',loss:'❌ Stop',parcial:'⚡ Parcial',tp1:'✅ TP1',tp2:'✅ TP2',tp3:'🎯 TP3'};
     const saidaTipo=t.tipo_saida||'pending';
     const sc=t.score||0;
     const stars=sc?'★'.repeat(sc)+'☆'.repeat(5-sc):'—';
-    const regras=(t.regras_quebradas||[]).map(r=>`<span class="regra-flag">${r}</span>`).join('');
+    const regras=(t.regras_quebradas||[]).map(r=>`<span class="regra-flag">${r}<\/span>`).join('');
     return `<tr>
-      <td>${dt}</td><td>${t.ativo}</td>
-      <td style="color:var(--blue);font-size:11px">${t.sessao||'—'}</td>
-      <td><span class="dir-badge ${dC}">${dL}</span></td>
-      <td>${Number(t.entrada).toFixed(2)}</td><td>${Number(t.stop).toFixed(2)}</td>
-      <td><div class="tp-wrap">${tps}</div></td>
-      <td>${t.qtd}</td><td>${t.fator}</td>
-      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo]||'—'}</span></td>
-      <td class="${rCE}">${rE>=0?'+ ':''}R$ ${Math.abs(rE).toFixed(2)}</td>
-      <td class="${rCR}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td>
-      <td style="color:var(--gold);font-size:11px">${stars}</td>
-      <td>${regras||'<span style="color:var(--muted);font-size:10px">nenhuma</span>'}</td>
-      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}</div></td>
+      <td>${dt}<\/td><td>${t.ativo}<\/td>
+      <td style="color:var(--blue);font-size:11px">${t.sessao||'—'}<\/td>
+      <td><span class="dir-badge ${dC}">${dL}<\/span><\/td>
+      <td>${Number(t.entrada).toFixed(2)}<\/td><td>${Number(t.stop).toFixed(2)}<\/td>
+      <td><div class="tp-wrap">${tps}<\/div><\/td>
+      <td>${t.qtd}<\/td><td>${t.fator}<\/td>
+      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo]||'—'}<\/span><\/td>
+      <td class="${rCE}">${rE>=0?'+ ':''}R$ ${Math.abs(rE).toFixed(2)}<\/td>
+      <td class="${rCR}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}<\/td>
+      <td style="color:var(--gold);font-size:11px">${stars}<\/td>
+      <td>${regras||'<span style="color:var(--muted);font-size:10px">nenhuma<\/span>'}<\/td>
+      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}<\/div><\/td>
       <td><div class="action-cell">
-        <button class="act-btn" onclick="startEdit(${t.id})">✏️</button>
-        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
-      </div></td>
-    </tr>`;
+        <button class="act-btn" onclick="startEdit(${t.id})">✏️<\/button>
+        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️<\/button>
+      <\/div><\/td>
+    <\/tr>`;
   }).join('');
 }
 
@@ -1044,6 +980,6 @@ async function init(){
   await fetchTrades();
 }
 init();
-</script>
-</body>
-</html>
+<\/script>
+<\/body>
+<\/html>
