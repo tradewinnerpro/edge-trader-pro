@@ -6,424 +6,128 @@
 <title>Edge Trader Pro — Diário de Trading</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* ── RESET & VARS ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg:        #05080f;
-    --surface:   #0b1020;
-    --surface2:  #0f1830;
-    --border:    rgba(255,185,70,0.15);
-    --border2:   rgba(255,185,70,0.08);
-    --gold:      #ffb946;
-    --gold2:     #ffd580;
-    --green:     #3dffa0;
-    --red:       #ff5e6b;
-    --muted:     #4a5980;
-    --text:      #dde4f5;
-    --text2:     #8898c0;
-    --font-h:    'Syne', sans-serif;
-    --font-m:    'JetBrains Mono', monospace;
-    --radius:    14px;
-    --radius-lg: 20px;
+    --bg:       #05080f;
+    --surface:  #0b1020;
+    --surface2: #0f1830;
+    --border:   rgba(255,185,70,.15);
+    --border2:  rgba(255,185,70,.08);
+    --gold:     #ffb946;
+    --green:    #3dffa0;
+    --red:      #ff5e6b;
+    --muted:    #4a5980;
+    --text:     #dde4f5;
+    --text2:    #8898c0;
+    --font-h:   'Syne', sans-serif;
+    --font-m:   'JetBrains Mono', monospace;
+    --radius:   14px;
+    --radius-lg:20px;
   }
-
   html { scroll-behavior: smooth; }
+  body { background:var(--bg);color:var(--text);font-family:var(--font-m);font-size:13px;min-height:100vh;overflow-x:hidden; }
+  body::before { content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,185,70,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,185,70,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0; }
+  .shell { position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:20px 16px 60px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-m);
-    font-size: 13px;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  .header { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border); }
+  .brand { display:flex;align-items:center;gap:14px; }
+  .brand-icon { width:46px;height:46px;background:linear-gradient(135deg,var(--gold),#e08a00);border-radius:12px;display:grid;place-items:center;font-size:22px;box-shadow:0 0 24px rgba(255,185,70,.35);flex-shrink:0; }
+  .brand-name { font-family:var(--font-h);font-size:22px;font-weight:800;letter-spacing:2px;color:var(--gold); }
+  .brand-sub { font-size:10px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;margin-top:1px; }
+  #clock { color:var(--gold);font-weight:600;display:block;font-size:18px; }
+  #dateStr { font-size:10px;color:var(--text2);margin-top:2px; }
+  .db-status { display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:10px;margin-top:6px;border:1px solid var(--border2); }
+  .db-status.ok  { color:var(--green);border-color:rgba(61,255,160,.2); }
+  .db-status.err { color:var(--red);border-color:rgba(255,94,107,.2); }
+  .db-status.loading { color:var(--text2); }
+  .dot { width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* subtle grid bg */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,185,70,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,185,70,.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .ticker-wrap { border-radius:var(--radius);overflow:hidden;background:var(--surface);border:1px solid var(--border2);margin-bottom:20px;height:48px; }
 
-  /* ── LAYOUT ── */
-  .shell {
-    position: relative;
-    z-index: 1;
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 20px 16px 60px;
-  }
+  .stats-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px; }
+  .stat { background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;animation:fadeUp .5s both; }
+  .stat::after { content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s; }
+  .stat:hover { border-color:var(--border);transform:translateY(-2px); }
+  .stat:hover::after { opacity:1; }
+  .stat-label { font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:4px; }
+  .stat-value { font-family:var(--font-h);font-size:24px;font-weight:700;color:var(--gold);line-height:1; }
+  .stat-value.pos { color:var(--green); }
+  .stat-value.neg { color:var(--red); }
 
-  /* ── HEADER ── */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 22px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .brand-icon {
-    width: 46px; height: 46px;
-    background: linear-gradient(135deg, var(--gold), #e08a00);
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 22px;
-    box-shadow: 0 0 24px rgba(255,185,70,.35);
-    flex-shrink: 0;
-  }
-  .brand-name {
-    font-family: var(--font-h);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: var(--gold);
-  }
-  .brand-sub {
-    font-size: 10px;
-    color: var(--text2);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
-  .header-time {
-    font-size: 11px;
-    color: var(--text2);
-    text-align: right;
-  }
-  #clock { color: var(--gold); font-weight: 600; display: block; font-size: 18px; }
+  .tip-bar { background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:var(--radius);padding:10px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2); }
+  #tipText { color:var(--text);flex:1; }
 
-  /* ── TICKER ── */
-  .ticker-wrap {
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    margin-bottom: 20px;
-    height: 48px;
-  }
+  .form-card { background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;margin-bottom:24px; }
+  .form-title { font-family:var(--font-h);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px; }
+  .form-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:12px; }
+  .form-group { display:flex;flex-direction:column;gap:5px; }
+  .form-group.wider { grid-column:span 3; }
+  label { font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2); }
+  input,select,textarea { background:var(--bg);border:1px solid rgba(255,185,70,.15);border-radius:10px;color:var(--text);font-family:var(--font-m);font-size:12px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;outline:none;width:100%;-webkit-appearance:none; }
+  input:focus,select:focus,textarea:focus { border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,185,70,.1); }
+  select option { background:#0b1020; }
+  textarea { resize:vertical;min-height:70px;font-family:var(--font-m); }
+  #outroAtivo { display:none;margin-top:6px; }
+  .preview-box { background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13px;color:var(--text2); }
+  .preview-box.pos { color:var(--green);border-color:rgba(61,255,160,.2); }
+  .preview-box.neg { color:var(--red);border-color:rgba(255,94,107,.2); }
+  .btn { border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s,box-shadow .15s;white-space:nowrap;width:100%; }
+  .btn:hover { transform:translateY(-2px); }
+  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25);margin-bottom:8px; }
+  .btn-cancel { background:var(--surface2);color:var(--text2);border:1px solid var(--border2); }
+  #cancelEdit { display:none; }
 
-  /* ── STATS ROW ── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color .2s, transform .2s;
-    animation: fadeUp .5s both;
-  }
-  .stat::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    opacity: 0;
-    transition: opacity .3s;
-  }
-  .stat:hover { border-color: var(--border); transform: translateY(-2px); }
-  .stat:hover::after { opacity: 1; }
-  .stat-label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text2);
-    margin-bottom: 4px;
-  }
-  .stat-value {
-    font-family: var(--font-h);
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .stat-value.pos { color: var(--green); }
-  .stat-value.neg { color: var(--red); }
+  .loading-overlay { display:none;position:fixed;inset:0;background:rgba(5,8,15,.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px; }
+  .loading-overlay.show { display:flex; }
+  .spinner { width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ── TIP BAR ── */
-  .tip-bar {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-left: 3px solid var(--gold);
-    border-radius: var(--radius);
-    padding: 10px 16px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    color: var(--text2);
-    animation: fadeUp .6s both;
-  }
-  .tip-bar span { color: var(--gold); font-size: 16px; }
-  #tipText { color: var(--text); flex: 1; }
+  .filter-row { display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;justify-content:space-between; }
+  .filter-tabs { display:flex;gap:6px; }
+  .tab { background:var(--surface);border:1px solid var(--border2);border-radius:30px;padding:6px 14px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:var(--font-m); }
+  .tab.active,.tab:hover { background:var(--gold);color:var(--bg);border-color:var(--gold); }
+  .trade-count { font-size:11px;color:var(--text2); }
 
-  /* ── FORM CARD ── */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    margin-bottom: 24px;
-    animation: fadeUp .7s both;
-  }
-  .form-title {
-    font-family: var(--font-h);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group.wide { grid-column: span 2; }
-  .form-group.wider { grid-column: span 3; }
-  label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text2);
-  }
-  input, select, textarea {
-    background: var(--bg);
-    border: 1px solid rgba(255,185,70,.15);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: var(--font-m);
-    font-size: 12px;
-    padding: 9px 12px;
-    transition: border-color .2s, box-shadow .2s;
-    outline: none;
-    width: 100%;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(255,185,70,.1);
-  }
-  select option { background: #0b1020; }
-  textarea { resize: vertical; min-height: 70px; font-family: var(--font-m); }
+  .table-wrap { background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden; }
+  .table-scroll { overflow-x:auto; }
+  table { width:100%;border-collapse:collapse;min-width:800px; }
+  thead th { background:var(--surface2);padding:12px 10px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);font-weight:600;white-space:nowrap;border-bottom:1px solid var(--border2); }
+  tbody tr { border-bottom:1px solid var(--border2);transition:background .15s; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:rgba(255,185,70,.03); }
+  td { padding:10px;vertical-align:middle;font-size:12px;color:var(--text); }
+  .empty-row td { text-align:center;padding:40px;color:var(--muted);font-size:13px; }
+  .dir-badge { display:inline-block;padding:3px 8px;border-radius:30px;font-size:10px;font-weight:700;letter-spacing:1px; }
+  .dir-long  { background:rgba(61,255,160,.1);color:var(--green);border:1px solid rgba(61,255,160,.2); }
+  .dir-short { background:rgba(255,94,107,.1);color:var(--red);border:1px solid rgba(255,94,107,.2); }
+  .res-pos { color:var(--green);font-weight:700; }
+  .res-neg { color:var(--red);font-weight:700; }
+  .tp-wrap { display:flex;gap:4px;flex-wrap:wrap; }
+  .tp-chip { background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:2px 6px;font-size:10px;color:var(--text2); }
+  .obs-short { color:var(--text2);font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help; }
+  .action-cell { display:flex;gap:6px; }
+  .act-btn { background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:4px 10px;font-size:10px;color:var(--text2);cursor:pointer;font-family:var(--font-m);transition:all .15s; }
+  .act-btn:hover { background:var(--gold);color:var(--bg);border-color:var(--gold); }
+  .act-btn.del:hover { background:var(--red);border-color:var(--red);color:#fff; }
 
-  #outroAtivo { display: none; margin-top: 6px; }
+  .footer { text-align:center;margin-top:32px;font-size:10px;color:var(--muted);letter-spacing:1px; }
 
-  .preview-box {
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 9px 12px;
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--text2);
-  }
-  .preview-box.pos { color: var(--green); border-color: rgba(61,255,160,.2); }
-  .preview-box.neg { color: var(--red); border-color: rgba(255,94,107,.2); }
-
-  .btn-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  .btn-actions .btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .btn {
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: var(--font-m);
-    font-weight: 600;
-    font-size: 12px;
-    padding: 10px 20px;
-    transition: transform .15s, box-shadow .15s, background .2s;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--gold), #e08a00);
-    color: #05080f;
-    box-shadow: 0 4px 20px rgba(255,185,70,.25);
-  }
-  .btn-primary:hover { box-shadow: 0 6px 28px rgba(255,185,70,.4); }
-  .btn-cancel {
-    background: var(--surface2);
-    color: var(--text2);
-    border: 1px solid var(--border2);
-  }
-  #cancelEdit { display: none; }
-
-  /* ── FILTER TABS ── */
-  .filter-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .filter-tabs { display: flex; gap: 6px; }
-  .tab {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 30px;
-    padding: 6px 14px;
-    font-size: 11px;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all .2s;
-    font-family: var(--font-m);
-  }
-  .tab.active, .tab:hover {
-    background: var(--gold);
-    color: var(--bg);
-    border-color: var(--gold);
-  }
-  .trade-count { font-size: 11px; color: var(--text2); }
-
-  /* ── TABLE ── */
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    animation: fadeUp .8s both;
-  }
-  .table-scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; min-width: 800px; }
-  thead th {
-    background: var(--surface2);
-    padding: 12px 10px;
-    text-align: left;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text2);
-    font-weight: 600;
-    white-space: nowrap;
-    border-bottom: 1px solid var(--border2);
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--border2);
-    transition: background .15s;
-  }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,185,70,.03); }
-  td {
-    padding: 10px 10px;
-    vertical-align: middle;
-    font-size: 12px;
-    color: var(--text);
-  }
-  .empty-row td {
-    text-align: center;
-    padding: 40px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .dir-badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 30px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  .dir-long { background: rgba(61,255,160,.1); color: var(--green); border: 1px solid rgba(61,255,160,.2); }
-  .dir-short { background: rgba(255,94,107,.1); color: var(--red); border: 1px solid rgba(255,94,107,.2); }
-  .res-pos { color: var(--green); font-weight: 700; }
-  .res-neg { color: var(--red); font-weight: 700; }
-  .tp-wrap { display: flex; gap: 4px; flex-wrap: wrap; }
-  .tp-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 2px 6px;
-    font-size: 10px;
-    color: var(--text2);
-  }
-  .obs-short { color: var(--text2); font-size: 11px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help; }
-  .action-cell { display: flex; gap: 6px; }
-  .act-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    padding: 4px 10px;
-    font-size: 10px;
-    color: var(--text2);
-    cursor: pointer;
-    font-family: var(--font-m);
-    transition: all .15s;
-  }
-  .act-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
-  .act-btn.del:hover { background: var(--red); border-color: var(--red); color: #fff; }
-
-  /* ── FOOTER ── */
-  .footer {
-    text-align: center;
-    margin-top: 32px;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-  .footer a { color: var(--gold); text-decoration: none; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── MOBILE ── */
-  @media (max-width: 600px) {
-    .form-group.wide, .form-group.wider { grid-column: span 1; }
-    .brand-name { font-size: 16px; }
-    .stat-value { font-size: 20px; }
-  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @media(max-width:600px) { .form-group.wider{grid-column:span 1} .brand-name{font-size:16px} .stat-value{font-size:20px} }
 </style>
 </head>
 <body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div style="color:var(--text2);font-size:12px;letter-spacing:1px;">sincronizando com o banco...</div>
+</div>
+
 <div class="shell">
 
-  <!-- HEADER -->
   <header class="header">
     <div class="brand">
       <div class="brand-icon">📊</div>
@@ -432,60 +136,39 @@
         <div class="brand-sub">Diário de Trading Profissional</div>
       </div>
     </div>
-    <div class="header-time">
+    <div style="text-align:right;">
       <span id="clock">--:--:--</span>
-      <span id="dateStr" style="font-size:10px; color: var(--text2);">Carregando...</span>
+      <div id="dateStr"></div>
+      <div class="db-status loading" id="dbStatus"><div class="dot"></div><span id="dbStatusText">conectando...</span></div>
     </div>
   </header>
 
-  <!-- TICKER TAPE -->
   <div class="ticker-wrap">
-    <div class="tradingview-widget-container" style="width:100%; height:48px;">
+    <div class="tradingview-widget-container" style="width:100%;height:48px;">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-      {
-        "symbols": [
-          {"proName":"OANDA:XAUUSD","title":"OURO"},
-          {"proName":"OANDA:SPX500USD","title":"S&P 500"},
-          {"proName":"OANDA:NAS100USD","title":"NASDAQ 100"},
-          {"proName":"OANDA:US30USD","title":"DOW JONES"},
-          {"proName":"OANDA:XAGUSD","title":"PRATA"}
-        ],
-        "showSymbolLogo": false,
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "displayMode": "adaptive",
-        "locale": "br"
-      }
+      {"symbols":[{"proName":"OANDA:XAUUSD","title":"OURO"},{"proName":"OANDA:SPX500USD","title":"S&P 500"},{"proName":"OANDA:NAS100USD","title":"NASDAQ 100"},{"proName":"OANDA:US30USD","title":"DOW JONES"},{"proName":"OANDA:XAGUSD","title":"PRATA"}],"showSymbolLogo":false,"colorTheme":"dark","isTransparent":true,"displayMode":"adaptive","locale":"br"}
       </script>
     </div>
   </div>
 
-  <!-- ESTATÍSTICAS -->
   <div class="stats-row">
-    <div class="stat"><div class="stat-label">Operações</div><div class="stat-value" id="sTotalOps">0</div></div>
-    <div class="stat"><div class="stat-label">Win Rate</div><div class="stat-value" id="sWinRate">0%</div></div>
+    <div class="stat"><div class="stat-label">Operações</div><div class="stat-value" id="sTotalOps">—</div></div>
+    <div class="stat"><div class="stat-label">Win Rate</div><div class="stat-value" id="sWinRate">—</div></div>
     <div class="stat"><div class="stat-label">Payoff</div><div class="stat-value" id="sPayoff">—</div></div>
-    <div class="stat"><div class="stat-label">Expectativa</div><div class="stat-value" id="sExpect">R$ 0</div></div>
-    <div class="stat"><div class="stat-label">Resultado Líq.</div><div class="stat-value" id="sNet">R$ 0</div></div>
+    <div class="stat"><div class="stat-label">Expectativa</div><div class="stat-value" id="sExpect">—</div></div>
+    <div class="stat"><div class="stat-label">Resultado Líq.</div><div class="stat-value" id="sNet">—</div></div>
   </div>
 
-  <!-- DICA MOTIVACIONAL -->
   <div class="tip-bar">
     <span>💡</span>
     <div id="tipText">Stop Loss não é opcional — é a sua proteção. Nunca mova.</div>
   </div>
 
-  <!-- FORMULÁRIO -->
   <div class="form-card">
     <div class="form-title">✦ Registrar Operação</div>
-
     <div class="form-grid">
-      <div class="form-group">
-        <label>📅 Data / Hora</label>
-        <input type="datetime-local" id="fDateTime" step="60">
-      </div>
-
+      <div class="form-group"><label>📅 Data / Hora</label><input type="datetime-local" id="fDateTime" step="60"></div>
       <div class="form-group">
         <label>📊 Ativo</label>
         <select id="fAtivo">
@@ -498,143 +181,56 @@
         </select>
         <input type="text" id="outroAtivo" placeholder="Digite o ativo">
       </div>
-
-      <div class="form-group">
-        <label>📈 Direção</label>
-        <select id="fLado">
-          <option value="compra">COMPRA (LONG)</option>
-          <option value="venda">VENDA (SHORT)</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>💰 Entrada</label>
-        <input type="number" id="fEntrada" step="0.01" placeholder="0.00">
-      </div>
-
-      <div class="form-group">
-        <label>⛔ Stop Loss</label>
-        <input type="number" id="fStop" step="0.01" placeholder="0.00">
-      </div>
-
-      <div class="form-group">
-        <label>🎯 TP1 (50%)</label>
-        <input type="number" id="fTp1" step="0.01" placeholder="0.00">
-      </div>
-
-      <div class="form-group">
-        <label>🎯 TP2 (30%)</label>
-        <input type="number" id="fTp2" step="0.01" placeholder="0.00">
-      </div>
-
-      <div class="form-group">
-        <label>🎯 TP3 (20%)</label>
-        <input type="number" id="fTp3" step="0.01" placeholder="0.00">
-      </div>
-
-      <div class="form-group">
-        <label>📦 Qtd / Lotes</label>
-        <input type="number" id="fQtd" step="0.01" value="1" min="0.01">
-      </div>
-
-      <div class="form-group">
-        <label>⚙️ Fator Mult.</label>
-        <input type="number" id="fFator" step="0.01" value="10" min="0.01">
-      </div>
+      <div class="form-group"><label>📈 Direção</label><select id="fLado"><option value="compra">COMPRA (LONG)</option><option value="venda">VENDA (SHORT)</option></select></div>
+      <div class="form-group"><label>💰 Entrada</label><input type="number" id="fEntrada" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>⛔ Stop Loss</label><input type="number" id="fStop" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>🎯 TP1 (50%)</label><input type="number" id="fTp1" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>🎯 TP2 (30%)</label><input type="number" id="fTp2" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>🎯 TP3 (20%)</label><input type="number" id="fTp3" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>📦 Qtd / Lotes</label><input type="number" id="fQtd" step="0.01" value="1" min="0.01"></div>
+      <div class="form-group"><label>⚙️ Fator Mult.</label><input type="number" id="fFator" step="0.01" value="10" min="0.01"></div>
     </div>
-
-    <!-- Linha observação + preview + botões -->
-    <div class="form-grid" style="margin-top:0;">
-      <div class="form-group wider">
-        <label>📝 Observações / Estratégia / Emoções</label>
-        <textarea id="fObs" rows="3" placeholder="Descreva a estratégia, gatilhos, o que sentiu, lições aprendidas..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>📊 Resultado Estimado</label>
-        <div class="preview-box" id="previewBox">aguardando dados...</div>
-      </div>
-
-      <div class="form-group btn-actions"> 
-        <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-  <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
-  <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
-</div>
+    <div class="form-grid">
+      <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
+      <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
+      <div class="form-group" style="justify-content:flex-end;">
+        <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
+        <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
       </div>
     </div>
   </div>
 
-  <!-- TABELA -->
   <div class="filter-row">
     <div class="filter-tabs">
       <button class="tab active" data-filter="all">Todos</button>
       <button class="tab" data-filter="win">Ganhos ✅</button>
       <button class="tab" data-filter="loss">Perdas ❌</button>
     </div>
-    <div class="trade-count" id="tradeCount">0 operações</div>
+    <div class="trade-count" id="tradeCount">—</div>
   </div>
 
   <div class="table-wrap">
     <div class="table-scroll">
       <table>
-        <thead>
-          <tr>
-            <th>Data / Hora</th>
-            <th>Ativo</th>
-            <th>Dir.</th>
-            <th>Entrada</th>
-            <th>Stop</th>
-            <th>Alvos</th>
-            <th>Qtd</th>
-            <th>Fator</th>
-            <th>Resultado</th>
-            <th>Observação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tradesBody">
-          <tr class="empty-row"><td colspan="11">✍️ Nenhum trade registrado ainda. Adicione o primeiro acima!</td></tr>
-        </tbody>
+        <thead><tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr></thead>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr></tbody>
       </table>
     </div>
   </div>
 
   <div class="footer">
-    <p>EDGE TRADER PRO • Dados salvos localmente no seu navegador • Feito para traders disciplinados</p>
+    <p>EDGE TRADER PRO • Dados na nuvem via Supabase • Acesse de qualquer dispositivo</p>
     <p style="margin-top:6px;">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
   </div>
-
-</div><!-- /shell -->
+</div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════
-// CLOCK
-// ══════════════════════════════════════════════════════════════════
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString('pt-BR');
-  document.getElementById('dateStr').textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
-}
-updateClock();
-setInterval(updateClock, 1000);
+// ── SUPABASE ──────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ══════════════════════════════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════════════════════════════
-const STORAGE_KEY = 'edgeTraderProV3';
-let trades = [];
-let editingId = null;
-let currentFilter = 'all';
-
-function loadTrades() {
-  try { trades = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch(e) { trades = []; }
-}
-function saveTrades() { localStorage.setItem(STORAGE_KEY, JSON.stringify(trades)); }
-
-// ══════════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════════
+// ── CONSTANTS ─────────────────────────────────────────────────────
 const TIPS = [
   "Stop Loss não é opcional — é a sua proteção. Nunca mova.",
   "Perdas pequenas são normais. Grandes perdas são erros.",
@@ -647,20 +243,33 @@ const TIPS = [
   "A disciplina separa traders rentáveis dos demais.",
   "Anote tudo: o diário é o seu maior patrimônio.",
 ];
-
 const FATOR_MAP = { 'GOLD (XAUUSD)': 10, 'PRATA (XAGUSD)': 10 };
+
+// ── STATE ─────────────────────────────────────────────────────────
+let trades = [];
+let editingId = null;
+let currentFilter = 'all';
+
+// ── CLOCK ─────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('pt-BR');
+  document.getElementById('dateStr').textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
 
 function nowLocal() {
   const d = new Date();
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 16);
 }
-
 function fmtDate(raw) {
   if (!raw) return '-';
   return new Date(raw).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
 }
-
 function calcResultado(entrada, tp1, tp2, tp3, qtd, fator, lado) {
   const tps = [tp1, tp2, tp3].map(Number).filter(v => !isNaN(v) && v > 0);
   if (!tps.length || isNaN(entrada)) return 0;
@@ -672,266 +281,213 @@ function calcResultado(entrada, tp1, tp2, tp3, qtd, fator, lado) {
   });
   return parseFloat(total.toFixed(2));
 }
-
-// ══════════════════════════════════════════════════════════════════
-// DOM refs
-// ══════════════════════════════════════════════════════════════════
-const $ = id => document.getElementById(id);
-const fAtivo   = $('fAtivo');
-const fOutro   = $('outroAtivo');
-const fLado    = $('fLado');
-const fEntrada = $('fEntrada');
-const fStop    = $('fStop');
-const fTp1     = $('fTp1');
-const fTp2     = $('fTp2');
-const fTp3     = $('fTp3');
-const fQtd     = $('fQtd');
-const fFator   = $('fFator');
-const fObs     = $('fObs');
-const fDT      = $('fDateTime');
-const previewBox = $('previewBox');
-const tbody    = $('tradesBody');
-const btnAdd   = $('btnAdd');
-const btnCancel = $('cancelEdit');
-const tipText  = $('tipText');
-
-// ══════════════════════════════════════════════════════════════════
-// ATIVO change
-// ══════════════════════════════════════════════════════════════════
-fAtivo.addEventListener('change', () => {
-  fOutro.style.display = fAtivo.value === 'Outro' ? 'block' : 'none';
-  fFator.value = FATOR_MAP[fAtivo.value] ?? 1;
-  updatePreview();
-});
-
-function getAtivo() {
-  return fAtivo.value === 'Outro' ? (fOutro.value.trim() || 'Outro') : fAtivo.value;
+function setDbStatus(state, text) {
+  const el = $('dbStatus');
+  el.className = 'db-status ' + state;
+  $('dbStatusText').textContent = text;
 }
+function showLoading(v) { $('loadingOverlay').classList.toggle('show', v); }
 
-// ══════════════════════════════════════════════════════════════════
-// PREVIEW
-// ══════════════════════════════════════════════════════════════════
-function updatePreview() {
-  const e = parseFloat(fEntrada.value);
-  const t1 = parseFloat(fTp1.value);
-  if (isNaN(e) || isNaN(t1)) {
-    previewBox.textContent = 'aguardando dados...';
-    previewBox.className = 'preview-box';
-    return;
+// ── SUPABASE CRUD ─────────────────────────────────────────────────
+async function fetchTrades() {
+  showLoading(true);
+  try {
+    const { data, error } = await db.from('trades').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    trades = data || [];
+    setDbStatus('ok', '● banco conectado');
+  } catch(e) {
+    console.error(e);
+    setDbStatus('err', '✕ erro: ' + (e.message || 'verifique o console'));
+    trades = [];
+  } finally {
+    showLoading(false);
+    renderTable();
+    updateStats();
   }
-  const r = calcResultado(e, parseFloat(fTp1.value), parseFloat(fTp2.value), parseFloat(fTp3.value), parseFloat(fQtd.value)||1, parseFloat(fFator.value)||1, fLado.value);
-  previewBox.textContent = (r >= 0 ? '+ ' : '') + 'R$ ' + r.toFixed(2);
-  previewBox.className = 'preview-box ' + (r >= 0 ? 'pos' : 'neg');
 }
 
-[fEntrada, fStop, fTp1, fTp2, fTp3, fQtd, fFator].forEach(el => el.addEventListener('input', updatePreview));
-fLado.addEventListener('change', updatePreview);
+async function insertTrade(payload) {
+  showLoading(true);
+  try {
+    const { error } = await db.from('trades').insert([payload]);
+    if (error) throw error;
+  } catch(e) {
+    alert('❌ Erro ao salvar: ' + e.message);
+  } finally { showLoading(false); }
+}
 
-// ══════════════════════════════════════════════════════════════════
-// STATS
-// ══════════════════════════════════════════════════════════════════
+async function updateTradeDB(id, payload) {
+  showLoading(true);
+  try {
+    const { error } = await db.from('trades').update(payload).eq('id', id);
+    if (error) throw error;
+  } catch(e) {
+    alert('❌ Erro ao atualizar: ' + e.message);
+  } finally { showLoading(false); }
+}
+
+async function deleteTradeDB(id) {
+  if (!confirm('Confirmar exclusão deste trade?')) return;
+  showLoading(true);
+  try {
+    const { error } = await db.from('trades').delete().eq('id', id);
+    if (error) throw error;
+    await fetchTrades();
+  } catch(e) {
+    alert('❌ Erro ao excluir: ' + e.message);
+    showLoading(false);
+  }
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
 function updateStats() {
   const total = trades.length;
   $('sTotalOps').textContent = total;
   $('sTotalOps').className = 'stat-value';
-
   if (!total) {
-    ['sWinRate','sPayoff','sExpect','sNet'].forEach(id => { $(id).textContent = '—'; $(id).className = 'stat-value'; });
+    ['sWinRate','sPayoff','sExpect','sNet'].forEach(id => { $(id).textContent='—'; $(id).className='stat-value'; });
     return;
   }
   const wins   = trades.filter(t => t.resultado > 0);
   const losses = trades.filter(t => t.resultado < 0);
-  const winRate = (wins.length / total) * 100;
-  const avgG = wins.length   ? wins.reduce((a,b) => a+b.resultado, 0) / wins.length : 0;
-  const avgL = losses.length ? Math.abs(losses.reduce((a,b) => a+b.resultado, 0) / losses.length) : 0;
-  const payoff = avgL ? avgG / avgL : (avgG > 0 ? 999 : 0);
-  const expect = (winRate/100)*avgG - ((100-winRate)/100)*avgL;
-  const net = trades.reduce((a,b) => a+b.resultado, 0);
+  const wr     = (wins.length / total) * 100;
+  const avgG   = wins.length   ? wins.reduce((a,b) => a+b.resultado,0)/wins.length : 0;
+  const avgL   = losses.length ? Math.abs(losses.reduce((a,b) => a+b.resultado,0)/losses.length) : 0;
+  const payoff = avgL ? avgG/avgL : (avgG>0?999:0);
+  const expect = (wr/100)*avgG - ((100-wr)/100)*avgL;
+  const net    = trades.reduce((a,b) => a+b.resultado, 0);
 
-  $('sWinRate').textContent  = winRate.toFixed(1) + '%';
-  $('sWinRate').className    = 'stat-value ' + (winRate >= 50 ? 'pos' : 'neg');
-  $('sPayoff').textContent   = payoff.toFixed(2) + 'R';
-  $('sPayoff').className     = 'stat-value ' + (payoff >= 1 ? 'pos' : 'neg');
-  $('sExpect').textContent   = 'R$ ' + expect.toFixed(2);
-  $('sExpect').className     = 'stat-value ' + (expect >= 0 ? 'pos' : 'neg');
-  $('sNet').textContent      = 'R$ ' + net.toFixed(2);
-  $('sNet').className        = 'stat-value ' + (net >= 0 ? 'pos' : 'neg');
+  $('sWinRate').textContent = wr.toFixed(1)+'%';   $('sWinRate').className = 'stat-value '+(wr>=50?'pos':'neg');
+  $('sPayoff').textContent  = payoff.toFixed(2)+'R'; $('sPayoff').className  = 'stat-value '+(payoff>=1?'pos':'neg');
+  $('sExpect').textContent  = 'R$ '+expect.toFixed(2); $('sExpect').className  = 'stat-value '+(expect>=0?'pos':'neg');
+  $('sNet').textContent     = 'R$ '+net.toFixed(2);   $('sNet').className     = 'stat-value '+(net>=0?'pos':'neg');
 }
 
-// ══════════════════════════════════════════════════════════════════
-// RENDER TABLE
-// ══════════════════════════════════════════════════════════════════
+// ── RENDER TABLE ──────────────────────────────────────────────────
 function renderTable() {
-  const filtered = currentFilter === 'all' ? trades
-    : currentFilter === 'win' ? trades.filter(t => t.resultado > 0)
-    : trades.filter(t => t.resultado <= 0);
+  const filtered = currentFilter==='all' ? trades
+    : currentFilter==='win' ? trades.filter(t=>t.resultado>0)
+    : trades.filter(t=>t.resultado<=0);
 
-  $('tradeCount').textContent = filtered.length + ' operaç' + (filtered.length === 1 ? 'ão' : 'ões');
+  $('tradeCount').textContent = filtered.length + ' operaç' + (filtered.length===1?'ão':'ões');
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">Nenhuma operação encontrada para este filtro.</td></tr>`;
-    updateStats();
+    $('tradesBody').innerHTML = `<tr class="empty-row"><td colspan="11">✍️ Nenhuma operação encontrada.</td></tr>`;
     return;
   }
-
-  tbody.innerHTML = filtered.map(t => {
-    const resClass = t.resultado >= 0 ? 'res-pos' : 'res-neg';
-    const resSinal = t.resultado >= 0 ? '+ ' : '';
-    const dirClass = t.lado === 'compra' ? 'dir-long' : 'dir-short';
-    const dirLabel = t.lado === 'compra' ? 'LONG' : 'SHORT';
-    const tpsHtml = [['TP1', t.tp1], ['TP2', t.tp2], ['TP3', t.tp3]]
-      .filter(([_, v]) => v != null && !isNaN(v))
-      .map(([lbl, v]) => `<span class="tp-chip">${lbl}: ${Number(v).toFixed(2)}</span>`)
-      .join('');
-    const obsShort = t.observacao ? (t.observacao.length > 40 ? t.observacao.slice(0,38)+'…' : t.observacao) : '—';
+  $('tradesBody').innerHTML = filtered.map(t => {
+    const rC  = t.resultado>=0?'res-pos':'res-neg';
+    const rS  = t.resultado>=0?'+ ':'';
+    const dC  = t.lado==='compra'?'dir-long':'dir-short';
+    const dL  = t.lado==='compra'?'LONG':'SHORT';
+    const tps = [['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]]
+      .filter(([,v])=>v!=null&&!isNaN(v))
+      .map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
+    const obs = t.observacao?(t.observacao.length>40?t.observacao.slice(0,38)+'…':t.observacao):'—';
+    const dt  = t.date_time_raw ? fmtDate(t.date_time_raw) : fmtDate(t.created_at);
     return `<tr>
-      <td>${t.dateTimeFormatted}</td>
-      <td>${t.ativo}</td>
-      <td><span class="dir-badge ${dirClass}">${dirLabel}</span></td>
+      <td>${dt}</td><td>${t.ativo}</td>
+      <td><span class="dir-badge ${dC}">${dL}</span></td>
       <td>${Number(t.entrada).toFixed(2)}</td>
       <td>${Number(t.stop).toFixed(2)}</td>
-      <td><div class="tp-wrap">${tpsHtml}</div></td>
-      <td>${t.qtd}</td>
-      <td>${t.fator}</td>
-      <td class="${resClass}">${resSinal}R$ ${Number(t.resultado).toFixed(2)}</td>
-      <td><div class="obs-short" title="${t.observacao || ''}">${obsShort}</div></td>
+      <td><div class="tp-wrap">${tps}</div></td>
+      <td>${t.qtd}</td><td>${t.fator}</td>
+      <td class="${rC}">${rS}R$ ${Number(t.resultado).toFixed(2)}</td>
+      <td><div class="obs-short" title="${t.observacao||''}">${obs}</div></td>
       <td><div class="action-cell">
         <button class="act-btn" onclick="startEdit(${t.id})">✏️ Editar</button>
-        <button class="act-btn del" onclick="deleteTrade(${t.id})">🗑️</button>
+        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
       </div></td>
     </tr>`;
   }).join('');
-
-  updateStats();
 }
 
-// ══════════════════════════════════════════════════════════════════
-// ADD / UPDATE
-// ══════════════════════════════════════════════════════════════════
-btnAdd.addEventListener('click', () => {
-  const entrada = parseFloat(fEntrada.value);
-  const stop    = parseFloat(fStop.value);
-  const tp1     = parseFloat(fTp1.value);
-  const qtd     = parseFloat(fQtd.value);
-  const fator   = parseFloat(fFator.value);
-  const lado    = fLado.value;
+// ── FORM ──────────────────────────────────────────────────────────
+const fAtivo=$('fAtivo'), fOutro=$('outroAtivo'), fLado=$('fLado');
+const fEntrada=$('fEntrada'), fStop=$('fStop');
+const fTp1=$('fTp1'), fTp2=$('fTp2'), fTp3=$('fTp3');
+const fQtd=$('fQtd'), fFator=$('fFator'), fObs=$('fObs'), fDT=$('fDateTime');
+const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('cancelEdit');
 
-  if ([entrada, stop, tp1, qtd, fator].some(isNaN)) {
-    alert('❌ Preencha Entrada, Stop, TP1, Quantidade e Fator.'); return;
-  }
-  if (lado === 'compra' && (stop >= entrada || tp1 <= entrada)) {
-    alert('⚠️ Compra: Stop deve ser menor que Entrada e TP1 maior que Entrada.'); return;
-  }
-  if (lado === 'venda' && (stop <= entrada || tp1 >= entrada)) {
-    alert('⚠️ Venda: Stop deve ser maior que Entrada e TP1 menor que Entrada.'); return;
-  }
+fAtivo.addEventListener('change', () => {
+  fOutro.style.display = fAtivo.value==='Outro'?'block':'none';
+  fFator.value = FATOR_MAP[fAtivo.value]??1;
+  updatePreview();
+});
 
-  const resultado = calcResultado(entrada, parseFloat(fTp1.value), parseFloat(fTp2.value), parseFloat(fTp3.value), qtd, fator, lado);
-  const raw = fDT.value || nowLocal();
-  const trade = {
-    id: editingId ?? Date.now(),
-    dateTimeRaw: raw,
-    dateTimeFormatted: fmtDate(raw),
-    ativo: getAtivo(),
-    lado, entrada, stop,
-    tp1, tp2: parseFloat(fTp2.value) || null, tp3: parseFloat(fTp3.value) || null,
-    qtd, fator, observacao: fObs.value.trim(), resultado
+function getAtivo() { return fAtivo.value==='Outro'?(fOutro.value.trim()||'Outro'):fAtivo.value; }
+
+function updatePreview() {
+  const e=parseFloat(fEntrada.value), t1=parseFloat(fTp1.value);
+  if (isNaN(e)||isNaN(t1)) { previewBox.textContent='aguardando dados...'; previewBox.className='preview-box'; return; }
+  const r=calcResultado(e,t1,parseFloat(fTp2.value),parseFloat(fTp3.value),parseFloat(fQtd.value)||1,parseFloat(fFator.value)||1,fLado.value);
+  previewBox.textContent=(r>=0?'+ ':'')+' R$ '+r.toFixed(2);
+  previewBox.className='preview-box '+(r>=0?'pos':'neg');
+}
+[fEntrada,fStop,fTp1,fTp2,fTp3,fQtd,fFator].forEach(el=>el.addEventListener('input',updatePreview));
+fLado.addEventListener('change',updatePreview);
+
+btnAdd.addEventListener('click', async () => {
+  const entrada=parseFloat(fEntrada.value), stop=parseFloat(fStop.value);
+  const tp1=parseFloat(fTp1.value), qtd=parseFloat(fQtd.value), fator=parseFloat(fFator.value);
+  const lado=fLado.value;
+  if ([entrada,stop,tp1,qtd,fator].some(isNaN)) { alert('❌ Preencha Entrada, Stop, TP1, Quantidade e Fator.'); return; }
+  if (lado==='compra'&&(stop>=entrada||tp1<=entrada)) { alert('⚠️ Compra: Stop < Entrada e TP1 > Entrada.'); return; }
+  if (lado==='venda' &&(stop<=entrada||tp1>=entrada)) { alert('⚠️ Venda: Stop > Entrada e TP1 < Entrada.');  return; }
+
+  const resultado=calcResultado(entrada,tp1,parseFloat(fTp2.value),parseFloat(fTp3.value),qtd,fator,lado);
+  const raw=fDT.value||nowLocal();
+  const payload={
+    date_time_raw:raw, ativo:getAtivo(), lado, entrada, stop, tp1,
+    tp2:parseFloat(fTp2.value)||null, tp3:parseFloat(fTp3.value)||null,
+    qtd, fator, observacao:fObs.value.trim(), resultado
   };
 
-  if (editingId !== null) {
-    trades = trades.map(t => t.id === editingId ? trade : t);
-    editingId = null;
-    btnAdd.textContent = '➕ Registrar Trade';
-    btnCancel.style.display = 'none';
+  if (editingId!==null) {
+    await updateTradeDB(editingId, payload);
+    editingId=null; btnAdd.textContent='➕ Registrar Trade'; btnCancel.style.display='none';
   } else {
-    trades.unshift(trade);
+    await insertTrade(payload);
   }
-
-  saveTrades();
-  renderTable();
+  $('tipText').textContent=TIPS[Math.floor(Math.random()*TIPS.length)];
   resetForm();
-
-  // tip
-  tipText.textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+  await fetchTrades();
 });
 
-// ══════════════════════════════════════════════════════════════════
-// EDIT / DELETE
-// ══════════════════════════════════════════════════════════════════
 function startEdit(id) {
-  const t = trades.find(x => x.id === id);
-  if (!t) return;
-  editingId = id;
-  fDT.value       = t.dateTimeRaw || nowLocal();
-  const knownAtivos = Array.from(fAtivo.options).map(o => o.value);
-  if (knownAtivos.includes(t.ativo)) { fAtivo.value = t.ativo; fOutro.style.display = 'none'; }
-  else { fAtivo.value = 'Outro'; fOutro.value = t.ativo; fOutro.style.display = 'block'; }
-  fFator.value    = t.fator;
-  fLado.value     = t.lado;
-  fEntrada.value  = t.entrada;
-  fStop.value     = t.stop;
-  fTp1.value      = t.tp1;
-  fTp2.value      = t.tp2 != null ? t.tp2 : '';
-  fTp3.value      = t.tp3 != null ? t.tp3 : '';
-  fQtd.value      = t.qtd;
-  fObs.value      = t.observacao || '';
+  const t=trades.find(x=>x.id===id); if(!t) return;
+  editingId=id;
+  fDT.value=t.date_time_raw||nowLocal();
+  const opts=Array.from(fAtivo.options).map(o=>o.value);
+  if (opts.includes(t.ativo)) { fAtivo.value=t.ativo; fOutro.style.display='none'; }
+  else { fAtivo.value='Outro'; fOutro.value=t.ativo; fOutro.style.display='block'; }
+  fFator.value=t.fator; fLado.value=t.lado; fEntrada.value=t.entrada; fStop.value=t.stop;
+  fTp1.value=t.tp1; fTp2.value=t.tp2??''; fTp3.value=t.tp3??'';
+  fQtd.value=t.qtd; fObs.value=t.observacao||'';
   updatePreview();
-  btnAdd.textContent = '✏️ Atualizar Trade';
-  btnCancel.style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  btnAdd.textContent='✏️ Atualizar Trade'; btnCancel.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function deleteTrade(id) {
-  if (!confirm('Confirmar exclusão deste trade?')) return;
-  trades = trades.filter(t => t.id !== id);
-  saveTrades();
-  renderTable();
-}
+btnCancel.addEventListener('click', ()=>{ editingId=null; btnAdd.textContent='➕ Registrar Trade'; btnCancel.style.display='none'; resetForm(); });
 
-btnCancel.addEventListener('click', () => {
-  editingId = null;
-  btnAdd.textContent = '➕ Registrar Trade';
-  btnCancel.style.display = 'none';
-  resetForm();
-});
-
-// ══════════════════════════════════════════════════════════════════
-// RESET FORM
-// ══════════════════════════════════════════════════════════════════
 function resetForm() {
-  fEntrada.value = '';
-  fStop.value    = '';
-  fTp1.value     = '';
-  fTp2.value     = '';
-  fTp3.value     = '';
-  fObs.value     = '';
-  fQtd.value     = '1';
-  fDT.value      = nowLocal();
-  fAtivo.value   = 'GOLD (XAUUSD)';
-  fFator.value   = '10';
-  fOutro.style.display = 'none';
-  previewBox.textContent = 'aguardando dados...';
-  previewBox.className = 'preview-box';
+  fEntrada.value=''; fStop.value=''; fTp1.value=''; fTp2.value=''; fTp3.value=''; fObs.value='';
+  fQtd.value='1'; fDT.value=nowLocal(); fAtivo.value='GOLD (XAUUSD)'; fFator.value='10';
+  fOutro.style.display='none'; previewBox.textContent='aguardando dados...'; previewBox.className='preview-box';
 }
 
-// ══════════════════════════════════════════════════════════════════
-// FILTER TABS
-// ══════════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentFilter = tab.dataset.filter;
-    renderTable();
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active'); currentFilter=tab.dataset.filter; renderTable();
   });
 });
 
-// ══════════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════════
-loadTrades();
+// ── INIT ──────────────────────────────────────────────────────────
 resetForm();
-renderTable();
+fetchTrades();
 </script>
 </body>
 </html>
