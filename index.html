@@ -252,7 +252,16 @@
   .preview-box.pos { color: var(--green); border-color: rgba(61,255,160,.2); }
   .preview-box.neg { color: var(--red); border-color: rgba(255,94,107,.2); }
 
-  .btn-actions { display: flex; gap: 10px; align-items: flex-end; }
+  .btn-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .btn-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
   .btn {
     border: none;
     border-radius: 10px;
@@ -263,6 +272,10 @@
     padding: 10px 20px;
     transition: transform .15s, box-shadow .15s, background .2s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
   .btn:hover { transform: translateY(-2px); }
   .btn-primary {
@@ -543,10 +556,9 @@
       </div>
 
       <div class="form-group btn-actions">
-        <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-          <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
-          <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
-        </div>
+  <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
+  <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
+</div>
       </div>
     </div>
   </div>
