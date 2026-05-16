@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Edge Trader Pro — Diário de Trading + Relatórios</title>
+<title>Trade Winner Pro — Diário de Trading</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -169,9 +169,9 @@
 <div class="shell">
   <header class="header">
     <div class="brand">
-      <div class="brand-icon">📊</div>
+      <div class="brand-icon">🏆</div>
       <div>
-        <div class="brand-name">EDGE TRADER PRO</div>
+        <div class="brand-name">TRADE WINNER PRO</div>
         <div class="brand-sub">Diário de Trading Profissional</div>
       </div>
     </div>
@@ -233,10 +233,10 @@
       <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
       <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
       
-      <!-- Área de ações com botões centralizados (estrutura solicitada) -->
+      <!-- Área de ações com botões centralizados (Cancelar Edição aparece SOMENTE durante edição) -->
       <div class="form-group btn-actions">
         <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
-        <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
+        <button class="btn btn-cancel" id="cancelEdit" style="display: none;">✕ Cancelar Edição</button>
         <button class="btn btn-report" id="btnPrintReport">🖨️ Imprimir Relatório</button>
       </div>
     </div>
@@ -254,14 +254,16 @@
   <div class="table-wrap">
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr></thead>
+        <thead>
+          <tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr>
+        </thead>
         <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr></tbody>
       </table>
     </div>
   </div>
 
   <div class="footer">
-    <p>EDGE TRADER PRO • Dados na nuvem via Supabase • Acesse de qualquer dispositivo</p>
+    <p>TRADE WINNER PRO • Dados na nuvem via Supabase • Acesse de qualquer dispositivo</p>
     <p style="margin-top:6px;">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
   </div>
 </div>
@@ -441,7 +443,7 @@ function renderTable() {
         <button class="act-btn" onclick="startEdit(${t.id})">✏️ Editar</button>
         <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
       </div></td>
-     </tr>`;
+    </tr>`;
   }).join('');
 }
 
@@ -488,7 +490,9 @@ btnAdd.addEventListener('click', async () => {
 
   if (editingId!==null) {
     await updateTradeDB(editingId, payload);
-    editingId=null; btnAdd.textContent='➕ Registrar Trade'; btnCancel.style.display='none';
+    editingId=null; 
+    btnAdd.textContent='➕ Registrar Trade'; 
+    btnCancel.style.display='none'; // ESCONDE BOTÃO CANCELAR APÓS EDITAR
   } else {
     await insertTrade(payload);
   }
@@ -508,11 +512,17 @@ window.startEdit = function(id) {
   fTp1.value=t.tp1; fTp2.value=t.tp2??''; fTp3.value=t.tp3??'';
   fQtd.value=t.qtd; fObs.value=t.observacao||'';
   updatePreview();
-  btnAdd.textContent='✏️ Atualizar Trade'; btnCancel.style.display='block';
+  btnAdd.textContent='✏️ Atualizar Trade';
+  btnCancel.style.display='flex'; // MOSTRA BOTÃO CANCELAR APENAS DURANTE EDIÇÃO
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
-btnCancel.addEventListener('click', ()=>{ editingId=null; btnAdd.textContent='➕ Registrar Trade'; btnCancel.style.display='none'; resetForm(); });
+btnCancel.addEventListener('click', ()=>{ 
+  editingId=null; 
+  btnAdd.textContent='➕ Registrar Trade'; 
+  btnCancel.style.display='none'; 
+  resetForm(); 
+});
 
 function resetForm() {
   fEntrada.value=''; fStop.value=''; fTp1.value=''; fTp2.value=''; fTp3.value=''; fObs.value='';
