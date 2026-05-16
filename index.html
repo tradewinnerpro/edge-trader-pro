@@ -74,9 +74,36 @@
   .preview-box { background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13px;color:var(--text2); }
   .preview-box.pos { color:var(--green);border-color:rgba(61,255,160,.2); }
   .preview-box.neg { color:var(--red);border-color:rgba(255,94,107,.2); }
-  .btn { border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s,box-shadow .15s;white-space:nowrap;width:100%; }
+
+  /* ── FORM ACTIONS (centralizado) ── */
+  .btn-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .btn-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .btn {
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: var(--font-m);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 10px 20px;
+    transition: transform .15s, box-shadow .15s, background .2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
   .btn:hover { transform:translateY(-2px); }
-  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25);margin-bottom:8px; }
+  .btn-primary { background:linear-gradient(135deg,var(--gold),#e08a00);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25); }
+  .btn-primary:hover { box-shadow:0 6px 28px rgba(255,185,70,.4); }
   .btn-cancel { background:var(--surface2);color:var(--text2);border:1px solid var(--border2); }
   #cancelEdit { display:none; }
 
@@ -193,7 +220,7 @@
     <div class="form-grid">
       <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
       <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
-      <div class="form-group" style="justify-content:flex-end;">
+      <div class="form-group btn-actions">
         <button class="btn btn-primary" id="btnAdd">➕ Registrar Trade</button>
         <button class="btn btn-cancel" id="cancelEdit">✕ Cancelar Edição</button>
       </div>
@@ -212,8 +239,10 @@
   <div class="table-wrap">
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr></thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr></tbody>
+        <thead>
+          <tr><th>Data/Hora</th><th>Ativo</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Resultado</th><th>Observação</th><th>Ações</th></tr>
+        </thead>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="11">Carregando trades...</td></tr>
       </table>
     </div>
   </div>
@@ -408,7 +437,7 @@ const fAtivo=$('fAtivo'), fOutro=$('outroAtivo'), fLado=$('fLado');
 const fEntrada=$('fEntrada'), fStop=$('fStop');
 const fTp1=$('fTp1'), fTp2=$('fTp2'), fTp3=$('fTp3');
 const fQtd=$('fQtd'), fFator=$('fFator'), fObs=$('fObs'), fDT=$('fDateTime');
-const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('cancelEdit');
+const previewBox=$('previewBox'), btnAdd=$('btnAdd'), btnCancel=$('btnCancel');
 
 fAtivo.addEventListener('change', () => {
   fOutro.style.display = fAtivo.value==='Outro'?'block':'none';
