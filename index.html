@@ -50,15 +50,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .account-tab.active-real{background:rgba(255,185,70,.15);color:var(--gold);box-shadow:0 0 14px rgba(255,185,70,.2)}
 .account-tab:hover:not(.active-demo):not(.active-real){color:var(--text)}
 
-/* ── CAPITAL PANEL ── */
-.capital-panel{display:flex;gap:10px;flex:1;flex-wrap:wrap;align-items:center}
-.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:2;min-width:200px}
+/* ── CAPITAL PANEL - TODOS COM MESMA LARGURA ── */
+.capital-panel{display:flex;gap:10px;flex:1;flex-wrap:wrap;align-items:stretch}
+.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:1;min-width:180px}
 .capital-input-wrap label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);white-space:nowrap}
 .capital-input-wrap .prefix{color:var(--text2);font-size:13px;margin-right:2px}
 .capital-input-wrap input{background:none;border:none;color:var(--text);font-family:var(--font-h);font-size:18px;font-weight:700;width:100%;outline:none;padding:0}
-.btn-save{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-m);white-space:nowrap}
+.btn-save{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:8px 20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-m);white-space:nowrap;flex-shrink:0}
 .btn-save:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
-.capital-badge{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;font-size:10px;color:var(--text2);white-space:nowrap;flex:1;min-width:100px}
+.capital-badge{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;font-size:10px;color:var(--text2);flex:1;min-width:120px;text-align:center}
+.capital-badge div:first-child{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:4px}
 .capital-badge span{font-family:var(--font-h);font-size:16px;font-weight:700;display:block}
 .capital-badge span.pos{color:var(--green)}
 .capital-badge span.neg{color:var(--red)}
@@ -67,8 +68,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @media (max-width: 768px) {
   .capital-panel{flex-direction:column;align-items:stretch}
   .capital-input-wrap{width:100%}
-  .btn-save{text-align:center;width:100%}
-  .capital-badge{text-align:center}
+  .btn-save{width:100%;text-align:center}
+  .capital-badge{width:100%}
 }
 
 /* ── TICKER ── */
@@ -252,11 +253,11 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       </div>
       <button class="btn-save" onclick="saveCapital()">💾 SALVAR</button>
       <div class="capital-badge">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px">Saldo Atual</div>
+        <div>Saldo Atual</div>
         <span id="saldoAtual" class="pos">R$ —</span>
       </div>
       <div class="capital-badge">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px">Rend. Total</div>
+        <div>Rend. Total</div>
         <span id="rendTotal">—%</span>
       </div>
     </div>
