@@ -50,14 +50,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .account-tab.active-real{background:rgba(255,185,70,.15);color:var(--gold);box-shadow:0 0 14px rgba(255,185,70,.2)}
 .account-tab:hover:not(.active-demo):not(.active-real){color:var(--text)}
 
-/* ── CAPITAL PANEL - BOTÃO DENTRO DO INPUT ── */
+/* ── CAPITAL PANEL ── */
 .capital-panel{display:flex;gap:10px;flex:1;flex-wrap:wrap;align-items:center}
-.capital-input-group{display:flex;align-items:center;gap:0;background:var(--surface);border:1px solid var(--border2);border-radius:12px;flex:2;min-width:200px;overflow:hidden}
-.capital-input-group label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);padding:0 12px;background:var(--surface2);height:100%;display:flex;align-items:center;white-space:nowrap}
-.capital-input-group .prefix{color:var(--text2);font-size:13px;margin-left:12px;margin-right:2px}
-.capital-input-group input{background:none;border:none;color:var(--text);font-family:var(--font-h);font-size:18px;font-weight:700;width:100%;outline:none;padding:10px 0;min-width:100px}
-.capital-input-group .btn-save{background:var(--surface2);border:none;border-left:1px solid var(--border2);color:var(--text2);padding:0 16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;height:100%;white-space:nowrap;font-family:var(--font-m);letter-spacing:1px}
-.capital-input-group .btn-save:hover{background:var(--gold);color:var(--bg)}
+.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:2;min-width:200px}
+.capital-input-wrap label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);white-space:nowrap}
+.capital-input-wrap .prefix{color:var(--text2);font-size:13px;margin-right:2px}
+.capital-input-wrap input{background:none;border:none;color:var(--text);font-family:var(--font-h);font-size:18px;font-weight:700;width:100%;outline:none;padding:0}
+.btn-save{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-m);white-space:nowrap}
+.btn-save:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .capital-badge{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;font-size:10px;color:var(--text2);white-space:nowrap;flex:1;min-width:100px}
 .capital-badge span{font-family:var(--font-h);font-size:16px;font-weight:700;display:block}
 .capital-badge span.pos{color:var(--green)}
@@ -66,9 +66,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* Responsivo mobile */
 @media (max-width: 768px) {
   .capital-panel{flex-direction:column;align-items:stretch}
-  .capital-input-group{width:100%}
+  .capital-input-wrap{width:100%}
+  .btn-save{text-align:center;width:100%}
   .capital-badge{text-align:center}
-  .capital-input-group .btn-save{padding:0 12px;font-size:10px}
 }
 
 /* ── TICKER ── */
@@ -245,12 +245,12 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       <button class="account-tab" data-account="real" id="tabReal">💰 REAL</button>
     </div>
     <div class="capital-panel">
-      <div class="capital-input-group">
+      <div class="capital-input-wrap">
         <label id="capitalLabel">Capital Demo</label>
         <span class="prefix">R$</span>
         <input type="number" id="capitalInput" placeholder="10000" step="100" min="0">
-        <button class="btn-save" onclick="saveCapital()">SALVAR</button>
       </div>
+      <button class="btn-save" onclick="saveCapital()">💾 SALVAR</button>
       <div class="capital-badge">
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px">Saldo Atual</div>
         <span id="saldoAtual" class="pos">R$ —</span>
@@ -778,7 +778,7 @@ function renderTable(acct){
   else if(currentFilter==='regras')filtered=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0);
 
   $('tradeCount').textContent=filtered.length+' operaç'+(filtered.length===1?'ão':'ões');
-  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>';return;}
+  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></table>';return;}
 
   $('tradesBody').innerHTML=filtered.map(t=>{
     const rE=t.resultado??0, rR=t.resultado_real;
