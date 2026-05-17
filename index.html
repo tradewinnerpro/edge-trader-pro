@@ -50,7 +50,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .account-tab.active-real{background:rgba(255,185,70,.15);color:var(--gold);box-shadow:0 0 14px rgba(255,185,70,.2)}
 .account-tab:hover:not(.active-demo):not(.active-real){color:var(--text)}
 
-/* ── CAPITAL PANEL - TODOS COM MESMA LARGURA ── */
+/* ── CAPITAL PANEL ── */
 .capital-panel{display:flex;gap:10px;flex:1;flex-wrap:wrap;align-items:stretch}
 .capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:1;min-width:150px}
 .capital-input-wrap label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);white-space:nowrap}
@@ -214,6 +214,58 @@ body.real-mode .stat::after{background:linear-gradient(90deg,transparent,var(--g
 body.demo-mode .stat::after{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
 body.demo-mode #clock{color:var(--blue)}
 body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc)}
+
+/* ESTILO ESPECÍFICO PARA IMPRESSÃO - RELATÓRIO APENAS COM TRADES */
+@media print {
+  /* Esconde tudo que não é a tabela de trades */
+  .header, .account-bar, .ticker-wrap, .stats-row, .tip-bar, .charts-grid, 
+  .form-card, .filter-row, .footer, .loading-overlay, .db-status,
+  .btn-report, .btn-actions, .btn-primary, .btn-cancel {
+    display: none !important;
+  }
+  
+  /* Mostra apenas a tabela */
+  .table-wrap, .table-scroll, table, thead, tbody, tr, th, td {
+    display: block;
+  }
+  
+  .table-wrap {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: white;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    font-size: 10px;
+  }
+  
+  th {
+    background: #f0f0f0;
+    color: black;
+  }
+  
+  body {
+    background: white;
+    color: black;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .shell {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+}
 </style>
 </head>
 <body class="demo-mode">
@@ -450,16 +502,16 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
             <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
           </tr>
         </thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/tr><\/tbody>
+      <\/table>
+    <\/div>
+  <\/div>
 
   <div class="footer">
     <p>TRADE WINNER PRO v3 • Demo & Real • Supabase Cloud • Candles Diários</p>
     <p style="margin-top:6px">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
-  </div>
-</div>
+  <\/div>
+<\/div>
 
 <script>
 // CONFIG
@@ -682,7 +734,7 @@ function renderTable(acct) {
   else if (currentFilter === 'pending') filtered = acct.filter(t => !t.tipo_saida || t.tipo_saida === 'pending');
   else if (currentFilter === 'regras') filtered = acct.filter(t => t.regras_quebradas && t.regras_quebradas.length > 0);
   $('tradeCount').textContent = filtered.length + ' operaç' + (filtered.length === 1 ? 'ão' : 'ões');
-  if (!filtered.length) { $('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>'; return; }
+  if (!filtered.length) { $('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.<tr></table>'; return; }
   $('tradesBody').innerHTML = filtered.map(t => {
     const rE = t.resultado ?? 0, rR = t.resultado_real;
     const dC = t.lado === 'compra' ? 'dir-long' : 'dir-short', dL = t.lado === 'compra' ? 'LONG' : 'SHORT';
@@ -836,7 +888,11 @@ document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', (
   const acct = trades.filter(t => (t.conta_tipo || 'demo') === currentAccount);
   renderTable(acct);
 }));
-$('btnPrintReport').addEventListener('click', () => window.print());
+
+// BOTÃO RELATÓRIO - AGORA SÓ IMPRIME A LISTA DE TRADES
+$('btnPrintReport').addEventListener('click', () => {
+  window.print();
+});
 
 // INIT
 async function init() {
