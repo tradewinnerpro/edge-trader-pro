@@ -52,13 +52,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* ── CAPITAL PANEL - TODOS COM MESMA LARGURA ── */
 .capital-panel{display:flex;gap:10px;flex:1;flex-wrap:wrap;align-items:stretch}
-.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:1;min-width:180px}
+.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;flex:1;min-width:150px}
 .capital-input-wrap label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);white-space:nowrap}
 .capital-input-wrap .prefix{color:var(--text2);font-size:13px;margin-right:2px}
 .capital-input-wrap input{background:none;border:none;color:var(--text);font-family:var(--font-h);font-size:18px;font-weight:700;width:100%;outline:none;padding:0}
-.btn-save{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:8px 20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-m);white-space:nowrap;flex-shrink:0}
+.btn-save{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-m);white-space:nowrap}
 .btn-save:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
-.capital-badge{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 14px;font-size:10px;color:var(--text2);flex:1;min-width:120px;text-align:center}
+.capital-badge{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:8px 10px;font-size:10px;color:var(--text2);flex:1;min-width:120px;text-align:center}
 .capital-badge div:first-child{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:4px}
 .capital-badge span{font-family:var(--font-h);font-size:16px;font-weight:700;display:block}
 .capital-badge span.pos{color:var(--green)}
@@ -107,7 +107,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .form-group{display:flex;flex-direction:column;gap:5px}
 .form-group.wider{grid-column:span 3}
 label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
-input,select,textarea{background:var(--bg);border:1px solid rgba(255,185,70,.15);border-radius:10px;color:var(--text);font-family:var(--font-m);font-size:12px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;outline:none;width:100%;-webkit-appearance:none}
+input,select,textarea{background:var(--bg);border:1px solid rgba(255,185,70,.15);border-radius:10px;color:var(--text);font-family:var(--font-m);font-size:12px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,185,70,.1)}
 select option{background:#0b1020}
 textarea{resize:vertical;min-height:70px}
@@ -450,19 +450,19 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
             <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
           </tr>
         </thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/tr><\/tbody>
-      <\/table>
-    <\/div>
-  <\/div>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 
   <div class="footer">
-    <p>TRADE WINNER PRO v3 • Demo &amp; Real • Supabase Cloud • Candles Diários</p>
+    <p>TRADE WINNER PRO v3 • Demo & Real • Supabase Cloud • Candles Diários</p>
     <p style="margin-top:6px">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
-  <\/div>
-<\/div>
+  </div>
+</div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────
+// CONFIG
 const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -478,488 +478,373 @@ const TIPS = [
   "A disciplina separa traders rentáveis dos demais.",
   "Anote tudo: o diário é o seu maior patrimônio.",
   "Um trade ruim bem executado é melhor que um trade bom mal executado.",
-  "Fora do mercado também é uma posição. Às vezes a melhor.",
+  "Fora do mercado também é uma posição. Às vezes a melhor."
 ];
-const FATOR_MAP={'GOLD (XAUUSD)':10,'PRATA (XAGUSD)':10};
-const SCORE_LABELS=['','1 — Setup Fraco','2 — Setup Médio','3 — Setup Bom','4 — Setup Forte','5 — Setup Perfeito'];
+const FATOR_MAP = {'GOLD (XAUUSD)': 10, 'PRATA (XAGUSD)': 10};
+const SCORE_LABELS = ['', '1 — Setup Fraco', '2 — Setup Médio', '3 — Setup Bom', '4 — Setup Forte', '5 — Setup Perfeito'];
 
-// ── STATE ─────────────────────────────────────────────────────────
-let trades=[], editingId=null, currentFilter='all';
-let selectedScore=1, selectedSessao='Nova York', selectedSaida='pending';
-let currentAccount='demo';
-let capitalDemo=10000, capitalReal=10000;
-let equityChart=null, candleChart=null;
+// STATE
+let trades = [], editingId = null, currentFilter = 'all';
+let selectedScore = 1, selectedSessao = 'Nova York', selectedSaida = 'pending';
+let currentAccount = 'demo';
+let capitalDemo = 10000, capitalReal = 10000;
+let equityChart = null, candleChart = null;
 
-// ── CLOCK ─────────────────────────────────────────────────────────
-function updateClock(){
-  const n=new Date();
-  document.getElementById('clock').textContent=n.toLocaleTimeString('pt-BR');
-  document.getElementById('dateStr').textContent=n.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+// CLOCK
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('pt-BR');
+  document.getElementById('dateStr').textContent = n.toLocaleDateString('pt-BR', {weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'});
 }
-updateClock(); setInterval(updateClock,1000);
+updateClock();
+setInterval(updateClock, 1000);
 
-// ── HELPERS ───────────────────────────────────────────────────────
-const $=id=>document.getElementById(id);
-function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
-function fmtDate(r){if(!r)return'-';return new Date(r).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
-function fmtDateKey(r){if(!r)return null;const d=new Date(r);return d.toISOString().slice(0,10);}
-function calcResultado(e,t1,t2,t3,q,f,lado){
-  const tps=[t1,t2,t3].map(Number).filter(v=>!isNaN(v)&&v>0);
-  if(!tps.length||isNaN(e))return 0;
-  const w=[0.5,0.3,0.2];let tot=0;
-  tps.forEach((tp,i)=>{const d=lado==='compra'?tp-e:e-tp;tot+=d*q*f*(w[i]||0);});
+// HELPERS
+const $ = id => document.getElementById(id);
+function nowLocal() { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
+function fmtDate(r) { if (!r) return '-'; return new Date(r).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'}); }
+function fmtDateKey(r) { if (!r) return null; const d = new Date(r); return d.toISOString().slice(0, 10); }
+function calcResultado(e, t1, t2, t3, q, f, lado) {
+  const tps = [t1, t2, t3].map(Number).filter(v => !isNaN(v) && v > 0);
+  if (!tps.length || isNaN(e)) return 0;
+  const w = [0.5, 0.3, 0.2];
+  let tot = 0;
+  tps.forEach((tp, i) => { const d = lado === 'compra' ? tp - e : e - tp; tot += d * q * f * (w[i] || 0); });
   return parseFloat(tot.toFixed(2));
 }
-function setDbStatus(s,t){const el=$('dbStatus');el.className='db-status '+s;$('dbStatusText').textContent=t;}
-function showLoading(v){$('loadingOverlay').classList.toggle('show',v);}
+function setDbStatus(s, t) { const el = $('dbStatus'); el.className = 'db-status ' + s; $('dbStatusText').textContent = t; }
+function showLoading(v) { $('loadingOverlay').classList.toggle('show', v); }
 
-// ── ACCOUNT SWITCH ────────────────────────────────────────────────
-function setAccount(acc){
-  currentAccount=acc;
-  document.body.className=acc+'-mode';
-  $('tabDemo').className='account-tab'+(acc==='demo'?' active-demo':'');
-  $('tabReal').className='account-tab'+(acc==='real'?' active-real':'');
-  const label=acc==='demo'?'📊 DEMO':'💰 REAL';
-  const col=acc==='demo'?'var(--blue)':'var(--gold)';
-  $('equityAccountLabel').textContent=acc.toUpperCase(); $('equityAccountLabel').style.color=col;
-  $('candleAccountLabel').textContent=acc.toUpperCase(); $('candleAccountLabel').style.color=col;
-  $('formAccountBadge').textContent=label;
-  $('formAccountBadge').className='account-badge '+acc;
-  $('capitalLabel').textContent='Capital '+acc.charAt(0).toUpperCase()+acc.slice(1);
-  $('capitalInput').value=acc==='demo'?capitalDemo:capitalReal;
+// ACCOUNT SWITCH
+function setAccount(acc) {
+  currentAccount = acc;
+  document.body.className = acc + '-mode';
+  $('tabDemo').className = 'account-tab' + (acc === 'demo' ? ' active-demo' : '');
+  $('tabReal').className = 'account-tab' + (acc === 'real' ? ' active-real' : '');
+  const label = acc === 'demo' ? '📊 DEMO' : '💰 REAL';
+  const col = acc === 'demo' ? 'var(--blue)' : 'var(--gold)';
+  $('equityAccountLabel').textContent = acc.toUpperCase(); $('equityAccountLabel').style.color = col;
+  $('candleAccountLabel').textContent = acc.toUpperCase(); $('candleAccountLabel').style.color = col;
+  $('formAccountBadge').textContent = label;
+  $('formAccountBadge').className = 'account-badge ' + acc;
+  $('capitalLabel').textContent = 'Capital ' + acc.charAt(0).toUpperCase() + acc.slice(1);
+  $('capitalInput').value = acc === 'demo' ? capitalDemo : capitalReal;
   renderAll();
 }
+document.querySelectorAll('.account-tab').forEach(tab => { tab.addEventListener('click', () => setAccount(tab.dataset.account)); });
 
-document.querySelectorAll('.account-tab').forEach(tab=>{
-  tab.addEventListener('click',()=>setAccount(tab.dataset.account));
-});
-
-// ── CAPITAL CRUD ──────────────────────────────────────────────────
-async function fetchCapital(){
-  try{
-    const {data}=await sb.from('capital').select('*');
-    if(data){
-      const demo=data.find(d=>d.conta_tipo==='demo');
-      const real=data.find(d=>d.conta_tipo==='real');
-      if(demo)capitalDemo=parseFloat(demo.valor);
-      if(real)capitalReal=parseFloat(real.valor);
+// CAPITAL CRUD
+async function fetchCapital() {
+  try {
+    const { data } = await sb.from('capital').select('*');
+    if (data) {
+      const demo = data.find(d => d.conta_tipo === 'demo');
+      const real = data.find(d => d.conta_tipo === 'real');
+      if (demo) capitalDemo = parseFloat(demo.valor);
+      if (real) capitalReal = parseFloat(real.valor);
     }
-  }catch(e){console.warn('capital table not ready yet',e);}
-  $('capitalInput').value=currentAccount==='demo'?capitalDemo:capitalReal;
+  } catch (e) { console.warn('capital table not ready yet', e); }
+  $('capitalInput').value = currentAccount === 'demo' ? capitalDemo : capitalReal;
 }
-
-async function saveCapital(){
-  const v=parseFloat($('capitalInput').value);
-  if(isNaN(v)||v<=0){alert('❌ Informe um valor válido de capital.');return;}
-  if(currentAccount==='demo')capitalDemo=v; else capitalReal=v;
-  try{
-    await sb.from('capital').upsert({conta_tipo:currentAccount,valor:v,updated_at:new Date().toISOString()},{onConflict:'conta_tipo'});
+async function saveCapital() {
+  const v = parseFloat($('capitalInput').value);
+  if (isNaN(v) || v <= 0) { alert('❌ Informe um valor válido de capital.'); return; }
+  if (currentAccount === 'demo') capitalDemo = v; else capitalReal = v;
+  try {
+    await sb.from('capital').upsert({ conta_tipo: currentAccount, valor: v, updated_at: new Date().toISOString() }, { onConflict: 'conta_tipo' });
     alert('✅ Capital salvo com sucesso!');
-  }catch(e){console.warn('capital upsert failed',e);alert('❌ Erro ao salvar capital: '+e.message);}
+  } catch (e) { console.warn('capital upsert failed', e); alert('❌ Erro ao salvar capital: ' + e.message); }
   renderAll();
 }
 
-// ── SUPABASE TRADES ───────────────────────────────────────────────
-async function fetchTrades(){
+// SUPABASE TRADES
+async function fetchTrades() {
   showLoading(true);
-  try{
-    const {data,error}=await sb.from('trades').select('*').order('created_at',{ascending:false});
-    if(error)throw error;
-    trades=data||[];
-    setDbStatus('ok','● banco conectado');
-  }catch(e){
-    console.error(e);setDbStatus('err','✕ erro: '+(e.message||'console'));trades=[];
-  }finally{showLoading(false);renderAll();}
+  try {
+    const { data, error } = await sb.from('trades').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    trades = data || [];
+    setDbStatus('ok', '● banco conectado');
+  } catch (e) {
+    console.error(e); setDbStatus('err', '✕ erro: ' + (e.message || 'console')); trades = [];
+  } finally { showLoading(false); renderAll(); }
+}
+async function insertTrade(p) { showLoading(true); try { const { error } = await sb.from('trades').insert([p]); if (error) throw error; } catch (e) { alert('❌ ' + e.message); } finally { showLoading(false); } }
+async function updateTradeDB(id, p) { showLoading(true); try { const { error } = await sb.from('trades').update(p).eq('id', id); if (error) throw error; } catch (e) { alert('❌ ' + e.message); } finally { showLoading(false); } }
+async function deleteTradeDB(id) {
+  if (!confirm('Confirmar exclusão?')) return;
+  showLoading(true);
+  try { const { error } = await sb.from('trades').delete().eq('id', id); if (error) throw error; await fetchTrades(); } catch (e) { alert('❌ ' + e.message); showLoading(false); }
 }
 
-async function insertTrade(p){showLoading(true);try{const{error}=await sb.from('trades').insert([p]);if(error)throw error;}catch(e){alert('❌ '+e.message);}finally{showLoading(false);}}
-async function updateTradeDB(id,p){showLoading(true);try{const{error}=await sb.from('trades').update(p).eq('id',id);if(error)throw error;}catch(e){alert('❌ '+e.message);}finally{showLoading(false);}}
-async function deleteTradeDB(id){
-  if(!confirm('Confirmar exclusão?'))return;
-  showLoading(true);
-  try{const{error}=await sb.from('trades').delete().eq('id',id);if(error)throw error;await fetchTrades();}
-  catch(e){alert('❌ '+e.message);showLoading(false);}
-}
-
-// ── RENDER ALL ────────────────────────────────────────────────────
-function renderAll(){
-  const acct=trades.filter(t=>(t.conta_tipo||'demo')===currentAccount);
+// RENDER ALL
+function renderAll() {
+  const acct = trades.filter(t => (t.conta_tipo || 'demo') === currentAccount);
   updateStats(acct);
   renderTable(acct);
   renderEquity(acct);
   renderCandles(acct);
   updateCapitalBadge(acct);
 }
-
-// ── CAPITAL BADGE ─────────────────────────────────────────────────
-function updateCapitalBadge(acct){
-  const cap=currentAccount==='demo'?capitalDemo:capitalReal;
-  const net=acct.reduce((a,t)=>{const r=t.resultado_real??t.resultado??0;return a+r;},0);
-  const saldo=cap+net;
-  const pct=cap>0?((net/cap)*100).toFixed(2):0;
-  $('saldoAtual').textContent='R$ '+saldo.toFixed(2);
-  $('saldoAtual').className=net>=0?'pos':'neg';
-  $('rendTotal').textContent=(net>=0?'+':'')+pct+'%';
-  $('rendTotal').className=net>=0?'pos':'neg';
+function updateCapitalBadge(acct) {
+  const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
+  const net = acct.reduce((a, t) => { const r = t.resultado_real ?? t.resultado ?? 0; return a + r; }, 0);
+  const saldo = cap + net;
+  const pct = cap > 0 ? ((net / cap) * 100).toFixed(2) : 0;
+  $('saldoAtual').textContent = 'R$ ' + saldo.toFixed(2);
+  $('saldoAtual').className = net >= 0 ? 'pos' : 'neg';
+  $('rendTotal').textContent = (net >= 0 ? '+' : '') + pct + '%';
+  $('rendTotal').className = net >= 0 ? 'pos' : 'neg';
 }
-
-// ── STATS ─────────────────────────────────────────────────────────
-function updateStats(acct){
-  const total=acct.length;
-  $('sTotalOps').textContent=total;
-  if(!total){['sWinRate','sPayoff','sExpect','sNet','sRegras','sScore'].forEach(id=>{$(id).textContent='—';$(id).className='stat-value';});return;}
-  const fn=t=>t.resultado_real??t.resultado??0;
-  const wins=acct.filter(t=>fn(t)>0), losses=acct.filter(t=>fn(t)<0);
-  const wr=acct.length?(wins.length/acct.length)*100:0;
-  const avgG=wins.length?wins.reduce((a,b)=>a+fn(b),0)/wins.length:0;
-  const avgL=losses.length?Math.abs(losses.reduce((a,b)=>a+fn(b),0)/losses.length):0;
-  const payoff=avgL?avgG/avgL:(avgG>0?999:0);
-  const expect=(wr/100)*avgG-((100-wr)/100)*avgL;
-  const net=acct.reduce((a,b)=>a+fn(b),0);
-  const totalReg=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0).length;
-  const ws=acct.filter(t=>t.score&&t.score>0);
-  const avgSc=ws.length?(ws.reduce((a,b)=>a+b.score,0)/ws.length).toFixed(1):null;
-  $('sWinRate').textContent=wr.toFixed(1)+'%';$('sWinRate').className='stat-value '+(wr>=50?'pos':'neg');
-  $('sPayoff').textContent=payoff.toFixed(2)+'R';$('sPayoff').className='stat-value '+(payoff>=1?'pos':'neg');
-  $('sExpect').textContent='R$ '+expect.toFixed(2);$('sExpect').className='stat-value '+(expect>=0?'pos':'neg');
-  $('sNet').textContent='R$ '+net.toFixed(2);$('sNet').className='stat-value '+(net>=0?'pos':'neg');
-  $('sRegras').textContent=totalReg;$('sRegras').className='stat-value '+(totalReg>0?'neg':'pos');
-  $('sScore').textContent=avgSc?avgSc+'★':'—';$('sScore').className='stat-value';
+function updateStats(acct) {
+  const total = acct.length;
+  $('sTotalOps').textContent = total;
+  if (!total) { ['sWinRate', 'sPayoff', 'sExpect', 'sNet', 'sRegras', 'sScore'].forEach(id => { $(id).textContent = '—'; $(id).className = 'stat-value'; }); return; }
+  const fn = t => t.resultado_real ?? t.resultado ?? 0;
+  const wins = acct.filter(t => fn(t) > 0), losses = acct.filter(t => fn(t) < 0);
+  const wr = acct.length ? (wins.length / acct.length) * 100 : 0;
+  const avgG = wins.length ? wins.reduce((a, b) => a + fn(b), 0) / wins.length : 0;
+  const avgL = losses.length ? Math.abs(losses.reduce((a, b) => a + fn(b), 0) / losses.length) : 0;
+  const payoff = avgL ? avgG / avgL : (avgG > 0 ? 999 : 0);
+  const expect = (wr / 100) * avgG - ((100 - wr) / 100) * avgL;
+  const net = acct.reduce((a, b) => a + fn(b), 0);
+  const totalReg = acct.filter(t => t.regras_quebradas && t.regras_quebradas.length > 0).length;
+  const ws = acct.filter(t => t.score && t.score > 0);
+  const avgSc = ws.length ? (ws.reduce((a, b) => a + b.score, 0) / ws.length).toFixed(1) : null;
+  $('sWinRate').textContent = wr.toFixed(1) + '%'; $('sWinRate').className = 'stat-value ' + (wr >= 50 ? 'pos' : 'neg');
+  $('sPayoff').textContent = payoff.toFixed(2) + 'R'; $('sPayoff').className = 'stat-value ' + (payoff >= 1 ? 'pos' : 'neg');
+  $('sExpect').textContent = 'R$ ' + expect.toFixed(2); $('sExpect').className = 'stat-value ' + (expect >= 0 ? 'pos' : 'neg');
+  $('sNet').textContent = 'R$ ' + net.toFixed(2); $('sNet').className = 'stat-value ' + (net >= 0 ? 'pos' : 'neg');
+  $('sRegras').textContent = totalReg; $('sRegras').className = 'stat-value ' + (totalReg > 0 ? 'neg' : 'pos');
+  $('sScore').textContent = avgSc ? avgSc + '★' : '—'; $('sScore').className = 'stat-value';
 }
-
-// ── EQUITY CHART ──────────────────────────────────────────────────
-function renderEquity(acct){
-  const sorted=[...acct].filter(t=>t.resultado_real!=null)
-    .sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
-  const cap=currentAccount==='demo'?capitalDemo:capitalReal;
-  const emptyEl=$('equityEmpty'), canvasEl=$('equityChart');
-
-  if(!sorted.length){
-    emptyEl.style.display='flex';canvasEl.style.display='none';
-    if(equityChart){equityChart.destroy();equityChart=null;}return;
-  }
-  emptyEl.style.display='none';canvasEl.style.display='block';
-
-  let cum=cap;
-  const data=[{x:0,y:cap}];
-  sorted.forEach((t,i)=>{cum+=t.resultado_real;data.push({x:i+1,y:parseFloat(cum.toFixed(2))});});
-
-  const ctx=canvasEl.getContext('2d');
-  if(equityChart)equityChart.destroy();
-  const isPos=cum>=cap;
-  const grad=ctx.createLinearGradient(0,0,0,200);
-  grad.addColorStop(0,isPos?'rgba(61,255,160,0.2)':'rgba(255,94,107,0.2)');
-  grad.addColorStop(1,'rgba(0,0,0,0)');
-
-  equityChart=new Chart(ctx,{
-    type:'line',
-    data:{datasets:[{data:data.map(d=>({x:d.x,y:d.y})),borderColor:isPos?'#3dffa0':'#ff5e6b',backgroundColor:grad,borderWidth:2,pointRadius:data.length>30?0:3,pointBackgroundColor:isPos?'#3dffa0':'#ff5e6b',fill:true,tension:0.35}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b1020',borderColor:'rgba(255,185,70,.2)',borderWidth:1,titleColor:'#8898c0',bodyColor:'#dde4f5',callbacks:{label:c=>' R$ '+c.parsed.y.toFixed(2)}}},
-      scales:{
-        x:{type:'linear',grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10},callback:v=>v===0?'Início':'#'+v}},
-        y:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')}}
-      }
-    }
+function renderEquity(acct) {
+  const sorted = [...acct].filter(t => t.resultado_real != null).sort((a, b) => new Date(a.date_time_raw || a.created_at) - new Date(b.date_time_raw || b.created_at));
+  const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
+  const emptyEl = $('equityEmpty'), canvasEl = $('equityChart');
+  if (!sorted.length) { emptyEl.style.display = 'flex'; canvasEl.style.display = 'none'; if (equityChart) { equityChart.destroy(); equityChart = null; } return; }
+  emptyEl.style.display = 'none'; canvasEl.style.display = 'block';
+  let cum = cap;
+  const data = [{ x: 0, y: cap }];
+  sorted.forEach((t, i) => { cum += t.resultado_real; data.push({ x: i + 1, y: parseFloat(cum.toFixed(2)) }); });
+  const ctx = canvasEl.getContext('2d');
+  if (equityChart) equityChart.destroy();
+  const isPos = cum >= cap;
+  const grad = ctx.createLinearGradient(0, 0, 0, 200);
+  grad.addColorStop(0, isPos ? 'rgba(61,255,160,0.2)' : 'rgba(255,94,107,0.2)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  equityChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets: [{ data: data.map(d => ({ x: d.x, y: d.y })), borderColor: isPos ? '#3dffa0' : '#ff5e6b', backgroundColor: grad, borderWidth: 2, pointRadius: data.length > 30 ? 0 : 3, pointBackgroundColor: isPos ? '#3dffa0' : '#ff5e6b', fill: true, tension: 0.35 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0b1020', borderColor: 'rgba(255,185,70,.2)', borderWidth: 1, titleColor: '#8898c0', bodyColor: '#dde4f5', callbacks: { label: c => ' R$ ' + c.parsed.y.toFixed(2) } } }, scales: { x: { type: 'linear', grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { family: 'JetBrains Mono', size: 10 }, callback: v => v === 0 ? 'Início' : '#' + v } }, y: { grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { family: 'JetBrains Mono', size: 10 }, callback: v => 'R$ ' + v.toLocaleString('pt-BR') } } } }
   });
 }
-
-// ── CANDLE CHART ──────────────────────────────────────────────────
-function renderCandles(acct){
-  const sorted=[...acct].filter(t=>t.resultado_real!=null)
-    .sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
-  const emptyEl=$('candleEmpty'), canvasEl=$('candleChart');
-  const cap=currentAccount==='demo'?capitalDemo:capitalReal;
-
-  const dayMap={};
-  let runningCap=cap;
-  sorted.forEach(t=>{
-    const key=fmtDateKey(t.date_time_raw||t.created_at);
-    if(!key)return;
-    if(!dayMap[key]){dayMap[key]={open:runningCap,trades:[],cumAtStart:runningCap};}
+function renderCandles(acct) {
+  const sorted = [...acct].filter(t => t.resultado_real != null).sort((a, b) => new Date(a.date_time_raw || a.created_at) - new Date(b.date_time_raw || b.created_at));
+  const emptyEl = $('candleEmpty'), canvasEl = $('candleChart');
+  const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
+  const dayMap = {};
+  let runningCap = cap;
+  sorted.forEach(t => {
+    const key = fmtDateKey(t.date_time_raw || t.created_at);
+    if (!key) return;
+    if (!dayMap[key]) { dayMap[key] = { open: runningCap, trades: [], cumAtStart: runningCap }; }
     dayMap[key].trades.push(t.resultado_real);
-    runningCap+=t.resultado_real;
+    runningCap += t.resultado_real;
   });
-
-  const days=Object.keys(dayMap).sort();
-  if(days.length<1){
-    emptyEl.style.display='flex';canvasEl.style.display='none';
-    if(candleChart){candleChart.destroy();candleChart=null;}return;
-  }
-  emptyEl.style.display='none';canvasEl.style.display='block';
-
-  const ohlcData=days.map((day,i)=>{
-    const d=dayMap[day];
-    const open=d.open;
-    let running=open, high=open, low=open;
-    d.trades.forEach(r=>{
-      running+=r;
-      if(running>high)high=running;
-      if(running<low)low=running;
-    });
-    const close=running;
-    return {x:i,o:open,h:high,l:low,c:close,day};
+  const days = Object.keys(dayMap).sort();
+  if (days.length < 1) { emptyEl.style.display = 'flex'; canvasEl.style.display = 'none'; if (candleChart) { candleChart.destroy(); candleChart = null; } return; }
+  emptyEl.style.display = 'none'; canvasEl.style.display = 'block';
+  const ohlcData = days.map((day, i) => {
+    const d = dayMap[day];
+    const open = d.open;
+    let running = open, high = open, low = open;
+    d.trades.forEach(r => { running += r; if (running > high) high = running; if (running < low) low = running; });
+    const close = running;
+    return { x: i, o: open, h: high, l: low, c: close, day };
   });
-
-  const ctx=canvasEl.getContext('2d');
-  if(candleChart)candleChart.destroy();
-
-  candleChart=new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:ohlcData.map(d=>{const dt=new Date(d.day+'T12:00:00');return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}),
-      datasets:[{
-        label:'Corpo',
-        data:ohlcData.map(d=>[Math.min(d.o,d.c),Math.max(d.o,d.c)||Math.min(d.o,d.c)+0.5]),
-        backgroundColor:ohlcData.map(d=>d.c>=d.o?'rgba(61,255,160,0.85)':'rgba(255,94,107,0.85)'),
-        borderColor:ohlcData.map(d=>d.c>=d.o?'#3dffa0':'#ff5e6b'),
-        borderWidth:1,
-        barThickness:Math.max(8,Math.min(28,Math.floor(280/ohlcData.length))),
-      }]
+  const ctx = canvasEl.getContext('2d');
+  if (candleChart) candleChart.destroy();
+  candleChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ohlcData.map(d => { const dt = new Date(d.day + 'T12:00:00'); return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }); }),
+      datasets: [{ label: 'Corpo', data: ohlcData.map(d => [Math.min(d.o, d.c), Math.max(d.o, d.c) || Math.min(d.o, d.c) + 0.5]), backgroundColor: ohlcData.map(d => d.c >= d.o ? 'rgba(61,255,160,0.85)' : 'rgba(255,94,107,0.85)'), borderColor: ohlcData.map(d => d.c >= d.o ? '#3dffa0' : '#ff5e6b'), borderWidth: 1, barThickness: Math.max(8, Math.min(28, Math.floor(280 / ohlcData.length))) }]
     },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#0b1020',borderColor:'rgba(255,185,70,.2)',borderWidth:1,
-          titleColor:'#ffb946',bodyColor:'#dde4f5',
-          callbacks:{
-            title:items=>{const d=ohlcData[items[0].dataIndex];const dt=new Date(d.day+'T12:00:00');return dt.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});},
-            label:item=>{
-              const d=ohlcData[item.dataIndex];
-              return[
-                '  Abertura : R$ '+d.o.toFixed(2),
-                '  Máxima   : R$ '+d.h.toFixed(2),
-                '  Mínima   : R$ '+d.l.toFixed(2),
-                '  Fechamento: R$ '+d.c.toFixed(2),
-                '  Resultado : '+(d.c-d.o>=0?'+':'')+'R$ '+(d.c-d.o).toFixed(2),
-              ];
-            }
-          }
-        }
-      },
-      scales:{
-        x:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10}}},
-        y:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')}}
-      }
-    },
-    plugins:[{
-      id:'candleWicks',
-      afterDatasetDraw(chart){
-        const {ctx,scales}=chart;
-        ctx.save();
-        ohlcData.forEach((d,i)=>{
-          const meta=chart.getDatasetMeta(0);
-          if(!meta.data[i])return;
-          const bar=meta.data[i];
-          const x=bar.x;
-          const yHigh=scales.y.getPixelForValue(d.h);
-          const yLow=scales.y.getPixelForValue(d.l);
-          const yOpen=scales.y.getPixelForValue(Math.max(d.o,d.c));
-          const yClose=scales.y.getPixelForValue(Math.min(d.o,d.c));
-          const color=d.c>=d.o?'#3dffa0':'#ff5e6b';
-          ctx.strokeStyle=color; ctx.lineWidth=1.5;
-          ctx.beginPath();ctx.moveTo(x,yHigh);ctx.lineTo(x,yOpen);ctx.stroke();
-          ctx.beginPath();ctx.moveTo(x,yClose);ctx.lineTo(x,yLow);ctx.stroke();
-        });
-        ctx.restore();
-      }
-    }]
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0b1020', borderColor: 'rgba(255,185,70,.2)', borderWidth: 1, titleColor: '#ffb946', bodyColor: '#dde4f5', callbacks: { title: items => { const d = ohlcData[items[0].dataIndex]; const dt = new Date(d.day + 'T12:00:00'); return dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }); }, label: item => { const d = ohlcData[item.dataIndex]; return ['  Abertura : R$ ' + d.o.toFixed(2), '  Máxima   : R$ ' + d.h.toFixed(2), '  Mínima   : R$ ' + d.l.toFixed(2), '  Fechamento: R$ ' + d.c.toFixed(2), '  Resultado : ' + (d.c - d.o >= 0 ? '+' : '') + 'R$ ' + (d.c - d.o).toFixed(2)]; } } } }, scales: { x: { grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { family: 'JetBrains Mono', size: 10 } } }, y: { grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { family: 'JetBrains Mono', size: 10 }, callback: v => 'R$ ' + v.toLocaleString('pt-BR') } } } },
+    plugins: [{ id: 'candleWicks', afterDatasetDraw(chart) { const { ctx, scales } = chart; ctx.save(); ohlcData.forEach((d, i) => { const meta = chart.getDatasetMeta(0); if (!meta.data[i]) return; const bar = meta.data[i]; const x = bar.x; const yHigh = scales.y.getPixelForValue(d.h); const yLow = scales.y.getPixelForValue(d.l); const yOpen = scales.y.getPixelForValue(Math.max(d.o, d.c)); const yClose = scales.y.getPixelForValue(Math.min(d.o, d.c)); const color = d.c >= d.o ? '#3dffa0' : '#ff5e6b'; ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, yHigh); ctx.lineTo(x, yOpen); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, yClose); ctx.lineTo(x, yLow); ctx.stroke(); }); ctx.restore(); } }]
   });
 }
-
-// ── RENDER TABLE ──────────────────────────────────────────────────
-function renderTable(acct){
-  let filtered=acct;
-  if(currentFilter==='win')filtered=acct.filter(t=>(t.resultado_real??t.resultado??0)>0);
-  else if(currentFilter==='loss')filtered=acct.filter(t=>{const r=t.resultado_real??t.resultado??0;return r<0&&t.tipo_saida!=='pending';});
-  else if(currentFilter==='pending')filtered=acct.filter(t=>!t.tipo_saida||t.tipo_saida==='pending');
-  else if(currentFilter==='regras')filtered=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0);
-
-  $('tradeCount').textContent=filtered.length+' operaç'+(filtered.length===1?'ão':'ões');
-  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></table>';return;}
-
-  $('tradesBody').innerHTML=filtered.map(t=>{
-    const rE=t.resultado??0, rR=t.resultado_real;
-    const dC=t.lado==='compra'?'dir-long':'dir-short', dL=t.lado==='compra'?'LONG':'SHORT';
-    const tps=[['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]].filter(([,v])=>v!=null&&!isNaN(v)&&v>0).map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
-    const obs=t.observacao?(t.observacao.length>35?t.observacao.slice(0,33)+'…':t.observacao):'—';
-    const dt=t.date_time_raw?fmtDate(t.date_time_raw):fmtDate(t.created_at);
-    const sMap={pending:'⏳ Aberto',loss:'❌ Stop',parcial:'⚡ Parcial',tp1:'✅ TP1',tp2:'✅ TP2',tp3:'🎯 TP3'};
-    const saidaTipo=t.tipo_saida||'pending';
-    const sc=t.score||0;
-    const stars=sc?'★'.repeat(sc)+'☆'.repeat(5-sc):'—';
-    const regras=(t.regras_quebradas||[]).map(r=>`<span class="regra-flag">${r}</span>`).join('');
+function renderTable(acct) {
+  let filtered = acct;
+  if (currentFilter === 'win') filtered = acct.filter(t => (t.resultado_real ?? t.resultado ?? 0) > 0);
+  else if (currentFilter === 'loss') filtered = acct.filter(t => { const r = t.resultado_real ?? t.resultado ?? 0; return r < 0 && t.tipo_saida !== 'pending'; });
+  else if (currentFilter === 'pending') filtered = acct.filter(t => !t.tipo_saida || t.tipo_saida === 'pending');
+  else if (currentFilter === 'regras') filtered = acct.filter(t => t.regras_quebradas && t.regras_quebradas.length > 0);
+  $('tradeCount').textContent = filtered.length + ' operaç' + (filtered.length === 1 ? 'ão' : 'ões');
+  if (!filtered.length) { $('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>'; return; }
+  $('tradesBody').innerHTML = filtered.map(t => {
+    const rE = t.resultado ?? 0, rR = t.resultado_real;
+    const dC = t.lado === 'compra' ? 'dir-long' : 'dir-short', dL = t.lado === 'compra' ? 'LONG' : 'SHORT';
+    const tps = [['TP1', t.tp1], ['TP2', t.tp2], ['TP3', t.tp3]].filter(([, v]) => v != null && !isNaN(v) && v > 0).map(([l, v]) => `<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
+    const obs = t.observacao ? (t.observacao.length > 35 ? t.observacao.slice(0, 33) + '…' : t.observacao) : '—';
+    const dt = t.date_time_raw ? fmtDate(t.date_time_raw) : fmtDate(t.created_at);
+    const sMap = { pending: '⏳ Aberto', loss: '❌ Stop', parcial: '⚡ Parcial', tp1: '✅ TP1', tp2: '✅ TP2', tp3: '🎯 TP3' };
+    const saidaTipo = t.tipo_saida || 'pending';
+    const sc = t.score || 0;
+    const stars = sc ? '★'.repeat(sc) + '☆'.repeat(5 - sc) : '—';
+    const regras = (t.regras_quebradas || []).map(r => `<span class="regra-flag">${r}</span>`).join('');
     return `<tr>
       <td>${dt}</td><td>${t.ativo}</td>
-      <td style="color:var(--blue);font-size:11px">${t.sessao||'—'}</td>
+      <td style="color:var(--blue);font-size:11px">${t.sessao || '—'}</td>
       <td><span class="dir-badge ${dC}">${dL}</span></td>
       <td>${Number(t.entrada).toFixed(2)}</td><td>${Number(t.stop).toFixed(2)}</td>
       <td><div class="tp-wrap">${tps}</div></td>
       <td>${t.qtd}</td><td>${t.fator}</td>
-      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo]||'—'}</span></td>
-      <td class="${rE>=0?'res-pos':'res-neg'}">${rE>=0?'+ ':''}R$ ${Math.abs(rE).toFixed(2)}</td>
-      <td class="${rR==null?'res-na':(rR>=0?'res-pos':'res-neg')}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td>
+      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo] || '—'}</span></td>
+      <td class="${rE >= 0 ? 'res-pos' : 'res-neg'}">${rE >= 0 ? '+ ' : ''}R$ ${Math.abs(rE).toFixed(2)}</td>
+      <td class="${rR == null ? 'res-na' : (rR >= 0 ? 'res-pos' : 'res-neg')}">${rR != null ? (rR >= 0 ? '+ ' : '') + 'R$ ' + Math.abs(rR).toFixed(2) : '—'}</td>
       <td style="color:var(--gold);font-size:11px">${stars}</td>
-      <td>${regras||'<span style="color:var(--muted);font-size:10px">nenhuma</span>'}</td>
-      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}</div></td>
-      <td><div class="action-cell">
-        <button class="act-btn" onclick="startEdit(${t.id})">✏️</button>
-        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
-      </div></td>
+      <td>${regras || '<span style="color:var(--muted);font-size:10px">nenhuma</span>'}</td>
+      <td><div class="obs-short" title="${(t.observacao || '').replace(/"/g, '&quot;')}">${obs}</div></td>
+      <td><div class="action-cell"><button class="act-btn" onclick="startEdit(${t.id})">✏️</button><button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button></div></td>
     </tr>`;
   }).join('');
 }
 
-// ── FORM ELEMENTS ─────────────────────────────────────────────────
-const fAtivo=$('fAtivo'),fOutro=$('outroAtivo'),fLado=$('fLado');
-const fEntrada=$('fEntrada'),fStop=$('fStop'),fTp1=$('fTp1'),fTp2=$('fTp2'),fTp3=$('fTp3');
-const fQtd=$('fQtd'),fFator=$('fFator'),fObs=$('fObs'),fDT=$('fDateTime');
-const previewBox=$('previewBox'),btnAdd=$('btnAdd'),btnCancel=$('cancelEdit');
-
-fAtivo.addEventListener('change',()=>{
-  fOutro.style.display=fAtivo.value==='Outro'?'block':'none';
-  if(FATOR_MAP[fAtivo.value])fFator.value=FATOR_MAP[fAtivo.value];
-  updatePreview();
-});
-
-function getAtivo(){return fAtivo.value==='Outro'?(fOutro.value.trim()||'Outro'):fAtivo.value;}
-
-function updatePreview(){
-  const e=parseFloat(fEntrada.value),s=parseFloat(fStop.value);
-  const t1=parseFloat(fTp1.value),q=parseFloat(fQtd.value)||1,f=parseFloat(fFator.value)||1,lado=fLado.value;
-  const cap=currentAccount==='demo'?capitalDemo:capitalReal;
-
-  if(!isNaN(e)&&!isNaN(t1)){
-    const r=calcResultado(e,t1,parseFloat(fTp2.value),parseFloat(fTp3.value),q,f,lado);
-    previewBox.textContent=(r>=0?'+ ':'')+' R$ '+r.toFixed(2);
-    previewBox.className='preview-box '+(r>=0?'pos':'neg');
-    $('lucroPot').textContent='R$ '+r.toFixed(2);
-    $('lucroPot').style.color=r>=0?'var(--green)':'var(--red)';
-  }else{previewBox.textContent='aguardando dados...';previewBox.className='preview-box';$('lucroPot').textContent='R$ —';}
-
-  if(!isNaN(e)&&!isNaN(s)){
-    const risco=Math.abs((lado==='compra'?s-e:e-s)*q*f);
-    $('riscoReais').textContent='R$ '+risco.toFixed(2);
-    $('riscoReais').style.color=risco>500?'var(--red)':risco>200?'var(--orange)':'var(--text2)';
-    if(cap>0){const pct=(risco/cap*100).toFixed(2);$('riscoPct').textContent=pct+'%';$('riscoPct').style.color=pct>2?'var(--red)':pct>1?'var(--orange)':'var(--green)';}
-    if(!isNaN(t1)){
-      const ret=Math.abs((lado==='compra'?t1-e:e-t1)*q*f*0.5);
-      const ratio=risco>0?ret/risco:0;
-      $('riscoRatio').textContent='1 : '+ratio.toFixed(2);
-      $('riscoRatio').style.color=ratio>=2?'var(--green)':ratio>=1?'var(--gold)':'var(--red)';
+// FORM ELEMENTS
+const fAtivo = $('fAtivo'), fOutro = $('outroAtivo'), fLado = $('fLado');
+const fEntrada = $('fEntrada'), fStop = $('fStop'), fTp1 = $('fTp1'), fTp2 = $('fTp2'), fTp3 = $('fTp3');
+const fQtd = $('fQtd'), fFator = $('fFator'), fObs = $('fObs'), fDT = $('fDateTime');
+const previewBox = $('previewBox'), btnAdd = $('btnAdd'), btnCancel = $('cancelEdit');
+fAtivo.addEventListener('change', () => { fOutro.style.display = fAtivo.value === 'Outro' ? 'block' : 'none'; if (FATOR_MAP[fAtivo.value]) fFator.value = FATOR_MAP[fAtivo.value]; updatePreview(); });
+function getAtivo() { return fAtivo.value === 'Outro' ? (fOutro.value.trim() || 'Outro') : fAtivo.value; }
+function updatePreview() {
+  const e = parseFloat(fEntrada.value), s = parseFloat(fStop.value);
+  const t1 = parseFloat(fTp1.value), q = parseFloat(fQtd.value) || 1, f = parseFloat(fFator.value) || 1, lado = fLado.value;
+  const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
+  if (!isNaN(e) && !isNaN(t1)) {
+    const r = calcResultado(e, t1, parseFloat(fTp2.value), parseFloat(fTp3.value), q, f, lado);
+    previewBox.textContent = (r >= 0 ? '+ ' : '') + ' R$ ' + r.toFixed(2);
+    previewBox.className = 'preview-box ' + (r >= 0 ? 'pos' : 'neg');
+    $('lucroPot').textContent = 'R$ ' + r.toFixed(2);
+    $('lucroPot').style.color = r >= 0 ? 'var(--green)' : 'var(--red)';
+  } else { previewBox.textContent = 'aguardando dados...'; previewBox.className = 'preview-box'; $('lucroPot').textContent = 'R$ —'; }
+  if (!isNaN(e) && !isNaN(s)) {
+    const risco = Math.abs((lado === 'compra' ? s - e : e - s) * q * f);
+    $('riscoReais').textContent = 'R$ ' + risco.toFixed(2);
+    $('riscoReais').style.color = risco > 500 ? 'var(--red)' : risco > 200 ? 'var(--orange)' : 'var(--text2)';
+    if (cap > 0) { const pct = (risco / cap * 100).toFixed(2); $('riscoPct').textContent = pct + '%'; $('riscoPct').style.color = pct > 2 ? 'var(--red)' : pct > 1 ? 'var(--orange)' : 'var(--green)'; }
+    if (!isNaN(t1)) {
+      const ret = Math.abs((lado === 'compra' ? t1 - e : e - t1) * q * f * 0.5);
+      const ratio = risco > 0 ? ret / risco : 0;
+      $('riscoRatio').textContent = '1 : ' + ratio.toFixed(2);
+      $('riscoRatio').style.color = ratio >= 2 ? 'var(--green)' : ratio >= 1 ? 'var(--gold)' : 'var(--red)';
     }
-  }else{$('riscoReais').textContent='R$ 0,00';$('riscoRatio').textContent='1 : —';$('riscoPct').textContent='—%';}
+  } else { $('riscoReais').textContent = 'R$ 0,00'; $('riscoRatio').textContent = '1 : —'; $('riscoPct').textContent = '—%'; }
 }
-[fEntrada,fStop,fTp1,fTp2,fTp3,fQtd,fFator].forEach(el=>el.addEventListener('input',updatePreview));
-fLado.addEventListener('change',updatePreview);
+[fEntrada, fStop, fTp1, fTp2, fTp3, fQtd, fFator].forEach(el => el.addEventListener('input', updatePreview));
+fLado.addEventListener('change', updatePreview);
 
-// ── SESSÃO ────────────────────────────────────────────────────────
-document.querySelectorAll('.sessao-chip').forEach(c=>c.addEventListener('click',()=>{
-  document.querySelectorAll('.sessao-chip').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active');selectedSessao=c.dataset.sessao;
+// SESSÃO
+document.querySelectorAll('.sessao-chip').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('.sessao-chip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active'); selectedSessao = c.dataset.sessao;
 }));
 
-// ── SCORE ─────────────────────────────────────────────────────────
-document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{
-  selectedScore=parseInt(s.dataset.v);
-  document.querySelectorAll('.star').forEach((x,i)=>x.classList.toggle('active',i<selectedScore));
-  $('scoreLabel').textContent=SCORE_LABELS[selectedScore]||'';
+// SCORE
+document.querySelectorAll('.star').forEach(s => s.addEventListener('click', () => {
+  selectedScore = parseInt(s.dataset.v);
+  document.querySelectorAll('.star').forEach((x, i) => x.classList.toggle('active', i < selectedScore));
+  $('scoreLabel').textContent = SCORE_LABELS[selectedScore] || '';
 }));
 
-// ── SAÍDA ─────────────────────────────────────────────────────────
-document.querySelectorAll('.saida-badge').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.saida-badge').forEach(x=>x.className='saida-badge');
-  b.classList.add('active-'+b.dataset.saida);
-  selectedSaida=b.dataset.saida;
-  if(b.dataset.saida==='loss'){
-    const e=parseFloat(fEntrada.value),s=parseFloat(fStop.value),q=parseFloat(fQtd.value)||1,f=parseFloat(fFator.value)||1;
-    if(!isNaN(e)&&!isNaN(s)){const lv=((fLado.value==='compra'?s-e:e-s)*q*f);$('fResultadoReal').value=lv.toFixed(2);}
+// SAÍDA
+document.querySelectorAll('.saida-badge').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.saida-badge').forEach(x => x.className = 'saida-badge');
+  b.classList.add('active-' + b.dataset.saida);
+  selectedSaida = b.dataset.saida;
+  if (b.dataset.saida === 'loss') {
+    const e = parseFloat(fEntrada.value), s = parseFloat(fStop.value), q = parseFloat(fQtd.value) || 1, f = parseFloat(fFator.value) || 1;
+    if (!isNaN(e) && !isNaN(s)) { const lv = ((fLado.value === 'compra' ? s - e : e - s) * q * f); $('fResultadoReal').value = lv.toFixed(2); }
   }
 }));
 
-// ── REGRAS ────────────────────────────────────────────────────────
-document.querySelectorAll('.rule-check').forEach(l=>l.addEventListener('change',()=>l.classList.toggle('checked',l.querySelector('input').checked)));
+// REGRAS
+document.querySelectorAll('.rule-check').forEach(l => l.addEventListener('change', () => l.classList.toggle('checked', l.querySelector('input').checked)));
 
-// ── SUBMIT ────────────────────────────────────────────────────────
-btnAdd.addEventListener('click',async()=>{
-  const e=parseFloat(fEntrada.value),s=parseFloat(fStop.value),t1=parseFloat(fTp1.value),q=parseFloat(fQtd.value),f=parseFloat(fFator.value),lado=fLado.value;
-  if([e,s,t1,q,f].some(isNaN)){alert('❌ Preencha Entrada, Stop, TP1, Quantidade e Fator.');return;}
-  if(lado==='compra'&&(s>=e||t1<=e)){alert('⚠️ Compra: Stop < Entrada e TP1 > Entrada.');return;}
-  if(lado==='venda'&&(s<=e||t1>=e)){alert('⚠️ Venda: Stop > Entrada e TP1 < Entrada.');return;}
-  const resultado=calcResultado(e,t1,parseFloat(fTp2.value),parseFloat(fTp3.value),q,f,lado);
-  const rReal=parseFloat($('fResultadoReal').value);
-  const regras=Array.from(document.querySelectorAll('.rule-check input:checked')).map(c=>c.value);
-  const payload={
-    date_time_raw:fDT.value||nowLocal(),ativo:getAtivo(),lado,entrada:e,stop:s,tp1:t1,
-    tp2:parseFloat(fTp2.value)||null,tp3:parseFloat(fTp3.value)||null,qtd:q,fator:f,
-    observacao:fObs.value.trim(),resultado,
-    tipo_saida:selectedSaida,resultado_real:isNaN(rReal)?null:rReal,
-    regras_quebradas:regras,score:selectedScore,sessao:selectedSessao,
-    conta_tipo:currentAccount
+// SUBMIT
+btnAdd.addEventListener('click', async () => {
+  const e = parseFloat(fEntrada.value), s = parseFloat(fStop.value), t1 = parseFloat(fTp1.value), q = parseFloat(fQtd.value), f = parseFloat(fFator.value), lado = fLado.value;
+  if ([e, s, t1, q, f].some(isNaN)) { alert('❌ Preencha Entrada, Stop, TP1, Quantidade e Fator.'); return; }
+  if (lado === 'compra' && (s >= e || t1 <= e)) { alert('⚠️ Compra: Stop < Entrada e TP1 > Entrada.'); return; }
+  if (lado === 'venda' && (s <= e || t1 >= e)) { alert('⚠️ Venda: Stop > Entrada e TP1 < Entrada.'); return; }
+  const resultado = calcResultado(e, t1, parseFloat(fTp2.value), parseFloat(fTp3.value), q, f, lado);
+  const rReal = parseFloat($('fResultadoReal').value);
+  const regras = Array.from(document.querySelectorAll('.rule-check input:checked')).map(c => c.value);
+  const payload = {
+    date_time_raw: fDT.value || nowLocal(), ativo: getAtivo(), lado, entrada: e, stop: s, tp1: t1,
+    tp2: parseFloat(fTp2.value) || null, tp3: parseFloat(fTp3.value) || null, qtd: q, fator: f,
+    observacao: fObs.value.trim(), resultado,
+    tipo_saida: selectedSaida, resultado_real: isNaN(rReal) ? null : rReal,
+    regras_quebradas: regras, score: selectedScore, sessao: selectedSessao,
+    conta_tipo: currentAccount
   };
-  if(editingId!==null){await updateTradeDB(editingId,payload);editingId=null;btnAdd.textContent='➕ Registrar Trade';btnCancel.style.display='none';}
-  else{await insertTrade(payload);}
-  $('tipText').textContent=TIPS[Math.floor(Math.random()*TIPS.length)];
-  resetForm();await fetchTrades();
+  if (editingId !== null) { await updateTradeDB(editingId, payload); editingId = null; btnAdd.textContent = '➕ Registrar Trade'; btnCancel.style.display = 'none'; }
+  else { await insertTrade(payload); }
+  $('tipText').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+  resetForm(); await fetchTrades();
 });
-
-window.startEdit=function(id){
-  const t=trades.find(x=>x.id===id);if(!t)return;
-  editingId=id;
-  fDT.value=t.date_time_raw||nowLocal();
-  const opts=Array.from(fAtivo.options).map(o=>o.value);
-  if(opts.includes(t.ativo)){fAtivo.value=t.ativo;fOutro.style.display='none';}
-  else{fAtivo.value='Outro';fOutro.value=t.ativo;fOutro.style.display='block';}
-  fFator.value=t.fator;fLado.value=t.lado;fEntrada.value=t.entrada;fStop.value=t.stop;
-  fTp1.value=t.tp1;fTp2.value=t.tp2??'';fTp3.value=t.tp3??'';fQtd.value=t.qtd;
-  fObs.value=t.observacao||'';$('fResultadoReal').value=t.resultado_real??'';
-  selectedSaida=t.tipo_saida||'pending';
-  document.querySelectorAll('.saida-badge').forEach(b=>{b.className='saida-badge';if(b.dataset.saida===selectedSaida)b.classList.add('active-'+selectedSaida);});
-  document.querySelectorAll('.rule-check input').forEach(cb=>{cb.checked=(t.regras_quebradas||[]).includes(cb.value);cb.closest('.rule-check').classList.toggle('checked',cb.checked);});
-  selectedScore=t.score||1;
-  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<selectedScore));
-  $('scoreLabel').textContent=SCORE_LABELS[selectedScore]||'';
-  selectedSessao=t.sessao||'Nova York';
-  document.querySelectorAll('.sessao-chip').forEach(c=>c.classList.toggle('active',c.dataset.sessao===selectedSessao));
+window.startEdit = function (id) {
+  const t = trades.find(x => x.id === id); if (!t) return;
+  editingId = id;
+  fDT.value = t.date_time_raw || nowLocal();
+  const opts = Array.from(fAtivo.options).map(o => o.value);
+  if (opts.includes(t.ativo)) { fAtivo.value = t.ativo; fOutro.style.display = 'none'; }
+  else { fAtivo.value = 'Outro'; fOutro.value = t.ativo; fOutro.style.display = 'block'; }
+  fFator.value = t.fator; fLado.value = t.lado; fEntrada.value = t.entrada; fStop.value = t.stop;
+  fTp1.value = t.tp1; fTp2.value = t.tp2 ?? ''; fTp3.value = t.tp3 ?? ''; fQtd.value = t.qtd;
+  fObs.value = t.observacao || ''; $('fResultadoReal').value = t.resultado_real ?? '';
+  selectedSaida = t.tipo_saida || 'pending';
+  document.querySelectorAll('.saida-badge').forEach(b => { b.className = 'saida-badge'; if (b.dataset.saida === selectedSaida) b.classList.add('active-' + selectedSaida); });
+  document.querySelectorAll('.rule-check input').forEach(cb => { cb.checked = (t.regras_quebradas || []).includes(cb.value); cb.closest('.rule-check').classList.toggle('checked', cb.checked); });
+  selectedScore = t.score || 1;
+  document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < selectedScore));
+  $('scoreLabel').textContent = SCORE_LABELS[selectedScore] || '';
+  selectedSessao = t.sessao || 'Nova York';
+  document.querySelectorAll('.sessao-chip').forEach(c => c.classList.toggle('active', c.dataset.sessao === selectedSessao));
   updatePreview();
-  btnAdd.textContent='✏️ Atualizar Trade';btnCancel.style.display='flex';
-  window.scrollTo({top:0,behavior:'smooth'});
+  btnAdd.textContent = '✏️ Atualizar Trade'; btnCancel.style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-
-btnCancel.addEventListener('click',()=>{editingId=null;btnAdd.textContent='➕ Registrar Trade';btnCancel.style.display='none';resetForm();});
-
-function resetForm(){
-  fEntrada.value='';fStop.value='';fTp1.value='';fTp2.value='';fTp3.value='';
-  fObs.value='';$('fResultadoReal').value='';fQtd.value='1';
-  fDT.value=nowLocal();fAtivo.value='GOLD (XAUUSD)';fFator.value='10';
-  fOutro.style.display='none';previewBox.textContent='aguardando dados...';previewBox.className='preview-box';
-  selectedSaida='pending';
-  document.querySelectorAll('.saida-badge').forEach(b=>{b.className='saida-badge';if(b.dataset.saida==='pending')b.classList.add('active-pending');});
-  document.querySelectorAll('.rule-check input').forEach(cb=>{cb.checked=false;cb.closest('.rule-check').classList.remove('checked');});
-  selectedScore=1;document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<1));$('scoreLabel').textContent=SCORE_LABELS[1];
-  selectedSessao='Nova York';document.querySelectorAll('.sessao-chip').forEach(c=>c.classList.toggle('active',c.dataset.sessao==='Nova York'));
-  $('riscoReais').textContent='R$ 0,00';$('riscoRatio').textContent='1 : —';$('riscoPct').textContent='—%';$('lucroPot').textContent='R$ —';
+btnCancel.addEventListener('click', () => { editingId = null; btnAdd.textContent = '➕ Registrar Trade'; btnCancel.style.display = 'none'; resetForm(); });
+function resetForm() {
+  fEntrada.value = ''; fStop.value = ''; fTp1.value = ''; fTp2.value = ''; fTp3.value = '';
+  fObs.value = ''; $('fResultadoReal').value = ''; fQtd.value = '1';
+  fDT.value = nowLocal(); fAtivo.value = 'GOLD (XAUUSD)'; fFator.value = '10';
+  fOutro.style.display = 'none'; previewBox.textContent = 'aguardando dados...'; previewBox.className = 'preview-box';
+  selectedSaida = 'pending';
+  document.querySelectorAll('.saida-badge').forEach(b => { b.className = 'saida-badge'; if (b.dataset.saida === 'pending') b.classList.add('active-pending'); });
+  document.querySelectorAll('.rule-check input').forEach(cb => { cb.checked = false; cb.closest('.rule-check').classList.remove('checked'); });
+  selectedScore = 1; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < 1)); $('scoreLabel').textContent = SCORE_LABELS[1];
+  selectedSessao = 'Nova York'; document.querySelectorAll('.sessao-chip').forEach(c => c.classList.toggle('active', c.dataset.sessao === 'Nova York'));
+  $('riscoReais').textContent = 'R$ 0,00'; $('riscoRatio').textContent = '1 : —'; $('riscoPct').textContent = '—%'; $('lucroPot').textContent = 'R$ —';
 }
-
-document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  tab.classList.add('active');currentFilter=tab.dataset.filter;
-  const acct=trades.filter(t=>(t.conta_tipo||'demo')===currentAccount);
+document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active'); currentFilter = tab.dataset.filter;
+  const acct = trades.filter(t => (t.conta_tipo || 'demo') === currentAccount);
   renderTable(acct);
 }));
+$('btnPrintReport').addEventListener('click', () => window.print());
 
-$('btnPrintReport').addEventListener('click',()=>window.print());
-
-// ── INIT ──────────────────────────────────────────────────────────
-async function init(){
+// INIT
+async function init() {
   resetForm();
   await fetchCapital();
   await fetchTrades();
 }
 init();
-<\/script>
-<\/body>
-<\/html>
+</script>
+</body>
+</html>
