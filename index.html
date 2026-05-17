@@ -430,16 +430,18 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
   <div class="table-wrap">
     <div class="table-scroll">
       <table>
-        <thead><tr>
-          <th>Data/Hora</th><th>Ativo</th><th>Sessão</th><th>Dir.</th>
-          <th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th>
-          <th>Saída</th><th>Est.</th><th>Real</th>
-          <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
-        </tr></thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/tr><\/tbody>
-      <\/table>
-    <\/div>
-  <\/div>
+        <thead>
+          <tr>
+            <th>Data/Hora</th><th>Ativo</th><th>Sessão</th><th>Dir.</th>
+            <th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th>
+            <th>Saída</th><th>Est.</th><th>Real</th>
+            <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 
   <div class="footer">
     <p>TRADE WINNER PRO v3 • Demo &amp; Real • Supabase Cloud • Candles Diários</p>
@@ -472,7 +474,7 @@ const SCORE_LABELS=['','1 — Setup Fraco','2 — Setup Médio','3 — Setup Bom
 // ── STATE ─────────────────────────────────────────────────────────
 let trades=[], editingId=null, currentFilter='all';
 let selectedScore=1, selectedSessao='Nova York', selectedSaida='pending';
-let currentAccount='demo'; // 'demo' | 'real'
+let currentAccount='demo';
 let capitalDemo=10000, capitalReal=10000;
 let equityChart=null, candleChart=null;
 
@@ -503,10 +505,8 @@ function showLoading(v){$('loadingOverlay').classList.toggle('show',v);}
 function setAccount(acc){
   currentAccount=acc;
   document.body.className=acc+'-mode';
-  // tabs
   $('tabDemo').className='account-tab'+(acc==='demo'?' active-demo':'');
   $('tabReal').className='account-tab'+(acc==='real'?' active-real':'');
-  // labels
   const label=acc==='demo'?'📊 DEMO':'💰 REAL';
   const col=acc==='demo'?'var(--blue)':'var(--gold)';
   $('equityAccountLabel').textContent=acc.toUpperCase(); $('equityAccountLabel').style.color=col;
@@ -542,7 +542,8 @@ async function saveCapital(){
   if(currentAccount==='demo')capitalDemo=v; else capitalReal=v;
   try{
     await sb.from('capital').upsert({conta_tipo:currentAccount,valor:v,updated_at:new Date().toISOString()},{onConflict:'conta_tipo'});
-  }catch(e){console.warn('capital upsert failed',e);}
+    alert('✅ Capital salvo com sucesso!');
+  }catch(e){console.warn('capital upsert failed',e);alert('❌ Erro ao salvar capital: '+e.message);}
   renderAll();
 }
 
@@ -619,7 +620,6 @@ function renderEquity(acct){
   const sorted=[...acct].filter(t=>t.resultado_real!=null)
     .sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
   const cap=currentAccount==='demo'?capitalDemo:capitalReal;
-  const isDemo=currentAccount==='demo';
   const emptyEl=$('equityEmpty'), canvasEl=$('equityChart');
 
   if(!sorted.length){
@@ -629,7 +629,6 @@ function renderEquity(acct){
   emptyEl.style.display='none';canvasEl.style.display='block';
 
   let cum=cap;
-  const labels=[{x:0,label:'Início'}];
   const data=[{x:0,y:cap}];
   sorted.forEach((t,i)=>{cum+=t.resultado_real;data.push({x:i+1,y:parseFloat(cum.toFixed(2))});});
 
@@ -661,7 +660,6 @@ function renderCandles(acct){
   const emptyEl=$('candleEmpty'), canvasEl=$('candleChart');
   const cap=currentAccount==='demo'?capitalDemo:capitalReal;
 
-  // Agrupa por dia
   const dayMap={};
   let runningCap=cap;
   sorted.forEach(t=>{
@@ -679,7 +677,6 @@ function renderCandles(acct){
   }
   emptyEl.style.display='none';canvasEl.style.display='block';
 
-  // Calcula OHLC por dia
   const ohlcData=days.map((day,i)=>{
     const d=dayMap[day];
     const open=d.open;
@@ -699,29 +696,15 @@ function renderCandles(acct){
   candleChart=new Chart(ctx,{
     type:'bar',
     data:{
-      labels:ohlcData.map(d=>{
-        const dt=new Date(d.day+'T12:00:00');
-        return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-      }),
-      datasets:[
-        // Corpo da vela (usando stacked bar trick)
-        {
-          label:'Corpo',
-          data:ohlcData.map(d=>({
-            x:d.x,
-            // valor base = min(open,close), tamanho = |close-open|
-            base:Math.min(d.o,d.c),
-            y:Math.abs(d.c-d.o)||0.5,
-            isGreen:d.c>=d.o,
-            open:d.o,close:d.c,high:d.h,low:d.l,day:d.day
-          })),
-          backgroundColor:ohlcData.map(d=>d.c>=d.o?'rgba(61,255,160,0.85)':'rgba(255,94,107,0.85)'),
-          borderColor:ohlcData.map(d=>d.c>=d.o?'#3dffa0':'#ff5e6b'),
-          borderWidth:1,
-          borderSkipped:false,
-          barThickness:Math.max(8,Math.min(28,Math.floor(280/ohlcData.length))),
-        }
-      ]
+      labels:ohlcData.map(d=>{const dt=new Date(d.day+'T12:00:00');return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}),
+      datasets:[{
+        label:'Corpo',
+        data:ohlcData.map(d=>[Math.min(d.o,d.c),Math.max(d.o,d.c)||Math.min(d.o,d.c)+0.5]),
+        backgroundColor:ohlcData.map(d=>d.c>=d.o?'rgba(61,255,160,0.85)':'rgba(255,94,107,0.85)'),
+        borderColor:ohlcData.map(d=>d.c>=d.o?'#3dffa0':'#ff5e6b'),
+        borderWidth:1,
+        barThickness:Math.max(8,Math.min(28,Math.floor(280/ohlcData.length))),
+      }]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
@@ -747,19 +730,13 @@ function renderCandles(acct){
       },
       scales:{
         x:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10}}},
-        y:{
-          grid:{color:'rgba(255,185,70,.04)'},
-          ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')},
-          stacked:false
-        }
+        y:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{family:'JetBrains Mono',size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')}}
       }
     },
     plugins:[{
       id:'candleWicks',
       afterDatasetDraw(chart){
-        // Desenha os pavios (wicks) manualmente
-        const {ctx,data,scales}=chart;
-        const ds=data.datasets[0].data;
+        const {ctx,scales}=chart;
         ctx.save();
         ohlcData.forEach((d,i)=>{
           const meta=chart.getDatasetMeta(0);
@@ -772,64 +749,55 @@ function renderCandles(acct){
           const yClose=scales.y.getPixelForValue(Math.min(d.o,d.c));
           const color=d.c>=d.o?'#3dffa0':'#ff5e6b';
           ctx.strokeStyle=color; ctx.lineWidth=1.5;
-          // pavio superior
           ctx.beginPath();ctx.moveTo(x,yHigh);ctx.lineTo(x,yOpen);ctx.stroke();
-          // pavio inferior
           ctx.beginPath();ctx.moveTo(x,yClose);ctx.lineTo(x,yLow);ctx.stroke();
         });
         ctx.restore();
       }
     }]
   });
-
-  // Para stacked bar (corpo com base), precisamos do plugin de floating bars
-  // Ajuste: reconfigurar dataset para floating bar pattern
-  candleChart.data.datasets[0].data=ohlcData.map(d=>[Math.min(d.o,d.c),Math.max(d.o,d.c)||Math.min(d.o,d.c)+0.5]);
-  candleChart.update('none');
 }
 
 // ── RENDER TABLE ──────────────────────────────────────────────────
 function renderTable(acct){
   let filtered=acct;
   if(currentFilter==='win')filtered=acct.filter(t=>(t.resultado_real??t.resultado??0)>0);
-  else if(currentFilter==='loss')filtered=acct.filter(t=>{const r=t.resultado_real??t.resultado??0;return r<=0&&t.tipo_saida!=='pending';});
+  else if(currentFilter==='loss')filtered=acct.filter(t=>{const r=t.resultado_real??t.resultado??0;return r<0&&t.tipo_saida!=='pending';});
   else if(currentFilter==='pending')filtered=acct.filter(t=>!t.tipo_saida||t.tipo_saida==='pending');
   else if(currentFilter==='regras')filtered=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0);
 
   $('tradeCount').textContent=filtered.length+' operaç'+(filtered.length===1?'ão':'ões');
-  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.<\/tr><\/tbody>';return;}
+  if(!filtered.length){$('tradesBody').innerHTML='<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>';return;}
 
   $('tradesBody').innerHTML=filtered.map(t=>{
     const rE=t.resultado??0, rR=t.resultado_real;
-    const fnR=rR!=null?rR:rE;
-    const rCE=rE>=0?'res-pos':'res-neg', rCR=rR==null?'res-na':(rR>=0?'res-pos':'res-neg');
     const dC=t.lado==='compra'?'dir-long':'dir-short', dL=t.lado==='compra'?'LONG':'SHORT';
-    const tps=[['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]].filter(([,v])=>v!=null&&!isNaN(v)&&v>0).map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}<\/span>`).join('');
+    const tps=[['TP1',t.tp1],['TP2',t.tp2],['TP3',t.tp3]].filter(([,v])=>v!=null&&!isNaN(v)&&v>0).map(([l,v])=>`<span class="tp-chip">${l}: ${Number(v).toFixed(2)}</span>`).join('');
     const obs=t.observacao?(t.observacao.length>35?t.observacao.slice(0,33)+'…':t.observacao):'—';
     const dt=t.date_time_raw?fmtDate(t.date_time_raw):fmtDate(t.created_at);
     const sMap={pending:'⏳ Aberto',loss:'❌ Stop',parcial:'⚡ Parcial',tp1:'✅ TP1',tp2:'✅ TP2',tp3:'🎯 TP3'};
     const saidaTipo=t.tipo_saida||'pending';
     const sc=t.score||0;
     const stars=sc?'★'.repeat(sc)+'☆'.repeat(5-sc):'—';
-    const regras=(t.regras_quebradas||[]).map(r=>`<span class="regra-flag">${r}<\/span>`).join('');
+    const regras=(t.regras_quebradas||[]).map(r=>`<span class="regra-flag">${r}</span>`).join('');
     return `<tr>
-      <td>${dt}<\/td><td>${t.ativo}<\/td>
-      <td style="color:var(--blue);font-size:11px">${t.sessao||'—'}<\/td>
-      <td><span class="dir-badge ${dC}">${dL}<\/span><\/td>
-      <td>${Number(t.entrada).toFixed(2)}<\/td><td>${Number(t.stop).toFixed(2)}<\/td>
-      <td><div class="tp-wrap">${tps}<\/div><\/td>
-      <td>${t.qtd}<\/td><td>${t.fator}<\/td>
-      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo]||'—'}<\/span><\/td>
-      <td class="${rCE}">${rE>=0?'+ ':''}R$ ${Math.abs(rE).toFixed(2)}<\/td>
-      <td class="${rCR}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}<\/td>
-      <td style="color:var(--gold);font-size:11px">${stars}<\/td>
-      <td>${regras||'<span style="color:var(--muted);font-size:10px">nenhuma<\/span>'}<\/td>
-      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}<\/div><\/td>
+      <td>${dt}</td><td>${t.ativo}</td>
+      <td style="color:var(--blue);font-size:11px">${t.sessao||'—'}</td>
+      <td><span class="dir-badge ${dC}">${dL}</span></td>
+      <td>${Number(t.entrada).toFixed(2)}</td><td>${Number(t.stop).toFixed(2)}</td>
+      <td><div class="tp-wrap">${tps}</div></td>
+      <td>${t.qtd}</td><td>${t.fator}</td>
+      <td><span class="saida-pill ${saidaTipo}">${sMap[saidaTipo]||'—'}</span></td>
+      <td class="${rE>=0?'res-pos':'res-neg'}">${rE>=0?'+ ':''}R$ ${Math.abs(rE).toFixed(2)}</td>
+      <td class="${rR==null?'res-na':(rR>=0?'res-pos':'res-neg')}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td>
+      <td style="color:var(--gold);font-size:11px">${stars}</td>
+      <td>${regras||'<span style="color:var(--muted);font-size:10px">nenhuma</span>'}</td>
+      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}</div></td>
       <td><div class="action-cell">
-        <button class="act-btn" onclick="startEdit(${t.id})">✏️<\/button>
-        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️<\/button>
-      <\/div><\/td>
-    <\/tr>`;
+        <button class="act-btn" onclick="startEdit(${t.id})">✏️</button>
+        <button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button>
+      </div></td>
+    </tr>`;
   }).join('');
 }
 
@@ -980,6 +948,6 @@ async function init(){
   await fetchTrades();
 }
 init();
-<\/script>
-<\/body>
-<\/html>
+</script>
+</body>
+</html>
