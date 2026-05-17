@@ -215,7 +215,7 @@ body.demo-mode .stat::after{background:linear-gradient(90deg,transparent,var(--b
 body.demo-mode #clock{color:var(--blue)}
 body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc)}
 
-/* ESTILO ESPECÍFICO PARA IMPRESSÃO - RELATÓRIO APENAS COM TRADES */
+/* ESTILO ESPECÍFICO PARA IMPRESSÃO - RELATÓRIO APENAS COM RESULTADOS EM COLUNAS */
 @media print {
   /* Esconde tudo que não é a tabela de trades */
   .header, .account-bar, .ticker-wrap, .stats-row, .tip-bar, .charts-grid, 
@@ -734,7 +734,7 @@ function renderTable(acct) {
   else if (currentFilter === 'pending') filtered = acct.filter(t => !t.tipo_saida || t.tipo_saida === 'pending');
   else if (currentFilter === 'regras') filtered = acct.filter(t => t.regras_quebradas && t.regras_quebradas.length > 0);
   $('tradeCount').textContent = filtered.length + ' operaç' + (filtered.length === 1 ? 'ão' : 'ões');
-  if (!filtered.length) { $('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.<tr></table>'; return; }
+  if (!filtered.length) { $('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="16">✍️ Nenhuma operação encontrada.</td></tr>'; return; }
   $('tradesBody').innerHTML = filtered.map(t => {
     const rE = t.resultado ?? 0, rR = t.resultado_real;
     const dC = t.lado === 'compra' ? 'dir-long' : 'dir-short', dL = t.lado === 'compra' ? 'LONG' : 'SHORT';
@@ -889,7 +889,7 @@ document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', (
   renderTable(acct);
 }));
 
-// BOTÃO RELATÓRIO - AGORA SÓ IMPRIME A LISTA DE TRADES
+// BOTÃO RELATÓRIO - IMPRIME SOMENTE OS TRADES EM COLUNAS
 $('btnPrintReport').addEventListener('click', () => {
   window.print();
 });
