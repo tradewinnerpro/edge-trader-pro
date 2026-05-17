@@ -64,7 +64,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .capital-badge span.pos{color:var(--green)}
 .capital-badge span.neg{color:var(--red)}
 
-/* Responsivo mobile */
 @media (max-width: 768px) {
   .capital-panel{flex-direction:column;align-items:stretch}
   .capital-input-wrap{width:100%}
@@ -72,10 +71,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   .capital-badge{width:100%}
 }
 
-/* ── TICKER ── */
 .ticker-wrap{border-radius:var(--r);overflow:hidden;background:var(--surface);border:1px solid var(--border2);margin-bottom:20px;height:48px}
 
-/* ── STATS ── */
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px}
 .stat{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;animation:fadeUp .5s both}
 .stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--account-color),transparent);opacity:0;transition:opacity .3s}
@@ -85,11 +82,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .stat-value{font-family:var(--font-h);font-size:22px;font-weight:700;color:var(--gold);line-height:1}
 .stat-value.pos{color:var(--green)}.stat-value.neg{color:var(--red)}
 
-/* ── TIP ── */
 .tip-bar{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:var(--r);padding:10px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2)}
 #tipText{color:var(--text);flex:1}
 
-/* ── CHARTS GRID ── */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:900px){.charts-grid{grid-template-columns:1fr}}
 .chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:20px}
@@ -97,7 +92,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .chart-wrap{height:200px;position:relative}
 .chart-empty{display:flex;align-items:center;justify-content:center;height:200px;color:var(--muted);font-size:12px;text-align:center;line-height:1.6}
 
-/* ── FORM ── */
 .form-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:20px;margin-bottom:24px}
 .form-title{font-family:var(--font-h);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .account-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px}
@@ -113,23 +107,19 @@ select option{background:#0b1020}
 textarea{resize:vertical;min-height:70px}
 #outroAtivo{display:none;margin-top:6px}
 
-/* ── RISCO BAR ── */
 .risco-bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .risco-box{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:8px 14px;flex:1;min-width:150px}
 .risco-box-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:3px}
 .risco-val{font-family:var(--font-h);font-size:18px;font-weight:700}
 
-/* ── SESSÃO ── */
 .sessao-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .sessao-chip{border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:10px;cursor:pointer;transition:all .2s;color:var(--text2);background:var(--surface2)}
 .sessao-chip:hover{border-color:var(--blue);color:var(--blue)}
 .sessao-chip.active{background:rgba(77,184,255,.15);border-color:var(--blue);color:var(--blue)}
 
-/* ── SCORE ── */
 .star{font-size:20px;cursor:pointer;opacity:.3;transition:all .15s;user-select:none}
 .star.active{opacity:1;filter:drop-shadow(0 0 4px var(--gold))}
 
-/* ── SAÍDA ── */
 .resultado-real-section{background:var(--bg);border:1px solid rgba(255,185,70,.1);border-radius:12px;padding:14px;margin-bottom:12px}
 .resultado-real-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .saida-badge-row{display:flex;gap:6px;flex-wrap:wrap}
@@ -144,7 +134,6 @@ textarea{resize:vertical;min-height:70px}
 .preview-box.pos{color:var(--green);border-color:rgba(61,255,160,.2)}
 .preview-box.neg{color:var(--red);border-color:rgba(255,94,107,.2)}
 
-/* ── REGRAS ── */
 .rules-section{background:var(--bg);border:1px solid rgba(255,94,107,.1);border-radius:12px;padding:14px;margin-bottom:12px}
 .rules-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px}
 .rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
@@ -155,7 +144,6 @@ textarea{resize:vertical;min-height:70px}
 .rule-check input:checked+.box::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
 .rule-check.checked{border-color:rgba(255,94,107,.3);color:var(--red);background:rgba(255,94,107,.05)}
 
-/* ── BUTTONS ── */
 .btn-actions{display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
 .btn-actions .btn{width:100%;justify-content:center}
 .btn{border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s,box-shadow .15s;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -165,13 +153,11 @@ textarea{resize:vertical;min-height:70px}
 .btn:hover{transform:translateY(-2px)}
 .btn-report:hover{background:rgba(255,185,70,.1)}
 
-/* ── LOADING ── */
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(2px)}
 .loading-overlay.show{display:flex}
 .spinner{width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── FILTER + TABLE ── */
 .filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{background:var(--surface);border:1px solid var(--border2);border-radius:30px;padding:6px 14px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:var(--font-m)}
@@ -209,27 +195,29 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.form-group.wider{grid-column:span 1}.brand-name{font-size:16px}.stat-value{font-size:18px}}
 
-/* account color theming */
 body.real-mode .stat::after{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 body.demo-mode .stat::after{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
 body.demo-mode #clock{color:var(--blue)}
 body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc)}
 
-/* ESTILO ESPECÍFICO PARA IMPRESSÃO - RELATÓRIO APENAS COM RESULTADOS EM COLUNAS */
+/* ESTILO DE IMPRESSÃO - SOMENTE AS COLUNAS DE RESULTADO */
 @media print {
-  /* Esconde tudo que não é a tabela de trades */
+  /* Esconde tudo */
   .header, .account-bar, .ticker-wrap, .stats-row, .tip-bar, .charts-grid, 
   .form-card, .filter-row, .footer, .loading-overlay, .db-status,
-  .btn-report, .btn-actions, .btn-primary, .btn-cancel {
+  .btn-report, .btn-actions, .btn-primary, .btn-cancel,
+  .action-cell, .obs-short, .tp-wrap, .regra-flag, .tp-chip {
     display: none !important;
   }
   
-  /* Mostra apenas a tabela */
-  .table-wrap, .table-scroll, table, thead, tbody, tr, th, td {
-    display: block;
+  /* Remove ações e observações da tabela */
+  .action-cell, td:last-child, th:last-child,
+  td:nth-child(15), th:nth-child(15),
+  td:nth-child(16), th:nth-child(16) {
+    display: none !important;
   }
   
-  .table-wrap {
+  .table-wrap, .table-scroll {
     margin: 0;
     padding: 0;
     border: none;
@@ -239,18 +227,20 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
   table {
     width: 100%;
     border-collapse: collapse;
+    min-width: auto !important;
   }
   
   th, td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 6px 4px;
     text-align: left;
-    font-size: 10px;
+    font-size: 9px;
   }
   
   th {
     background: #f0f0f0;
     color: black;
+    font-weight: bold;
   }
   
   body {
@@ -264,6 +254,12 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
     padding: 0;
     margin: 0;
     max-width: 100%;
+  }
+  
+  /* Força a tabela a ter largura total */
+  .table-wrap {
+    width: 100%;
+    overflow: visible;
   }
 }
 </style>
@@ -291,7 +287,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
     </div>
   </header>
 
-  <!-- ACCOUNT SWITCHER + CAPITAL -->
   <div class="account-bar">
     <div class="account-tabs">
       <button class="account-tab active-demo" data-account="demo" id="tabDemo">📊 DEMO</button>
@@ -338,7 +333,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
     <span>💡</span><div id="tipText">Stop Loss não é opcional — é a sua proteção. Nunca mova.</div>
   </div>
 
-  <!-- CHARTS -->
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">📈 Curva de Equity — <span id="equityAccountLabel" style="color:var(--blue)">DEMO</span></div>
@@ -356,7 +350,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
     </div>
   </div>
 
-  <!-- FORM -->
   <div class="form-card">
     <div class="form-title">
       ✦ Registrar Operação
@@ -386,27 +379,13 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       <div class="form-group"><label>⚙️ Fator Mult.</label><input type="number" id="fFator" step="0.01" value="10" min="0.01"></div>
     </div>
 
-    <!-- RISCO -->
     <div class="risco-bar">
-      <div class="risco-box">
-        <div class="risco-box-label">⚠️ Risco (R$)</div>
-        <div class="risco-val" id="riscoReais" style="color:var(--red)">R$ 0,00</div>
-      </div>
-      <div class="risco-box">
-        <div class="risco-box-label">% do Capital</div>
-        <div class="risco-val" id="riscoPct" style="color:var(--text2)">—%</div>
-      </div>
-      <div class="risco-box">
-        <div class="risco-box-label">📊 Risco/Retorno TP1</div>
-        <div class="risco-val" id="riscoRatio" style="color:var(--text2)">1 : —</div>
-      </div>
-      <div class="risco-box">
-        <div class="risco-box-label">🎯 Lucro Potencial</div>
-        <div class="risco-val" id="lucroPot" style="color:var(--green)">R$ —</div>
-      </div>
+      <div class="risco-box"><div class="risco-box-label">⚠️ Risco (R$)</div><div class="risco-val" id="riscoReais" style="color:var(--red)">R$ 0,00</div></div>
+      <div class="risco-box"><div class="risco-box-label">% do Capital</div><div class="risco-val" id="riscoPct" style="color:var(--text2)">—%</div></div>
+      <div class="risco-box"><div class="risco-box-label">📊 Risco/Retorno TP1</div><div class="risco-val" id="riscoRatio" style="color:var(--text2)">1 : —</div></div>
+      <div class="risco-box"><div class="risco-box-label">🎯 Lucro Potencial</div><div class="risco-val" id="lucroPot" style="color:var(--green)">R$ —</div></div>
     </div>
 
-    <!-- SESSÃO -->
     <div style="margin-bottom:10px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">🌍 Sessão de Mercado</div>
       <div class="sessao-row" id="sessaoRow">
@@ -418,7 +397,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       </div>
     </div>
 
-    <!-- SCORE -->
     <div style="margin-bottom:12px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">⭐ Qualidade do Setup</div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -430,7 +408,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       </div>
     </div>
 
-    <!-- RESULTADO REAL -->
     <div class="resultado-real-section">
       <div class="resultado-real-title">🏁 Como o Trade Fechou? <span style="color:var(--text2);font-size:10px">(preencha após a saída)</span></div>
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Tipo de Saída</div>
@@ -443,18 +420,11 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
         <div class="saida-badge" data-saida="tp3">🎯 TP3 (Full)</div>
       </div>
       <div class="saida-grid">
-        <div class="form-group">
-          <label>💲 Resultado Real (R$)</label>
-          <input type="number" id="fResultadoReal" step="0.01" placeholder="Ex: -150.00 ou +320.00">
-        </div>
-        <div class="form-group">
-          <label>📊 Resultado Estimado</label>
-          <div class="preview-box" id="previewBox">aguardando dados...</div>
-        </div>
+        <div class="form-group"><label>💲 Resultado Real (R$)</label><input type="number" id="fResultadoReal" step="0.01" placeholder="Ex: -150.00 ou +320.00"></div>
+        <div class="form-group"><label>📊 Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
       </div>
     </div>
 
-    <!-- REGRAS -->
     <div class="rules-section">
       <div class="rules-title">⚠️ Violações Cometidas <span style="color:var(--text2);font-size:10px">(marque se ocorreu)</span></div>
       <div class="rules-grid" id="rulesGrid">
@@ -469,7 +439,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
       </div>
     </div>
 
-    <!-- OBS + ACTIONS -->
     <div class="form-grid">
       <div class="form-group wider"><label>📝 Observações / Estratégia / Emoções</label><textarea id="fObs" rows="3" placeholder="Estratégia, gatilhos, emoções, lições..."></textarea></div>
       <div class="form-group btn-actions">
@@ -480,7 +449,6 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
     </div>
   </div>
 
-  <!-- TABLE -->
   <div class="filter-row">
     <div class="filter-tabs">
       <button class="tab active" data-filter="all">Todos</button>
@@ -502,16 +470,16 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
             <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
           </tr>
         </thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/tr><\/tbody>
-      <\/table>
-    <\/div>
-  <\/div>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</tr></tbody>
+      </table>
+    </div>
+  </div>
 
   <div class="footer">
     <p>TRADE WINNER PRO v3 • Demo & Real • Supabase Cloud • Candles Diários</p>
     <p style="margin-top:6px">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
-  <\/div>
-<\/div>
+  </div>
+</div>
 
 <script>
 // CONFIG
@@ -889,7 +857,7 @@ document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', (
   renderTable(acct);
 }));
 
-// BOTÃO RELATÓRIO - IMPRIME SOMENTE OS TRADES EM COLUNAS
+// BOTÃO RELATÓRIO - IMPRIME SOMENTE AS COLUNAS DE RESULTADO
 $('btnPrintReport').addEventListener('click', () => {
   window.print();
 });
