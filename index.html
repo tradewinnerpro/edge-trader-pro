@@ -720,15 +720,170 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 
 <script>
 // ══════════════════════════════════════════════════════
-// CONFIGURAÇÃO E CONEXÃO SUPABASE
+// CONFIGURAÇÃO SUPABASE
 // ══════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_eaIj1Dk5o-1jSUF3wMHgsQ_pvG4e8Nd';
+const SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ASSETS_KEY = 'twp_assets_v5';
-const SCORE_LABELS = ['','1 — Setup Fraco','2 — Setup Médio','3 — Setup Bom','4 — Setup Forte','5 — Setup Perfeito'];
 
+// ══════════════════════════════════════════════════════
+// FUNÇÕES DE CONEXÃO COM O BANCO
+// ══════════════════════════════════════════════════════
+
+// Buscar trades
+async function fetchTrades() {
+  showLoading(true);
+  try {
+    const { data, error } = await sb
+      .from('trades')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    trades = data || [];
+    setDbStatus('ok', '● banco conectado');
+  } catch (e) {
+    console.error('Erro Supabase:', e.message);
+    setDbStatus('err', '✕ ' + e.message);
+    trades = [];
+  } finally {
+    showLoading(false);
+    renderAll();
+  }
+}
+
+// Inserir trade
+async function insertTrade(p) {
+  showLoading(true);
+  try {
+    const { error } = await sb.from('trades').insert([p]);
+    if (error) throw error;
+  } catch (e) {
+    alert('❌ Erro ao salvar: ' + e.message);
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Atualizar trade
+async function updateTradeDB(id, p) {
+  showLoading(true);
+  try {
+    const { error } = await sb.from('trades').update(p).eq('id', id);
+    if (error) throw error;
+  } catch (e) {
+    alert('❌ Erro ao atualizar: ' + e.message);
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Deletar trade
+async function deleteTradeDB(id) {
+  if (!confirm('Confirmar exclusão?')) return;
+  showLoading(true);
+  try {
+    const { error } = await sb.from('trades').delete().eq('id', id);
+    if (error) throw error;
+    await fetchTrades();
+  } catch (e) {
+    alert('❌ Erro ao excluir: ' + e.message);
+    showLoading(false);
+  }
+}
+
+// Buscar setups
+async function fetchSetups() {
+  try {
+    const { data, error } = await sb
+      .from('setups')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    setups = data || [];
+  } catch (e) {
+    console.warn('Setups:', e.message);
+    setups = [];
+  }
+  rebuildSetupSelect();
+}
+
+// Buscar capital
+async function fetchCapital() {
+  try {
+    const { data } = await sb
+      .from('capital')
+      .select('*');
+    
+    if (data) {
+      const d = data.find(x => x.conta_tipo === 'demo');
+      const r = data.find(x => x.conta_tipo === 'real');
+      if (d) capitalDemo = parseFloat(d.valor);
+      if (r) capitalReal = parseFloat(r.valor);
+    }
+  } catch (e) {
+    console.warn('Capital:', e.message);
+  }
+  gid('capitalInput').value = currentAccount === 'demo' ? capitalDemo : capitalReal;
+}
+
+// Salvar capital
+async function saveCapital() {
+  const v = parseFloat(gid('capitalInput').value);
+  if (isNaN(v) || v <= 0) {
+    alert('❌ Valor inválido');
+    return;
+  }
   
+  if (currentAccount === 'demo') capitalDemo = v;
+  else capitalReal = v;
+  
+  try {
+    await sb
+      .from('capital')
+      .upsert({
+        conta_tipo: currentAccount,
+        valor: v,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'conta_tipo'
+      });
+  } catch (e) {
+    console.warn('Capital save:', e.message);
+  }
+  renderAll();
+}
+
+// Status da conexão
+function setDbStatus(s, t) {
+  const el = gid('dbStatus');
+  el.className = 'db-status ' + s;
+  gid('dbStatusText').textContent = t;
+}
+
+// Loading
+function showLoading(v) {
+  gid('loadingOverlay').classList.toggle('show', v);
+}
+
+// ══════════════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════════════════════
+
+async function init() {
+  rebuildSelect();
+  rebuildTicker();
+  resetForm();
+  buildInsights();
+  
+  // Inicializar conexões com Supabase
+  await fetchCapital();
+  await fetchSetups();
+  await fetchTrades();
+}
+
 // ── HELPERS (definidos PRIMEIRO) ─────────────────────
 function gid(id){ return document.getElementById(id); }
 function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
