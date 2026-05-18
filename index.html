@@ -1173,7 +1173,17 @@ function renderCandles(acct){
   }};
   const barW=Math.max(6,Math.min(26,Math.floor(260/ohlc.length)));
   candleChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data:bodyData,backgroundColor:bodyColors,borderColor:bodyBorder,borderWidth:1,borderSkipped:false,barThickness:barW}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b1020',borderColor:'rgba(255,185,70,.2)',borderWidth:1,titleColor:'#ffb946',bodyColor:'#dde4f5',callbacks:{title:items=>{const d=ohlc[items[0].dataIndex];return new Date(d.day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});},label:item=>{const d=ohlc[item.dataIndex],res=d.close-d.open;return['  Abertura  : R$ '+d.open.toFixed(2),'  Máxima    : R$ '+d.high.toFixed(2),'  Mínima    : R$ '+d.low.toFixed(2),'  Fechamento: R$ '+d.close.toFixed(2),'  Resultado : '+(res>=0?'+':'')+'R$ '+res.toFixed(2)];}}}}},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b1020',borderColor:'rgba(255,185,70,.2)',borderWidth:1,titleColor:'#ffb946',bodyColor:'#dde4f5',callbacks:{title:items=>{const d=ohlc[items[0].dataIndex];return new Date(d.day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});},label:item=>{const d=ohlc[item.dataIndex],res=d.close-d.open;label:item=>{
+  const d=ohlc[item.dataIndex];
+  const res=d.close-d.open;
+  return[
+    'Abertura: R$ '+d.open.toFixed(2),
+    'Maxima: R$ '+d.high.toFixed(2),
+    'Minima: R$ '+d.low.toFixed(2),
+    'Fechamento: R$ '+d.close.toFixed(2),
+    'Resultado: '+(res>=0?'+':'')+'R$ '+res.toFixed(2)
+  ];
+}
     scales:{x:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{size:10}}},y:{grid:{color:'rgba(255,185,70,.04)'},ticks:{color:'#4a5980',font:{size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')}}}},plugins:[wickPlugin]});
 }
 
@@ -1210,7 +1220,7 @@ function renderTable(acct){
       <td class="${rCR}">${rR!=null?(rR>=0?'+ ':'')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td>
       <td style="color:var(--gold);font-size:11px;letter-spacing:1px">${stars}</td>
       <td style="max-width:130px">${regras||'<span style="color:var(--muted);font-size:10px">—</span>'}</td>
-      <td><div class="obs-short" title="${(t.observacao||'').replace(/"/g,'&quot;')}">${obs}</div></td>
+      <td><div class="obs-short" title="${(t.observacao||'').replace(/\"/g,'&quot;')}">${obs}</div></td>
       <td><div class="action-cell"><button class="act-btn" data-edit="${t.id}">✏️</button><button class="act-btn del" data-del="${t.id}">🗑️</button></div></td>
     </tr>`;
   }).join('');
