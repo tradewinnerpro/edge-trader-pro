@@ -574,16 +574,16 @@ td{padding:10px;vertical-align:middle;font-size:12px}
           <th>Saída</th><th>Est.</th><th>Real</th>
           <th>Score</th><th>Violações</th><th>Obs.</th><th>Ações</th>
         </tr></thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="17">Carregando...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="17">Carregando...<\/tr><\/tbody>
+      <\/table>
+    <\/div>
+  <\/div>
 
   <div class="footer">
     <p>TRADE WINNER PRO v5 • Demo &amp; Real • Biblioteca de Setups • Educação Integrada</p>
     <p style="margin-top:6px">Regra nº1: nunca mova o stop. Regra nº2: nunca esqueça a regra nº1.</p>
-  </div>
-</div>
+  <\/div>
+<\/div>
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -792,11 +792,36 @@ function saveAssets(){
 function getAtivo(){return $('fAtivo').value==='Outro'?($('outroAtivo').value.trim()||'Outro'):$('fAtivo').value;}
 
 // ══════════════════════════════════════════════════════
-// SETUP MANAGER
+// SETUP MANAGER (CORRIGIDO - localStorage fallback)
 // ══════════════════════════════════════════════════════
+const SETUPS_KEY = 'twp_setups_v1';
+const DEFAULT_SETUPS = [
+  {id:1, nome:'Pin Bar em S/R', descricao:'Pin bar em nível de suporte/resistência com pavio longo. Score ideal: 4-5.', score:4},
+  {id:2, nome:'Engolfo de Alta', descricao:'Candle verde engole completamente o vermelho anterior. Volume confirmando.', score:4},
+  {id:3, nome:'Pullback para EMA', descricao:'Preço retorna para EMA 20 em tendência clara com candle de reversão.', score:5},
+  {id:4, nome:'Inside Bar Breakout', descricao:'Inside bar após candle mãe grande. Rompimento com volume.', score:3},
+  {id:5, nome:'Fibonacci 61.8%', descricao:'Retração ao nível 61.8% com candle de confirmação na direção da tendência.', score:4},
+  {id:6, nome:'Oferta/Demanda', descricao:'Primeira revisita em zona institucional com candle de absorção.', score:5},
+];
+
 async function fetchSetups(){
-  try{const{data,error}=await sb.from('setups').select('*').order('id');if(error)throw error;setups=data||[];}
-  catch(e){console.warn('setups fetch:',e.message);setups=[];}
+  try{
+    const {data,error}=await sb.from('setups').select('*').order('id');
+    if(error) throw error;
+    if(data && data.length>0){
+      setups=data;
+      localStorage.setItem(SETUPS_KEY,JSON.stringify(setups));
+    }else{
+      let local = localStorage.getItem(SETUPS_KEY);
+      if(local) setups=JSON.parse(local);
+      else setups=DEFAULT_SETUPS;
+    }
+  }catch(e){
+    console.warn('setups fetch error:',e.message);
+    let local = localStorage.getItem(SETUPS_KEY);
+    if(local) setups=JSON.parse(local);
+    else setups=DEFAULT_SETUPS;
+  }
   rebuildSetupSelect();
 }
 
@@ -825,8 +850,8 @@ function renderSetupList(){
   setups.forEach((s,i)=>{
     const row=document.createElement('div');row.className='setup-row';
     const starsHtml=Array.from({length:5},(_,j)=>`<span class="setup-star${j<(s.score||3)?' active':''}" data-idx="${i}" data-v="${j+1}" onclick="setSetupStar(${i},${j+1})">★</span>`).join('');
-    row.innerHTML=`<div class="setup-row-top"><input type="text" class="s-nome" value="${s.nome}" placeholder="Nome do setup"><input type="number" class="s-score" value="${s.score||3}" min="1" max="5" style="display:none"><button class="btn-del-setup" onclick="removeSetupRow(${s.id})">✕</button></div><div class="setup-row-desc"><textarea class="s-desc" placeholder="Descrição, quando usar, confluências...">${s.descricao||''}</textarea></div><div class="setup-stars-edit">${starsHtml}</div>`;
-    row.dataset.id=s.id;
+    row.innerHTML=`<div class="setup-row-top"><input type="text" class="s-nome" value="${s.nome}" placeholder="Nome do setup"><input type="number" class="s-score" value="${s.score||3}" min="1" max="5" style="display:none"><button class="btn-del-setup" onclick="removeSetupRow(${i})">✕</button></div><div class="setup-row-desc"><textarea class="s-desc" placeholder="Descrição, quando usar, confluências...">${s.descricao||''}</textarea></div><div class="setup-stars-edit">${starsHtml}</div>`;
+    row.dataset.idx=i;
     list.appendChild(row);
   });
 }
@@ -839,34 +864,39 @@ function setSetupStar(idx,v){
 }
 
 function addSetupRow(){
-  setups.push({id:'new_'+Date.now(),nome:'',descricao:'',score:3});
+  setups.push({id:Date.now(),nome:'',descricao:'',score:3});
   renderSetupList();
 }
 
-async function removeSetupRow(id){
-  if(String(id).startsWith('new_')){setups=setups.filter(s=>s.id!==id);renderSetupList();return;}
-  if(!confirm('Remover este setup? Trades vinculados a ele não serão afetados.'))return;
-  try{await sb.from('setups').delete().eq('id',id);setups=setups.filter(s=>s.id!==id);renderSetupList();}
-  catch(e){alert('❌ '+e.message);}
+function removeSetupRow(idx){
+  if(!confirm('Remover este setup?'))return;
+  setups.splice(idx,1);
+  renderSetupList();
 }
 
 async function saveSetups(){
   const rows=document.querySelectorAll('.setup-row');
-  showLoading(true);
+  const novas = [];
+  rows.forEach((row,i)=>{
+    const nome=row.querySelector('.s-nome').value.trim();
+    if(!nome) return;
+    const desc=row.querySelector('.s-desc').value.trim();
+    const score=parseInt(row.querySelector('.s-score').value)||3;
+    const id = setups[i]?.id || Date.now()+i;
+    novas.push({id,nome,descricao:desc,score});
+  });
+  if(novas.length===0){alert('❌ Nenhum setup válido.');return;}
+  setups=novas;
+  localStorage.setItem(SETUPS_KEY,JSON.stringify(setups));
+  
+  // Tentar salvar no Supabase se possível
   try{
-    for(const row of rows){
-      const id=row.dataset.id;
-      const nome=row.querySelector('.s-nome').value.trim();
-      const desc=row.querySelector('.s-desc').value.trim();
-      const score=parseInt(row.querySelector('.s-score').value)||3;
-      if(!nome)continue;
-      if(String(id).startsWith('new_')){await sb.from('setups').insert([{nome,descricao:desc,score}]);}
-      else{await sb.from('setups').update({nome,descricao:desc,score}).eq('id',id);}
-    }
-  }catch(e){alert('❌ '+e.message);}
-  finally{showLoading(false);}
-  await fetchSetups();
+    await sb.from('setups').upsert(setups.map(s=>({id:s.id,nome:s.nome,descricao:s.descricao,score:s.score})));
+  }catch(e){console.warn('Não foi possível salvar setups no Supabase:',e.message);}
+  
+  rebuildSetupSelect();
   closeModal('setupModal');
+  alert('✅ Setups salvos localmente!');
 }
 
 // ══════════════════════════════════════════════════════
@@ -1002,7 +1032,7 @@ function renderTable(acct){
   else if(currentFilter==='pending')f=acct.filter(t=>!t.tipo_saida||t.tipo_saida==='pending');
   else if(currentFilter==='regras')f=acct.filter(t=>t.regras_quebradas&&t.regras_quebradas.length>0);
   $('tradeCount').textContent=f.length+' operaç'+(f.length===1?'ão':'ões');
-  if(!f.length){$('tradesBody').innerHTML=`<tr class="empty-row"><td colspan="17">✍️ Nenhuma operação encontrada.</td></tr>`;return;}
+  if(!f.length){$('tradesBody').innerHTML=`<tr class="empty-row"><td colspan="17">✍️ Nenhuma operação encontrada. None</td>`;return;}
   const sMap={pending:'⏳ Aberto',loss:'❌ Stop',parcial:'⚡ Parcial',tp1:'✅ TP1',tp2:'✅ TP2',tp3:'🎯 TP3'};
   $('tradesBody').innerHTML=f.map(t=>{
     const rE=t.resultado??0,rR=t.resultado_real;
