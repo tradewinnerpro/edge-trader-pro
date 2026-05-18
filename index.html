@@ -726,165 +726,7 @@ const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ══════════════════════════════════════════════════════
-// FUNÇÕES DE CONEXÃO COM O BANCO
-// ══════════════════════════════════════════════════════
-
-// Buscar trades
-async function fetchTrades() {
-  showLoading(true);
-  try {
-    const { data, error } = await sb
-      .from('trades')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    
-    trades = data || [];
-    setDbStatus('ok', '● banco conectado');
-  } catch (e) {
-    console.error('Erro Supabase:', e.message);
-    setDbStatus('err', '✕ ' + e.message);
-    trades = [];
-  } finally {
-    showLoading(false);
-    renderAll();
-  }
-}
-
-// Inserir trade
-async function insertTrade(p) {
-  showLoading(true);
-  try {
-    const { error } = await sb.from('trades').insert([p]);
-    if (error) throw error;
-  } catch (e) {
-    alert('❌ Erro ao salvar: ' + e.message);
-  } finally {
-    showLoading(false);
-  }
-}
-
-// Atualizar trade
-async function updateTradeDB(id, p) {
-  showLoading(true);
-  try {
-    const { error } = await sb.from('trades').update(p).eq('id', id);
-    if (error) throw error;
-  } catch (e) {
-    alert('❌ Erro ao atualizar: ' + e.message);
-  } finally {
-    showLoading(false);
-  }
-}
-
-// Deletar trade
-async function deleteTradeDB(id) {
-  if (!confirm('Confirmar exclusão?')) return;
-  showLoading(true);
-  try {
-    const { error } = await sb.from('trades').delete().eq('id', id);
-    if (error) throw error;
-    await fetchTrades();
-  } catch (e) {
-    alert('❌ Erro ao excluir: ' + e.message);
-    showLoading(false);
-  }
-}
-
-// Buscar setups
-async function fetchSetups() {
-  try {
-    const { data, error } = await sb
-      .from('setups')
-      .select('*')
-      .order('id');
-    
-    if (error) throw error;
-    setups = data || [];
-  } catch (e) {
-    console.warn('Setups:', e.message);
-    setups = [];
-  }
-  rebuildSetupSelect();
-}
-
-// Buscar capital
-async function fetchCapital() {
-  try {
-    const { data } = await sb
-      .from('capital')
-      .select('*');
-    
-    if (data) {
-      const d = data.find(x => x.conta_tipo === 'demo');
-      const r = data.find(x => x.conta_tipo === 'real');
-      if (d) capitalDemo = parseFloat(d.valor);
-      if (r) capitalReal = parseFloat(r.valor);
-    }
-  } catch (e) {
-    console.warn('Capital:', e.message);
-  }
-  gid('capitalInput').value = currentAccount === 'demo' ? capitalDemo : capitalReal;
-}
-
-// Salvar capital
-async function saveCapital() {
-  const v = parseFloat(gid('capitalInput').value);
-  if (isNaN(v) || v <= 0) {
-    alert('❌ Valor inválido');
-    return;
-  }
-  
-  if (currentAccount === 'demo') capitalDemo = v;
-  else capitalReal = v;
-  
-  try {
-    await sb
-      .from('capital')
-      .upsert({
-        conta_tipo: currentAccount,
-        valor: v,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'conta_tipo'
-      });
-  } catch (e) {
-    console.warn('Capital save:', e.message);
-  }
-  renderAll();
-}
-
-// Status da conexão
-function setDbStatus(s, t) {
-  const el = gid('dbStatus');
-  el.className = 'db-status ' + s;
-  gid('dbStatusText').textContent = t;
-}
-
-// Loading
-function showLoading(v) {
-  gid('loadingOverlay').classList.toggle('show', v);
-}
-
-// ══════════════════════════════════════════════════════
-// INICIALIZAÇÃO
-// ══════════════════════════════════════════════════════
-
-async function init() {
-  rebuildSelect();
-  rebuildTicker();
-  resetForm();
-  buildInsights();
-  
-  // Inicializar conexões com Supabase
-  await fetchCapital();
-  await fetchSetups();
-  await fetchTrades();
-}
-
-// ── HELPERS (definidos PRIMEIRO) ─────────────────────
+// ── HELPERS ───────────────────────────────────────────
 function gid(id){ return document.getElementById(id); }
 function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
 function fmtDate(r){if(!r)return'-';return new Date(r).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
@@ -1032,7 +874,7 @@ function saveWeekly(){
   setTimeout(()=>gid('btnSaveWeekly').textContent='💾 Salvar Reflexão',2000);
 }
 
-// ── INSIGHTS (20s interval) ────────────────────────────
+// ── INSIGHTS ───────────────────────────────────────────
 function buildInsights(){
   const nav=gid('insightNav');
   nav.innerHTML=INSIGHTS.map((_,i)=>`<div class="insight-dot${i===0?' active':''}" data-i="${i}"></div>`).join('');
@@ -1047,7 +889,7 @@ function showInsight(i){
   setTimeout(()=>{el.innerHTML=`<span class="tag">${ins.tag}</span>&nbsp;${ins.text}`;el.style.opacity='1';},400);
   gid('insightNav').querySelectorAll('.insight-dot').forEach((d,j)=>d.classList.toggle('active',j===i));
   clearTimeout(insightTimer);
-  insightTimer=setTimeout(()=>showInsight((i+1)%INSIGHTS.length),20000); // 20 segundos
+  insightTimer=setTimeout(()=>showInsight((i+1)%INSIGHTS.length),20000);
 }
 
 // ── ANALYTICS ──────────────────────────────────────────
@@ -1374,7 +1216,7 @@ function renderTable(acct){
   gid('tradesBody').querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>deleteTradeDB(parseInt(btn.dataset.del))));
 }
 
-// ── PREVIEW / RISCO COM ALERTA ─────────────────────────
+// ── PREVIEW / RISCO ────────────────────────────────────
 function updatePreview(){
   const e=parseFloat(gid('fEntrada').value),s=parseFloat(gid('fStop').value);
   const t1=parseFloat(gid('fTp1').value),q=parseFloat(gid('fQtd').value)||1;
@@ -1390,7 +1232,6 @@ function updatePreview(){
     const risco=Math.abs((lado==='compra'?s-e:e-s)*q*f);
     gid('riscoReais').textContent='R$ '+risco.toFixed(2);
     const pct=cap>0?risco/cap*100:0;
-    // ALERTAS VISUAIS
     const over2=pct>2;const over1=pct>1;
     gid('riscoBoxReais').className='risco-box'+(over2?' danger':over1?' warning':'');
     gid('riscoBoxPct').className='risco-box'+(over2?' danger':over1?' warning':'');
@@ -1436,12 +1277,28 @@ function startEdit(id){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ════════════════════════════════════════════════════
-// INIT — bind all events after DOM ready
-// ════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',function(){
+// ══════════════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════════════════════
+async function init(){
   updateClock();setInterval(updateClock,1000);
+  rebuildSelect();
+  rebuildTicker();
+  resetForm();
+  buildInsights();
+  loadWeekly();
+  loadMeta();
+  
+  // Inicializar conexões com Supabase
+  await fetchCapital();
+  await fetchSetups();
+  await fetchTrades();
+}
 
+// ══════════════════════════════════════════════════════
+// EVENT LISTENERS
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
   // Education
   gid('btnOpenEdu').addEventListener('click',openEdu);
   gid('eduCloseBtn').addEventListener('click',closeEdu);
@@ -1529,14 +1386,8 @@ document.addEventListener('DOMContentLoaded',function(){
   gid('btnPrintReport').addEventListener('click',()=>window.print());
   gid('btnExportCSV').addEventListener('click',exportCSV);
 
-  // INIT
-  buildInsights();
-  rebuildSelect();
-  rebuildTicker();
-  resetForm();
-  loadWeekly();
-  loadMeta();
-  fetchCapital().then(()=>fetchSetups()).then(()=>fetchTrades());
+  // Start app
+  init();
 });
 </script>
 </body>
