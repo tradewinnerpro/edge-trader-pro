@@ -892,6 +892,21 @@ async function handleAuth(){
   gid('authBtn').textContent = isRegistering ? 'Criar Conta' : 'Entrar';
 }
 
+async function logout(){
+  await sb.auth.signOut();
+  currentUser = null;
+  gid('authOverlay').style.display = 'flex';
+  gid('appShell').style.display = 'none';
+  gid('authEmail').value = '';
+  gid('authPassword').value = '';
+  gid('authError').style.display = 'none';
+  gid('authBtn').textContent = 'Entrar';
+  isRegistering = false;
+  gid('authMsg').textContent = 'Faça login para acessar seu diário';
+  gid('authToggle').textContent = 'Não tem conta? Criar uma';
+  setDbStatus('loading','desconectado');
+}
+
 // ── RLS HELPER ─────────────────────────────────────
 function withUser(payload){return{...payload,user_id:currentUser?.id};}
 
