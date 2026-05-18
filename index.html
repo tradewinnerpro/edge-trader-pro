@@ -97,6 +97,7 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
 .account-badge.real{background:rgba(255,185,70,.15);color:var(--gold);border:1px solid rgba(255,185,70,.3)}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:12px}
 .form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.wider{grid-column:span 5}  /* ← AJUSTE AQUI: mude para span 4, 5 ou 1/-1 */
 label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
 input,select,textarea{background:var(--bg);border:1px solid rgba(255,185,70,.15);border-radius:10px;color:var(--text);font-family:var(--font-m);font-size:12px;padding:9px 12px;transition:border-color .2s,box-shadow .2s;outline:none;width:100%;-webkit-appearance:none}
 input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,185,70,.1)}
