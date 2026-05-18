@@ -832,41 +832,64 @@ function toggleAuthMode(){
 }
 
 async function handleAuth(){
-  const email=gid('authEmail').value.trim();
-  const password=gid('authPassword').value.trim();
-  gid('authError').style.display='none';
-  if(!email||!password){gid('authError').textContent='Preencha email e senha.';gid('authError').style.display='block';return;}
-  if(password.length<6){gid('authError').textContent='Senha deve ter ao menos 6 caracteres.';gid('authError').style.display='block';return;}
+  const email = gid('authEmail').value.trim();
+  const password = gid('authPassword').value.trim();
+  gid('authError').style.display = 'none';
+  gid('authBtn').textContent = 'Carregando...';
+  
+  if(!email || !password){
+    gid('authError').textContent = 'Preencha email e senha.';
+    gid('authError').style.display = 'block';
+    gid('authBtn').textContent = isRegistering ? 'Criar Conta' : 'Entrar';
+    return;
+  }
+  if(password.length < 6){
+    gid('authError').textContent = 'Senha deve ter ao menos 6 caracteres.';
+    gid('authError').style.display = 'block';
+    gid('authBtn').textContent = isRegistering ? 'Criar Conta' : 'Entrar';
+    return;
+  }
 
-  try{
+  try {
     let result;
     if(isRegistering){
-      result=await sb.auth.signUp({email,password});
-      if(result.error)throw result.error;
-      if(result.data.user&&!result.data.session){
-        gid('authMsg').textContent='✅ Conta criada! Verifique seu email e faça login.';
-        gid('authBtn').textContent='Entrar';
-        isRegistering=false;toggleAuthMode();
-        return;
-      }
-    }else{
-      result=await sb.auth.signInWithPassword({email,password});
-      if(result.error)throw result.error;
+      result = await sb.auth.signUp({email, password});
+    } else {
+      result = await sb.auth.signInWithPassword({email, password});
     }
-    currentUser=result.data.user;
-    onAuthSuccess();
-  }catch(e){
-    gid('authError').textContent=e.message||'Erro ao autenticar.';
-    gid('authError').style.display='block';
+    
+    console.log('Auth result:', result);
+    
+    if(result.error){
+      gid('authError').textContent = result.error.message;
+      gid('authError').style.display = 'block';
+      gid('authBtn').textContent = isRegistering ? 'Criar Conta' : 'Entrar';
+      return;
+    }
+    
+    if(result.data && result.data.user){
+      currentUser = result.data.user;
+      gid('authOverlay').style.display = 'none';
+      gid('appShell').style.display = 'block';
+      gid('userEmail').textContent = currentUser.email;
+      setDbStatus('ok','● conectado');
+      initApp();
+      return;
+    }
+    
+    if(isRegistering && result.data && !result.data.session){
+      gid('authError').style.color = 'var(--green)';
+      gid('authError').textContent = '✅ Conta criada! Agora faça login.';
+      gid('authError').style.display = 'block';
+      isRegistering = false;
+      toggleAuthMode();
+    }
+  } catch(e){
+    console.error('Auth error:', e);
+    gid('authError').textContent = e.message || 'Erro ao autenticar';
+    gid('authError').style.display = 'block';
   }
-}
-
-async function logout(){
-  await sb.auth.signOut();
-  currentUser=null;
-  gid('authOverlay').style.display='flex';
-  gid('appShell').style.display='none';
-  gid('authEmail').value='';gid('authPassword').value='';
+  gid('authBtn').textContent = isRegistering ? 'Criar Conta' : 'Entrar';
 }
 
 // ── RLS HELPER ─────────────────────────────────────
