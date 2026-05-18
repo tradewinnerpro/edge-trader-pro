@@ -750,7 +750,7 @@ const SCORE_LABELS=['','1 — Setup Fraco','2 — Setup Médio','3 — Setup Bom
 const ASSETS_KEY='twp_assets_v5';
 const WEEKLY_KEY='twp_weekly_v5';
 const META_KEY='twp_meta_v5';
-
+ura, fechamento, maxima e minima.</p><ul><li><strong>Vela Verde:</strong> fechamento acima da abertura — compr
 const DEFAULT_ASSETS=[
   {name:'GOLD (XAUUSD)',symbol:'OANDA:XAUUSD',fator:10},
   {name:'NASDAQ (NDX)',symbol:'OANDA:NAS100USD',fator:20},
@@ -760,7 +760,7 @@ const DEFAULT_ASSETS=[
 ];
 
 const EDU_DATA=[
-  {cat:'Candlesticks',title:'O que é um Candlestick?',preview:'Representação visual do movimento de preços em um período.',full:`<p>Cada candlestick representa <strong>4 dados</strong>: abertura, fechamento, maxima e minima.</p><ul><li><strong>Vela Verde:</strong> fechamento acima da abertura — compradores dominaram</li><li><strong>Vela Vermelha:</strong> fechamento abaixo — vendedores dominaram</li><li>Pavios longos = rejeição de preço naquele nível</li></ul><div class='tip'>💡 Origem japonesa do séc. XVIII. O método mais popular de análise no mundo.</div>`},
+  {cat:'Candlesticks',title:'O que é um Candlestick?',preview:'Representação visual do movimento de preços em um período.',full:`<p>Cada candlestick representa <strong>4 dados</strong>: abertadores dominaram</li><li><strong>Vela Vermelha:</strong> fechamento abaixo — vendedores dominaram</li><li>Pavios longos = rejeição de preço naquele nível</li></ul><div class='tip'>💡 Origem japonesa do séc. XVIII. O método mais popular de análise no mundo.</div>`},
   {cat:'Candlesticks',title:'Pin Bar — Rejeição de Preço',preview:'Candle com pavio longo indicando forte rejeição de nível.',full:`<p>Pavio de ao menos 2x o tamanho do corpo.</p><ul><li><strong>Alta:</strong> pavio longo para baixo — rejeição de suporte → compra</li><li><strong>Baixa:</strong> pavio longo para cima — rejeição de resistência → venda</li><li>Confirma melhor em nível chave (S/R, Fibonacci, EMA)</li></ul><div class='tip'>⭐ Score 4-5 estrelas quando em nível relevante com contexto claro.</div>`},
   {cat:'Candlesticks',title:'Engolfo (Engulfing)',preview:'Candle que engole completamente o candle anterior.',full:`<p>Um dos padrões de reversão mais confiáveis.</p><ul><li><strong>Alta:</strong> vela verde engole vela vermelha → reversão para cima</li><li><strong>Baixa:</strong> vela vermelha engole verde → reversão para baixo</li><li>Volume elevado confirma a reversão</li></ul><div class='tip'>💡 Mais poderoso em extremo de tendência + nível chave.</div>`},
   {cat:'Candlesticks',title:'Inside Bar — Acumulação',preview:'Candle dentro do range do candle anterior. Pausa antes do movimento.',full:`<p>100% dentro da maxima/minima do candle anterior (candle mãe).</p><ul><li>Pausa antes de movimento direcional</li><li>Rompimento para cima → compra; para baixo → venda</li><li>Stop abaixo/acima do candle mãe</li></ul><div class='tip'>📊 Quanto menor o inside bar, mais comprimida a energia.</div>`},
