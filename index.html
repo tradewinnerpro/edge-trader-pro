@@ -760,10 +760,10 @@ const DEFAULT_ASSETS=[
 ];
 
 const EDU_DATA=[
-  {cat:'Candlesticks',title:'O que é um Candlestick?',preview:'Representação visual do movimento de preços em um período.',full:`<p>Cada candlestick representa <strong>4 dados</strong>: abertura, fechamento, máxima e mínima.</p><ul><li><strong>Vela Verde:</strong> fechamento acima da abertura — compradores dominaram</li><li><strong>Vela Vermelha:</strong> fechamento abaixo — vendedores dominaram</li><li>Pavios longos = rejeição de preço naquele nível</li></ul><div class='tip'>💡 Origem japonesa do séc. XVIII. O método mais popular de análise no mundo.</div>`},
+  {cat:'Candlesticks',title:'O que é um Candlestick?',preview:'Representação visual do movimento de preços em um período.',full:`<p>Cada candlestick representa <strong>4 dados</strong>: abertura, fechamento, maxima e minima.</p><ul><li><strong>Vela Verde:</strong> fechamento acima da abertura — compradores dominaram</li><li><strong>Vela Vermelha:</strong> fechamento abaixo — vendedores dominaram</li><li>Pavios longos = rejeição de preço naquele nível</li></ul><div class='tip'>💡 Origem japonesa do séc. XVIII. O método mais popular de análise no mundo.</div>`},
   {cat:'Candlesticks',title:'Pin Bar — Rejeição de Preço',preview:'Candle com pavio longo indicando forte rejeição de nível.',full:`<p>Pavio de ao menos 2x o tamanho do corpo.</p><ul><li><strong>Alta:</strong> pavio longo para baixo — rejeição de suporte → compra</li><li><strong>Baixa:</strong> pavio longo para cima — rejeição de resistência → venda</li><li>Confirma melhor em nível chave (S/R, Fibonacci, EMA)</li></ul><div class='tip'>⭐ Score 4-5 estrelas quando em nível relevante com contexto claro.</div>`},
   {cat:'Candlesticks',title:'Engolfo (Engulfing)',preview:'Candle que engole completamente o candle anterior.',full:`<p>Um dos padrões de reversão mais confiáveis.</p><ul><li><strong>Alta:</strong> vela verde engole vela vermelha → reversão para cima</li><li><strong>Baixa:</strong> vela vermelha engole verde → reversão para baixo</li><li>Volume elevado confirma a reversão</li></ul><div class='tip'>💡 Mais poderoso em extremo de tendência + nível chave.</div>`},
-  {cat:'Candlesticks',title:'Inside Bar — Acumulação',preview:'Candle dentro do range do candle anterior. Pausa antes do movimento.',full:`<p>100% dentro da máxima/mínima do candle anterior (candle mãe).</p><ul><li>Pausa antes de movimento direcional</li><li>Rompimento para cima → compra; para baixo → venda</li><li>Stop abaixo/acima do candle mãe</li></ul><div class='tip'>📊 Quanto menor o inside bar, mais comprimida a energia.</div>`},
+  {cat:'Candlesticks',title:'Inside Bar — Acumulação',preview:'Candle dentro do range do candle anterior. Pausa antes do movimento.',full:`<p>100% dentro da maxima/minima do candle anterior (candle mãe).</p><ul><li>Pausa antes de movimento direcional</li><li>Rompimento para cima → compra; para baixo → venda</li><li>Stop abaixo/acima do candle mãe</li></ul><div class='tip'>📊 Quanto menor o inside bar, mais comprimida a energia.</div>`},
   {cat:'Suporte & Resistência',title:'O que são Suporte e Resistência?',preview:'Níveis de preço onde o ativo tende a mudar de direção.',full:`<p><strong>Suporte</strong> = "chão" (compradores impedem queda).<br><strong>Resistência</strong> = "teto" (vendedores impedem alta).</p><ul><li>Quanto mais testado e respeitado, mais forte o nível</li><li>Suporte rompido vira resistência (e vice-versa)</li><li>Volume elevado durante o teste aumenta confiabilidade</li></ul><div class='tip'>🎯 S/R são os pontos mais importantes para entradas, stops e TPs.</div>`},
   {cat:'Suporte & Resistência',title:'Zonas de Oferta e Demanda (S&D)',preview:'Regiões institucionais onde grandes players deixaram ordens.',full:`<p><strong>Demanda</strong> = onde o preço saiu com força de alta.<br><strong>Oferta</strong> = onde o preço caiu com força.</p><ul><li>Na primeira revisita, ordens de grandes players ainda estão lá</li><li>Saída explosiva = havia interesse institucional</li><li>Zona "fresca" (1ª revisita) é muito mais poderosa</li></ul><div class='tip'>⭐ Setup de 5 estrelas na 1ª revisita com candle de confirmação.</div>`},
   {cat:'Tendência',title:'Teoria de Dow — 6 Princípios',preview:'Base da análise técnica moderna criada no séc. XIX.',full:`<p>Os 6 princípios de Charles Dow:</p><ul><li><strong>1.</strong> O mercado desconta tudo</li><li><strong>2.</strong> Três movimentos: primária / secundária / terciária</li><li><strong>3.</strong> Três fases: acumulação → participação → distribuição</li><li><strong>4.</strong> Índices se confirmam mutuamente</li><li><strong>5.</strong> Volume confirma a tendência</li><li><strong>6.</strong> Tendência persiste até sinais claros de reversão</li></ul><div class='tip'>📚 Fonte: Stormer — Análise Gráfica, Liberta Investimentos.</div>`},
@@ -1040,20 +1040,75 @@ async function saveSetupsFn(){
 }
 
 // ── EXPORT CSV ─────────────────────────────────────────
+// ── FIX 1: EXPORT CSV ──────────────────────────────────
+// Substitua a função exportCSV inteira por esta versão
 function exportCSV(){
-  const acct=trades.filter(t=>(t.conta_tipo||'demo')===currentAccount);
-  if(!acct.length){alert('Nenhum trade para exportar.');return;}
-  const headers=['Data/Hora','Ativo','Setup','Sessão','Direção','Entrada','Stop','TP1','TP2','TP3','Qtd','Fator','Saída','Estimado','Real','Score','Violações','Observação'];
-  const rows=acct.map(t=>{
-    const setupNome=t.setup_id?setups.find(s=>s.id===t.setup_id)?.nome||'':'';
-    const real=t.resultado_real!=null?t.resultado_real:'';
-    return [t.date_time_raw||t.created_at,t.ativo,setupNome,t.sessao||'',t.lado,t.entrada,t.stop,t.tp1,t.tp2||'',t.tp3||'',t.qtd,t.fator,t.tipo_saida||'',t.resultado||'',real,t.score||'',(t.regras_quebradas||[]).join(';'),(t.observacao||'').replace(/"/g,'""')].map(v=>`"${v}"`).join(',');
+  var acct = trades.filter(function(t){ return (t.conta_tipo||'demo') === currentAccount; });
+  if(!acct.length){ alert('Nenhum trade para exportar.'); return; }
+
+  var headers = [
+    'Data/Hora','Ativo','Setup','Sessao','Direcao',
+    'Entrada','Stop','TP1','TP2','TP3','Qtd','Fator',
+    'Saida','Estimado','Real','Score','Violacoes','Observacao'
+  ];
+
+  var rows = acct.map(function(t){
+    var s = setups.find(function(x){ return x.id === t.setup_id; });
+    var setupNome = s ? s.nome : '';
+    var real = t.resultado_real != null ? t.resultado_real : '';
+    var regras = (t.regras_quebradas || []).join(';');
+    var obs = (t.observacao || '').replace(/"/g, '""');
+    var vals = [
+      t.date_time_raw || t.created_at,
+      t.ativo,
+      setupNome,
+      t.sessao || '',
+      t.lado,
+      t.entrada,
+      t.stop,
+      t.tp1,
+      t.tp2 || '',
+      t.tp3 || '',
+      t.qtd,
+      t.fator,
+      t.tipo_saida || '',
+      t.resultado || '',
+      real,
+      t.score || '',
+      regras,
+      obs
+    ];
+    return vals.map(function(v){ return '"' + v + '"'; }).join(',');
   });
-  const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download=`trade-winner-${currentAccount}-${new Date().toISOString().slice(0,10)}.csv`;
+
+  var csv = '\uFEFF' + [headers.join(',')].concat(rows).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'trade-winner-' + currentAccount + '-' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
 }
+
+
+// ── FIX 2: RENDER CANDLES (tooltip sem acentos) ────────
+// Dentro da função renderCandles, localize o bloco "callbacks"
+// e substitua APENAS o label callback por este:
+
+// DE:
+// label:item=>{const d=ohlc[item.dataIndex],res=d.close-d.open;return['  Abertura  : R$ '+d.open.toFixed(2),'  Máxima    : R$ '+d.high.toFixed(2),'  Mínima    : R$ '+d.low.toFixed(2),'  Fechamento: R$ '+d.close.toFixed(2),'  Resultado : '+(res>=0?'+':'')+'R$ '+res.toFixed(2)];}
+
+// POR:
+// label:function(item){
+//   var d=ohlc[item.dataIndex];
+//   var res=d.close-d.open;
+//   return[
+//     'Abertura: R$ '+d.open.toFixed(2),
+//     'Maxima: R$ '+d.high.toFixed(2),
+//     'Minima: R$ '+d.low.toFixed(2),
+//     'Fechamento: R$ '+d.close.toFixed(2),
+//     'Resultado: '+(res>=0?'+':'')+'R$ '+res.toFixed(2)
+//   ];
+// }
 
 // ── ACCOUNT ────────────────────────────────────────────
 function setAccount(acc){
