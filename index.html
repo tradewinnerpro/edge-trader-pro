@@ -103,7 +103,7 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loading-overlay.show{display:flex}
 .spinner{width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body class="demo-mode">
@@ -184,9 +184,9 @@ td{padding:10px;vertical-align:middle;font-size:12px}
   </div>
 
   <div class="filter-row"><div class="filter-tabs"><button class="tab active" data-filter="all">Todos</button><button class="tab" data-filter="win">Ganhos</button><button class="tab" data-filter="loss">Perdas</button><button class="tab" data-filter="pending">Aberto</button></div><div class="trade-count" id="tradeCount">—</div></div>
-  <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Data/Hora</th><th>Ativo</th><th>Setup</th><th>Sessão</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Saída</th><th>Est.</th><th>Real</th><th>Score</th><th>Obs.</th><th>Ações</th></tr></thead><tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...</td></tr></tbody></table></div></div>
-  <div class="footer" style="text-align:center;margin-top:32px;font-size:10px"><p>TRADE WINNER PRO v5 • Supabase Cloud</p></div>
-</div>
+  <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Data/Hora</th><th>Ativo</th><th>Setup</th><th>Sessão</th><th>Dir.</th><th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th><th>Saída</th><th>Est.</th><th>Real</th><th>Score</th><th>Obs.</th><th>Ações</th></tr></thead><tbody id="tradesBody"><tr class="empty-row"><td colspan="16">Carregando...<\/td><\/tr><\/tbody><\/table><\/div><\/div>
+  <div class="footer" style="text-align:center;margin-top:32px;font-size:10px"><p>TRADE WINNER PRO v5 • Supabase Cloud<\/p><\/div>
+<\/div>
 
 <script>
 const SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
@@ -225,7 +225,23 @@ function rebuildSelect() {
 function getAtivo() { return $('fAtivo').value === 'Outro' ? ($('outroAtivo').value.trim() || 'Outro') : $('fAtivo').value; }
 
 async function fetchSetups() {
-  try { const {data,error} = await sb.from('setups').select('*').order('id'); if(error) throw error; setups = data || []; }
+  try { 
+    const {data,error} = await sb.from('setups').select('*').order('id'); 
+    if(error) throw error; 
+    setups = data || []; 
+    if(setups.length === 0) {
+      const defaultSetups = [
+        {nome:'Breakout de Sessão', descricao:'Rompe máxima/minima da primeira hora', score:4},
+        {nome:'Pullback em Tendência', descricao:'Retração após movimento forte', score:5},
+        {nome:'Reversão em Suporte', descricao:'Toque em suporte diário', score:3}
+      ];
+      for(let s of defaultSetups) {
+        await sb.from('setups').insert([s]);
+      }
+      const {data: newData} = await sb.from('setups').select('*');
+      setups = newData || [];
+    }
+  }
   catch(e) { console.warn('setups:', e.message); setups = []; }
   const sel = $('fSetup');
   sel.innerHTML = '<option value="">— Selecione um setup —</option>';
@@ -263,13 +279,23 @@ function setAccount(acc) {
   $('tabDemo').className = 'account-tab' + (acc === 'demo' ? ' active-demo' : '');
   $('tabReal').className = 'account-tab' + (acc === 'real' ? ' active-real' : '');
   $('formAccountBadge').textContent = acc === 'demo' ? '📊 DEMO' : '💰 REAL';
+  $('equityLabel').textContent = acc === 'demo' ? 'DEMO' : 'REAL';
+  $('candleLabel').textContent = acc === 'demo' ? 'DEMO' : 'REAL';
   $('capitalLabel').textContent = 'Capital ' + (acc === 'demo' ? 'Demo' : 'Real');
   $('capitalInput').value = acc === 'demo' ? capitalDemo : capitalReal;
   renderAll();
 }
 
 async function fetchCapital() {
-  try { const {data} = await sb.from('capital').select('*'); if(data) { const d = data.find(x => x.conta_tipo === 'demo'), r = data.find(x => x.conta_tipo === 'real'); if(d) capitalDemo = parseFloat(d.valor); if(r) capitalReal = parseFloat(r.valor); } } catch(e) {}
+  try { 
+    const {data,error} = await sb.from('capital').select('*'); 
+    if(error) throw error;
+    if(data) { 
+      const d = data.find(x => x.conta_tipo === 'demo'), r = data.find(x => x.conta_tipo === 'real'); 
+      if(d) capitalDemo = parseFloat(d.valor); 
+      if(r) capitalReal = parseFloat(r.valor); 
+    } 
+  } catch(e) { console.warn('fetchCapital:', e); }
   $('capitalInput').value = currentAccount === 'demo' ? capitalDemo : capitalReal;
 }
 
@@ -277,38 +303,82 @@ async function saveCapital() {
   const v = parseFloat($('capitalInput').value);
   if(isNaN(v) || v <= 0) { alert('Valor inválido'); return; }
   if(currentAccount === 'demo') capitalDemo = v; else capitalReal = v;
-  try { await sb.from('capital').upsert({conta_tipo:currentAccount, valor:v, updated_at:new Date().toISOString()}, {onConflict:'conta_tipo'}); } catch(e) {}
-  renderAll();
+  try { 
+    await sb.from('capital').upsert({conta_tipo:currentAccount, valor:v, updated_at:new Date().toISOString()}, {onConflict:'conta_tipo'}); 
+    renderAll();
+  } catch(e) { alert('Erro ao salvar capital: '+e.message); }
 }
 
 async function fetchTrades() {
   showLoading(true);
-  try { const {data,error} = await sb.from('trades').select('*').order('created_at',{ascending:false}); if(error) throw error; trades = data || []; setDbStatus('ok','conectado'); }
-  catch(e) { setDbStatus('err','erro'); trades = []; }
+  try { 
+    const {data,error} = await sb.from('trades').select('*').order('created_at',{ascending:false}); 
+    if(error) throw error; 
+    trades = data || []; 
+    setDbStatus('ok','conectado'); 
+  }
+  catch(e) { 
+    console.error('fetchTrades:', e);
+    setDbStatus('err','erro de conexão'); 
+    trades = []; 
+  }
   finally { showLoading(false); renderAll(); }
 }
 
-async function insertTrade(p) { showLoading(true); try { await sb.from('trades').insert([p]); } catch(e) { alert(e.message); } finally { showLoading(false); } }
-async function updateTradeDB(id,p) { showLoading(true); try { await sb.from('trades').update(p).eq('id',id); } catch(e) { alert(e.message); } finally { showLoading(false); } }
-async function deleteTradeDB(id) { if(!confirm('Excluir?')) return; showLoading(true); try { await sb.from('trades').delete().eq('id',id); await fetchTrades(); } catch(e) { alert(e.message); showLoading(false); } }
+async function insertTrade(p) { 
+  showLoading(true); 
+  try { 
+    const {error} = await sb.from('trades').insert([p]); 
+    if(error) throw error;
+    await fetchTrades();
+  } catch(e) { alert('Erro ao registrar: '+e.message); } 
+  finally { showLoading(false); } 
+}
+
+async function updateTradeDB(id,p) { 
+  showLoading(true); 
+  try { 
+    const {error} = await sb.from('trades').update(p).eq('id',id); 
+    if(error) throw error;
+    await fetchTrades();
+  } catch(e) { alert('Erro ao atualizar: '+e.message); } 
+  finally { showLoading(false); } 
+}
+
+async function deleteTradeDB(id) { 
+  if(!confirm('Excluir esta operação?')) return; 
+  showLoading(true); 
+  try { 
+    const {error} = await sb.from('trades').delete().eq('id',id); 
+    if(error) throw error;
+    await fetchTrades(); 
+  } catch(e) { alert('Erro ao excluir: '+e.message); showLoading(false); } 
+}
 
 function renderAll() {
   const acct = trades.filter(t => (t.conta_tipo || 'demo') === currentAccount);
-  updateStats(acct); renderTable(acct); renderEquity(acct); renderCandles(acct); updateCapitalBadge(acct);
+  updateStats(acct); 
+  renderTable(acct); 
+  renderEquity(acct); 
+  renderCandles(acct); 
+  updateCapitalBadge(acct);
 }
 
 function updateCapitalBadge(acct) {
   const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
   const net = acct.reduce((a,t) => a + (t.resultado_real ?? t.resultado ?? 0), 0);
   const saldo = cap + net, pct = cap > 0 ? (net/cap*100).toFixed(2) : 0;
-  $('saldoAtual').textContent = 'R$ ' + saldo.toFixed(2);
-  $('rendTotal').textContent = (net >= 0 ? '+' : '') + pct + '%';
+  $('saldoAtual').innerHTML = 'R$ ' + saldo.toFixed(2).replace('.',',');
+  $('rendTotal').innerHTML = (net >= 0 ? '+' : '') + pct + '%';
 }
 
 function updateStats(acct) {
   const total = acct.length;
   $('sTotalOps').textContent = total;
-  if(!total) { ['sWinRate','sPayoff','sExpect','sNet','sRegras','sScore'].forEach(id => { $(id).textContent = '—'; }); return; }
+  if(!total) { 
+    ['sWinRate','sPayoff','sExpect','sNet','sRegras','sScore'].forEach(id => { $(id).textContent = '—'; }); 
+    return; 
+  }
   const fn = t => t.resultado_real ?? t.resultado ?? 0;
   const wins = acct.filter(t => fn(t) > 0), losses = acct.filter(t => fn(t) < 0);
   const wr = (wins.length/acct.length)*100;
@@ -323,13 +393,13 @@ function updateStats(acct) {
   $('sWinRate').textContent = wr.toFixed(1)+'%';
   $('sPayoff').textContent = payoff.toFixed(2)+'R';
   $('sExpect').textContent = 'R$ '+expect.toFixed(2);
-  $('sNet').textContent = 'R$ '+net.toFixed(2);
+  $('sNet').innerHTML = net >= 0 ? '+R$ '+net.toFixed(2) : '-R$ '+Math.abs(net).toFixed(2);
   $('sRegras').textContent = totalReg;
   $('sScore').textContent = avgSc ? avgSc+'★' : '—';
 }
 
 function renderEquity(acct) {
-  const sorted = [...acct].filter(t => t.resultado_real != null).sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
+  const sorted = [...acct].filter(t => t.resultado_real != null && !isNaN(t.resultado_real)).sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
   const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
   const canvas = $('equityChart'), empty = $('equityEmpty');
   if(!sorted.length) { empty.style.display='flex'; canvas.style.display='none'; if(equityChart){equityChart.destroy();equityChart=null;} return; }
@@ -339,23 +409,31 @@ function renderEquity(acct) {
   const isPos = cum >= cap;
   if(equityChart) equityChart.destroy();
   const ctx = canvas.getContext('2d');
-  equityChart = new Chart(ctx, {type:'line', data:{datasets:[{data, borderColor:isPos?'#3dffa0':'#ff5e6b', fill:true, tension:0.35}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});
+  equityChart = new Chart(ctx, {type:'line', data:{datasets:[{data, borderColor:isPos?'#3dffa0':'#ff5e6b', fill:true, tension:0.35, backgroundColor:isPos?'rgba(61,255,160,0.1)':'rgba(255,94,107,0.1)'}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>'R$ '+ctx.raw.y.toFixed(2)}}}}});
 }
 
 function renderCandles(acct) {
-  const sorted = [...acct].filter(t => t.resultado_real != null).sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
+  const sorted = [...acct].filter(t => t.resultado_real != null && !isNaN(t.resultado_real)).sort((a,b)=>new Date(a.date_time_raw||a.created_at)-new Date(b.date_time_raw||b.created_at));
   const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
   const canvas = $('candleChart'), empty = $('candleEmpty');
   const dayMap = {}; let running = cap;
-  sorted.forEach(t => { const key = fmtDateKey(t.date_time_raw||t.created_at); if(!key) return; if(!dayMap[key]) dayMap[key]={open:running,high:running,low:running}; running += t.resultado_real; if(running>dayMap[key].high) dayMap[key].high=running; if(running<dayMap[key].low) dayMap[key].low=running; dayMap[key].close=running; });
+  sorted.forEach(t => { 
+    const key = fmtDateKey(t.date_time_raw||t.created_at); 
+    if(!key) return; 
+    if(!dayMap[key]) dayMap[key]={open:running,high:running,low:running,close:running}; 
+    running += t.resultado_real; 
+    if(running>dayMap[key].high) dayMap[key].high=running; 
+    if(running<dayMap[key].low) dayMap[key].low=running; 
+    dayMap[key].close=running; 
+  });
   const days = Object.keys(dayMap).sort();
   if(!days.length) { empty.style.display='flex'; canvas.style.display='none'; if(candleChart){candleChart.destroy();candleChart=null;} return; }
   empty.style.display='none'; canvas.style.display='block';
   const ohlc = days.map(d => ({...dayMap[d], day:d}));
-  const bodyData = ohlc.map(d => [Math.min(d.open,d.close), Math.max(d.open,d.close)||Math.min(d.open,d.close)+0.1]);
+  const bodyData = ohlc.map(d => [Math.min(d.open,d.close), Math.max(d.open,d.close)]);
   const bodyColors = ohlc.map(d => d.close>=d.open ? 'rgba(61,255,160,0.85)' : 'rgba(255,94,107,0.85)');
   if(candleChart) candleChart.destroy();
-  candleChart = new Chart(canvas.getContext('2d'), {type:'bar', data:{labels:ohlc.map(d=>d.day.slice(5)), datasets:[{data:bodyData, backgroundColor:bodyColors, barThickness:15}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:item=>'R$ '+item.raw}}}}});
+  candleChart = new Chart(canvas.getContext('2d'), {type:'bar', data:{labels:ohlc.map(d=>d.day.slice(5)), datasets:[{data:bodyData, backgroundColor:bodyColors, barThickness:12}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:item=>'R$ '+item.raw[0].toFixed(2)+' - R$ '+item.raw[1].toFixed(2)}}}}});
 }
 
 function renderTable(acct) {
@@ -372,7 +450,25 @@ function renderTable(acct) {
     const saida = t.tipo_saida || 'pending';
     const stars = t.score ? '★'.repeat(t.score) + '☆'.repeat(5-t.score) : '—';
     const setupNome = setups.find(s => s.id === t.setup_id)?.nome || '';
-    return `<tr><td>${dt}</td><td style="color:var(--gold)">${t.ativo}</td><td><span style="background:rgba(167,139,250,.15);padding:2px 8px;border-radius:20px;font-size:9px">${setupNome}</span></td><td>${t.sessao||'—'}</td><td><span class="dir-badge ${t.lado==='compra'?'dir-long':'dir-short'}">${t.lado==='compra'?'LONG':'SHORT'}</span></td><td>${Number(t.entrada).toFixed(2)}</td><td style="color:var(--red)">${Number(t.stop).toFixed(2)}</td><td>${t.tp1?`TP1:${t.tp1}`:''}</td><td>${t.qtd}</td><td>${t.fator}</td><td><span class="saida-pill ${saida}">${sMap[saida]||'—'}</span></td><td class="${rE>=0?'res-pos':'res-neg'}">${rE>=0?'+':''}R$ ${Math.abs(rE).toFixed(2)}</td><td>${rR!=null?(rR>=0?'+':'-')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td><td style="color:var(--gold)">${stars}</td><td>${(t.observacao||'').slice(0,20)}</td><td class="action-cell"><button class="act-btn" onclick="startEdit(${t.id})">✏️</button><button class="act-btn del" onclick="deleteTradeDB(${t.id})">🗑️</button></td></tr>`;
+    const alvos = [t.tp1, t.tp2, t.tp3].filter(v=>v).map(v=>v.toFixed(2)).join('/');
+    return `<tr>
+      <td>${dt}</td>
+      <td style="color:var(--gold)">${t.ativo}</td>
+      <td><span style="background:rgba(167,139,250,.15);padding:2px 8px;border-radius:20px;font-size:9px">${setupNome}</span></td>
+      <td>${t.sessao||'—'}</td>
+      <td><span class="dir-badge ${t.lado==='compra'?'dir-long':'dir-short'}">${t.lado==='compra'?'LONG':'SHORT'}</span></td>
+      <td>${Number(t.entrada).toFixed(2)}</td>
+      <td style="color:var(--red)">${Number(t.stop).toFixed(2)}</td>
+      <td style="font-size:10px">${alvos||'—'}</td>
+      <td>${t.qtd}</td>
+      <td>${t.fator}</td>
+      <td><span class="saida-pill ${saida}">${sMap[saida]||'—'}</span></td>
+      <td class="${rE>=0?'res-pos':'res-neg'}">${rE>=0?'+':'-'}R$ ${Math.abs(rE).toFixed(2)}</td>
+      <td>${rR!=null?(rR>=0?'+':'-')+'R$ '+Math.abs(rR).toFixed(2):'—'}</td>
+      <td style="color:var(--gold)">${stars}</td>
+      <td>${(t.observacao||'').slice(0,20)}</td>
+      <td class="action-cell"><button class="act-btn" onclick="window.startEdit(${t.id})">✏️</button><button class="act-btn del" onclick="window.deleteTradeDB(${t.id})">🗑️</button></td>
+    </tr>`;
   }).join('');
 }
 
@@ -380,69 +476,162 @@ function updatePreview() {
   const e = parseFloat($('fEntrada').value), s = parseFloat($('fStop').value), t1 = parseFloat($('fTp1').value);
   const q = parseFloat($('fQtd').value)||1, f = parseFloat($('fFator').value)||1, lado = $('fLado').value;
   const cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
-  if(!isNaN(e) && !isNaN(t1)) {
+  if(!isNaN(e) && !isNaN(t1) && t1>0) {
     const r = calcResultado(e, t1, parseFloat($('fTp2').value), parseFloat($('fTp3').value), q, f, lado);
-    $('previewBox').textContent = (r>=0?'+ ':'')+'R$ '+r.toFixed(2);
-    $('lucroPot').textContent = 'R$ '+r.toFixed(2);
+    $('previewBox').innerHTML = (r>=0?'+ ':'')+'R$ '+r.toFixed(2);
+    $('lucroPot').innerHTML = 'R$ '+r.toFixed(2);
   }
   if(!isNaN(e) && !isNaN(s)) {
     const risco = Math.abs((lado==='compra'?s-e:e-s)*q*f);
-    $('riscoReais').textContent = 'R$ '+risco.toFixed(2);
-    if(cap > 0) $('riscoPct').textContent = (risco/cap*100).toFixed(2)+'%';
-    if(!isNaN(t1)) { const ret = Math.abs((lado==='compra'?t1-e:e-t1)*q*f); $('riscoRatio').textContent = '1 : '+(risco>0?ret/risco:0).toFixed(2); }
+    $('riscoReais').innerHTML = 'R$ '+risco.toFixed(2);
+    if(cap > 0) $('riscoPct').innerHTML = (risco/cap*100).toFixed(2)+'%';
+    if(!isNaN(t1) && t1>0) { const ret = Math.abs((lado==='compra'?t1-e:e-t1)*q*f); $('riscoRatio').innerHTML = '1 : '+(risco>0?ret/risco:0).toFixed(2); }
   }
 }
 
+// Event Listeners
 $('fAtivo').addEventListener('change', () => { $('outroAtivo').style.display = $('fAtivo').value === 'Outro' ? 'block' : 'none'; updatePreview(); });
 [$('fEntrada'),$('fStop'),$('fTp1'),$('fTp2'),$('fTp3'),$('fQtd'),$('fFator')].forEach(el => el?.addEventListener('input', updatePreview));
 $('fLado')?.addEventListener('change', updatePreview);
-document.querySelectorAll('.sessao-chip').forEach(c => c.addEventListener('click', () => { document.querySelectorAll('.sessao-chip').forEach(x => x.classList.remove('active')); c.classList.add('active'); selectedSessao = c.dataset.sessao; }));
-document.querySelectorAll('.star').forEach(s => s.addEventListener('click', () => { selectedScore = parseInt(s.dataset.v); document.querySelectorAll('.star').forEach((x,i) => x.classList.toggle('active', i<selectedScore)); $('scoreLabel').textContent = SCORE_LABELS[selectedScore]; }));
-document.querySelectorAll('.saida-badge').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.saida-badge').forEach(x => x.className='saida-badge'); b.classList.add('active-'+b.dataset.saida); selectedSaida = b.dataset.saida; if(b.dataset.saida==='loss'){ const e=parseFloat($('fEntrada').value),s=parseFloat($('fStop').value),q=parseFloat($('fQtd').value)||1,f=parseFloat($('fFator').value)||1; if(!isNaN(e)&&!isNaN(s)) $('fResultadoReal').value = (($('fLado').value==='compra'?s-e:e-s)*q*f).toFixed(2); } }));
+
+document.querySelectorAll('.sessao-chip').forEach(c => c.addEventListener('click', () => { 
+  document.querySelectorAll('.sessao-chip').forEach(x => x.classList.remove('active')); 
+  c.classList.add('active'); 
+  selectedSessao = c.dataset.sessao; 
+}));
+
+document.querySelectorAll('.star').forEach(s => s.addEventListener('click', () => { 
+  selectedScore = parseInt(s.dataset.v); 
+  document.querySelectorAll('.star').forEach((x,i) => x.classList.toggle('active', i<selectedScore)); 
+  $('scoreLabel').innerHTML = SCORE_LABELS[selectedScore]; 
+}));
+
+document.querySelectorAll('.saida-badge').forEach(b => b.addEventListener('click', () => { 
+  document.querySelectorAll('.saida-badge').forEach(x => { x.className='saida-badge'; }); 
+  b.classList.add('active-'+b.dataset.saida); 
+  selectedSaida = b.dataset.saida; 
+  if(b.dataset.saida==='loss'){ 
+    const e=parseFloat($('fEntrada').value),s=parseFloat($('fStop').value),q=parseFloat($('fQtd').value)||1,f=parseFloat($('fFator').value)||1; 
+    if(!isNaN(e)&&!isNaN(s)) $('fResultadoReal').value = (($('fLado').value==='compra'?s-e:e-s)*q*f).toFixed(2); 
+  } 
+}));
+
 document.querySelectorAll('.rule-check').forEach(l => l.addEventListener('change', () => l.classList.toggle('checked', l.querySelector('input').checked)));
 
 $('btnAdd').addEventListener('click', async () => {
   const e = parseFloat($('fEntrada').value), s = parseFloat($('fStop').value), t1 = parseFloat($('fTp1').value), q = parseFloat($('fQtd').value), f = parseFloat($('fFator').value), lado = $('fLado').value;
-  if([e,s,t1,q,f].some(isNaN)) { alert('Preencha todos os campos'); return; }
+  if([e,s,t1,q,f].some(isNaN)) { alert('Preencha todos os campos obrigatórios'); return; }
   const resultado = calcResultado(e, t1, parseFloat($('fTp2').value), parseFloat($('fTp3').value), q, f, lado);
   const rReal = parseFloat($('fResultadoReal').value);
   const regras = Array.from(document.querySelectorAll('.rule-check input:checked')).map(c => c.value);
-  const payload = { date_time_raw: $('fDateTime').value || nowLocal(), ativo: getAtivo(), lado: lado, entrada: e, stop: s, tp1: t1, tp2: parseFloat($('fTp2').value)||null, tp3: parseFloat($('fTp3').value)||null, qtd: q, fator: f, observacao: $('fObs').value.trim(), resultado, tipo_saida: selectedSaida, resultado_real: isNaN(rReal)?null:rReal, regras_quebradas: regras, score: selectedScore, sessao: selectedSessao, conta_tipo: currentAccount, setup_id: selectedSetupId };
-  if(editingId) { await updateTradeDB(editingId, payload); editingId = null; $('btnAdd').textContent = '➕ Registrar Trade'; $('cancelEdit').style.display = 'none'; }
-  else { await insertTrade(payload); }
-  await fetchTrades();
+  const payload = { 
+    date_time_raw: $('fDateTime').value || nowLocal(), 
+    ativo: getAtivo(), 
+    lado: lado, 
+    entrada: e, 
+    stop: s, 
+    tp1: t1, 
+    tp2: parseFloat($('fTp2').value)||null, 
+    tp3: parseFloat($('fTp3').value)||null, 
+    qtd: q, 
+    fator: f, 
+    observacao: $('fObs').value.trim(), 
+    resultado, 
+    tipo_saida: selectedSaida, 
+    resultado_real: isNaN(rReal)?null:rReal, 
+    regras_quebradas: regras, 
+    score: selectedScore, 
+    sessao: selectedSessao, 
+    conta_tipo: currentAccount, 
+    setup_id: selectedSetupId,
+    created_at: new Date().toISOString()
+  };
+  if(editingId) { 
+    await updateTradeDB(editingId, payload); 
+    editingId = null; 
+    $('btnAdd').innerHTML = '➕ Registrar Trade'; 
+    $('cancelEdit').style.display = 'none'; 
+  } else { 
+    await insertTrade(payload); 
+  }
+  // Reset form
   $('fEntrada').value=''; $('fStop').value=''; $('fTp1').value=''; $('fTp2').value=''; $('fTp3').value=''; $('fObs').value=''; $('fResultadoReal').value='';
+  $('fDateTime').value = nowLocal();
+  selectedScore = 1; selectedSaida = 'pending'; selectedSetupId = null;
+  document.querySelectorAll('.star').forEach((x,i) => x.classList.toggle('active', i<1));
+  document.querySelectorAll('.saida-badge').forEach(x => x.className='saida-badge');
+  document.querySelector('.saida-badge.active-pending').className = 'saida-badge active-pending';
+  $('fSetup').value = '';
+  onSetupChange();
 });
 
 window.startEdit = function(id) {
   const t = trades.find(x => x.id === id); if(!t) return;
   editingId = id;
   $('fDateTime').value = t.date_time_raw || nowLocal();
-  $('fAtivo').value = t.ativo; $('fLado').value = t.lado; $('fEntrada').value = t.entrada; $('fStop').value = t.stop;
-  $('fTp1').value = t.tp1; $('fTp2').value = t.tp2??''; $('fTp3').value = t.tp3??''; $('fQtd').value = t.qtd; $('fFator').value = t.fator;
-  $('fObs').value = t.observacao||''; $('fResultadoReal').value = t.resultado_real??'';
+  $('fAtivo').value = t.ativo; 
+  if(t.ativo && ![...$('fAtivo').options].some(o=>o.value===t.ativo)) {
+    const opt = document.createElement('option'); opt.value = t.ativo; opt.textContent = t.ativo;
+    $('fAtivo').appendChild(opt);
+  }
+  $('fAtivo').value = t.ativo;
+  $('fLado').value = t.lado; 
+  $('fEntrada').value = t.entrada; 
+  $('fStop').value = t.stop;
+  $('fTp1').value = t.tp1; 
+  $('fTp2').value = t.tp2??''; 
+  $('fTp3').value = t.tp3??''; 
+  $('fQtd').value = t.qtd; 
+  $('fFator').value = t.fator;
+  $('fObs').value = t.observacao||''; 
+  $('fResultadoReal').value = t.resultado_real??'';
   selectedSaida = t.tipo_saida||'pending';
   document.querySelectorAll('.saida-badge').forEach(b => { b.className='saida-badge'; if(b.dataset.saida===selectedSaida) b.classList.add('active-'+selectedSaida); });
   selectedScore = t.score||1;
   document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('active', i<selectedScore));
+  $('scoreLabel').innerHTML = SCORE_LABELS[selectedScore];
   selectedSessao = t.sessao||'Nova York';
   document.querySelectorAll('.sessao-chip').forEach(c => c.classList.toggle('active', c.dataset.sessao===selectedSessao));
   selectedSetupId = t.setup_id||null; $('fSetup').value = selectedSetupId||''; onSetupChange();
   updatePreview();
-  $('btnAdd').textContent = '✏️ Atualizar'; $('cancelEdit').style.display = 'flex';
+  $('btnAdd').innerHTML = '✏️ Atualizar'; 
+  $('cancelEdit').style.display = 'flex';
   window.scrollTo({top:0});
 };
 
-$('cancelEdit').addEventListener('click', () => { editingId = null; $('btnAdd').textContent = '➕ Registrar Trade'; $('cancelEdit').style.display = 'none'; });
+$('cancelEdit').addEventListener('click', () => { 
+  editingId = null; 
+  $('btnAdd').innerHTML = '➕ Registrar Trade'; 
+  $('cancelEdit').style.display = 'none'; 
+});
 
-document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentFilter = tab.dataset.filter; renderTable(trades.filter(t => (t.conta_tipo||'demo')===currentAccount)); }));
+document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => { 
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); 
+  tab.classList.add('active'); 
+  currentFilter = tab.dataset.filter; 
+  renderTable(trades.filter(t => (t.conta_tipo||'demo')===currentAccount)); 
+}));
+
 $('btnPrintReport')?.addEventListener('click', () => window.print());
 
-function openEdu() { alert('Painel educacional - Em breve mais conteúdos!'); }
-async function openSetupModal() { alert('Gerenciar Setups - Use o SQL Editor do Supabase para editar a tabela setups'); }
+$('tabDemo').addEventListener('click', () => setAccount('demo'));
+$('tabReal').addEventListener('click', () => setAccount('real'));
+
+function openEdu() { alert('📚 Conteúdo Educacional\n\nEm breve: Curso de Análise Técnica, Psicologia Trading e Gerenciamento de Risco!'); }
+async function openSetupModal() { alert('⚙️ Gerenciar Setups\n\nUse o SQL Editor do Supabase para editar a tabela "setups" ou adicione via código.'); }
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  $('clock').innerHTML = now.toLocaleTimeString('pt-BR');
+  $('dateStr').innerHTML = now.toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric'});
+}
+setInterval(updateClock, 1000);
+updateClock();
 
 async function init() {
   rebuildSelect();
+  $('fDateTime').value = nowLocal();
   await fetchCapital();
   await fetchSetups();
   await fetchTrades();
