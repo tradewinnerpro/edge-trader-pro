@@ -398,9 +398,11 @@ td{padding:10px;vertical-align:middle;font-size:12px}
   .stat-value{font-size:13px !important}
   .analytics-grid{grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
   .analytics-card{border:1px solid #ccc !important;padding:8px !important}
-  .charts-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-  .chart-card{border:1px solid #ccc !important;padding:8px !important}
-  .chart-wrap{height:130px}
+  .charts-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;page-break-inside:avoid}
+  .chart-card{border:1px solid #ccc !important;padding:8px !important;page-break-inside:avoid;overflow:hidden}
+  .chart-wrap{height:160px !important;position:relative !important;overflow:hidden !important}
+  .chart-wrap canvas{display:block !important;width:100% !important;max-width:100% !important;height:160px !important;max-height:160px !important;position:static !important}
+  .chart-empty{height:160px !important}
   .ticker-outer{display:none !important}
   .table-wrap{border:1px solid #ccc !important}
   .table-scroll{overflow:visible}
