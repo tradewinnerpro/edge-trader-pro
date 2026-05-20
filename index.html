@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -419,62 +419,62 @@ td{padding:10px;vertical-align:middle;font-size:12px}
    ═══════════════════════════════════════════════════════ -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div style="color:var(--text2);font-size:12px;letter-spacing:1px">syncing...</div>
+  <div style="color:var(--text2);font-size:12px;letter-spacing:1px">sincronizando...</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-   EDUCATION PANEL
+   PAINEL DE EDUCAÇÃO
    ═══════════════════════════════════════════════════════ -->
 <div class="edu-overlay" id="eduOverlay"></div>
 <div class="edu-panel" id="eduPanel">
   <div class="edu-header">
-    <div class="edu-header-title">Education - Technical Analysis</div>
-    <button class="edu-close" id="eduCloseBtn">X Close</button>
+    <div class="edu-header-title">Educação - Análise Técnica</div>
+    <button class="edu-close" id="eduCloseBtn">X Fechar</button>
   </div>
-  <div class="edu-search"><input type="text" id="eduSearch" placeholder="Search concept..."></div>
+  <div class="edu-search"><input type="text" id="eduSearch" placeholder="Buscar conceito..."></div>
   <div class="edu-cats" id="eduCats"></div>
   <div class="edu-content" id="eduContent"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-   ASSET MODAL
+   MODAL DE ATIVOS
    ═══════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="assetModal">
   <div class="modal asset-modal">
-    <div class="modal-title">Manage Assets</div>
-    <div class="modal-sub">These assets appear in the <strong style="color:var(--gold)">ticker</strong> and <strong style="color:var(--gold)">form select</strong>.<br>TradingView Symbol: <code style="color:var(--blue)">EXCHANGE:TICKER</code> e.g. <code style="color:var(--blue)">OANDA:XAUUSD</code></div>
-    <div class="asset-row-label"><span>Name</span><span>TradingView Symbol</span><span>Factor</span><span></span></div>
+    <div class="modal-title">Gerenciar Ativos</div>
+    <div class="modal-sub">Estes ativos aparecem no <strong style="color:var(--gold)">ticker</strong> e no <strong style="color:var(--gold)">select do formulário</strong>.<br>Símbolo TradingView: <code style="color:var(--blue)">EXCHANGE:TICKER</code> ex: <code style="color:var(--blue)">OANDA:XAUUSD</code></div>
+    <div class="asset-row-label"><span>Nome</span><span>Símbolo TradingView</span><span>Fator</span><span></span></div>
     <div class="asset-list" id="assetList"></div>
-    <button class="btn-add-asset" id="btnAddAsset">+ Add Asset</button>
+    <button class="btn-add-asset" id="btnAddAsset">+ Adicionar Ativo</button>
     <div class="asset-tip">
-      <strong style="color:var(--blue)">Multiplier Factor:</strong> MetaTrader: right-click asset - Specifications - "Tick Value".<br>
-      Examples: GOLD=10 | NASDAQ=20 | S&P500=50 | DOW JONES=5 | SILVER=50 | EURUSD=10
+      <strong style="color:var(--blue)">Fator Multiplicador:</strong> MetaTrader: clique direito no ativo - Especificações - "Tick Value".<br>
+      Exemplos: OURO=10 | NASDAQ=20 | S&P500=50 | DOW JONES=5 | PRATA=50 | EURUSD=10
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-      <button class="btn btn-primary" id="btnSaveAssets">Save & Apply</button>
-      <button class="btn btn-cancel" id="btnCancelAssets">Cancel</button>
+      <button class="btn btn-primary" id="btnSaveAssets">Salvar e Aplicar</button>
+      <button class="btn btn-cancel" id="btnCancelAssets">Cancelar</button>
     </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-   SETUP MODAL
+   MODAL DE SETUPS
    ═══════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="setupModal">
   <div class="modal setup-modal">
-    <div class="modal-title" style="color:var(--purple)">Manage Setups</div>
-    <div class="modal-sub">Create your setups with name, description and score (1-5 stars). Saved to database.</div>
+    <div class="modal-title" style="color:var(--purple)">Gerenciar Setups</div>
+    <div class="modal-sub">Crie seus setups com nome, descrição e pontuação (1-5 estrelas). Salvos no banco de dados.</div>
     <div class="setup-list" id="setupList"></div>
-    <button class="btn-add-setup" id="btnAddSetup">+ Add Setup</button>
+    <button class="btn-add-setup" id="btnAddSetup">+ Adicionar Setup</button>
     <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-      <button class="btn btn-primary" style="background:linear-gradient(135deg,var(--purple),#7c3aed)" id="btnSaveSetups">Save Setups</button>
-      <button class="btn btn-cancel" id="btnCancelSetups">Cancel</button>
+      <button class="btn btn-primary" style="background:linear-gradient(135deg,var(--purple),#7c3aed)" id="btnSaveSetups">Salvar Setups</button>
+      <button class="btn btn-cancel" id="btnCancelSetups">Cancelar</button>
     </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-   MAIN APP SHELL
+   APLICATIVO PRINCIPAL
    ═══════════════════════════════════════════════════════ -->
 <div class="shell">
   <header class="header">
@@ -482,20 +482,20 @@ td{padding:10px;vertical-align:middle;font-size:12px}
       <div class="brand-icon">T</div>
       <div>
         <div class="brand-name">TRADE WINNER PRO</div>
-        <div class="brand-sub">Professional Journal v5</div>
+        <div class="brand-sub">Diário Profissional v5</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <button class="btn-edu" id="btnOpenEdu">Education</button>
+      <button class="btn-edu" id="btnOpenEdu">Educação</button>
       <div style="text-align:right">
         <span id="clock">--:--:--</span>
         <div id="dateStr"></div>
-        <div class="db-status loading" id="dbStatus"><div class="dot"></div><span id="dbStatusText">connecting...</span></div>
+        <div class="db-status loading" id="dbStatus"><div class="dot"></div><span id="dbStatusText">conectando...</span></div>
       </div>
     </div>
   </header>
 
-  <!-- ═══════════ ACCOUNT + CAPITAL ═══════════ -->
+  <!-- ═══════════ CONTA + CAPITAL ═══════════ -->
   <div class="account-bar">
     <div class="account-tabs">
       <button class="account-tab active-demo" data-account="demo" id="tabDemo">DEMO</button>
@@ -503,151 +503,151 @@ td{padding:10px;vertical-align:middle;font-size:12px}
     </div>
     <div class="capital-panel">
       <div class="capital-input-wrap">
-        <label id="capitalLabel">Demo Capital</label>
+        <label id="capitalLabel">Capital Demo</label>
         <span class="prefix">$&nbsp;</span>
         <input type="number" id="capitalInput" placeholder="10000" step="100" min="0">
       </div>
-      <button class="btn-sm" id="btnSaveCapital">Save</button>
-      <div class="capital-badge"><div>Current Balance</div><span id="saldoAtual" class="pos">$ -</span></div>
-      <div class="capital-badge"><div>Total Return</div><span id="rendTotal">-%</span></div>
+      <button class="btn-sm" id="btnSaveCapital">Salvar</button>
+      <div class="capital-badge"><div>Saldo Atual</div><span id="saldoAtual" class="pos">$ -</span></div>
+      <div class="capital-badge"><div>Retorno Total</div><span id="rendTotal">-%</span></div>
     </div>
   </div>
 
-  <!-- ═══════════ META + STREAK ═══════════ -->
+  <!-- ═══════════ META + SEQUÊNCIA ═══════════ -->
   <div class="meta-bar">
     <div class="meta-box">
-      <label>Monthly Goal ($)</label>
-      <input type="number" id="metaInput" placeholder="e.g. 2000" step="100" min="0">
+      <label>Meta Mensal ($)</label>
+      <input type="number" id="metaInput" placeholder="ex: 2000" step="100" min="0">
     </div>
     <div class="meta-progress">
       <div class="meta-progress-label">
-        <span>Goal Progress</span>
+        <span>Progresso da Meta</span>
         <span id="metaPct">-%</span>
       </div>
       <div class="meta-bar-track"><div class="meta-bar-fill" id="metaFill" style="width:0%"></div></div>
     </div>
     <div class="streak-badge">
-      <div>Current Streak</div>
+      <div>Sequência Atual</div>
       <div class="streak-val neutral" id="streakVal">-</div>
-      <div id="streakLabel" style="font-size:9px;color:var(--text2);margin-top:2px">no trades</div>
+      <div id="streakLabel" style="font-size:9px;color:var(--text2);margin-top:2px">sem operações</div>
     </div>
   </div>
 
   <!-- ═══════════ TICKER ═══════════ -->
   <div class="ticker-outer">
     <div class="ticker-wrap"><div id="tvContainer" style="width:100%;height:48px"></div></div>
-    <button class="btn-manage-ticker" id="btnOpenAssets">Manage Assets</button>
+    <button class="btn-manage-ticker" id="btnOpenAssets">Gerenciar Ativos</button>
   </div>
 
-  <!-- ═══════════ INSIGHTS BAR ═══════════ -->
+  <!-- ═══════════ BARRA DE INSIGHTS ═══════════ -->
   <div class="insights-bar">
     <span class="insight-label">Insight</span>
     <div class="insight-track"><div class="insight-text" id="insightText"></div></div>
     <div class="insight-nav" id="insightNav"></div>
   </div>
 
-  <!-- ═══════════ STATS ═══════════ -->
+  <!-- ═══════════ ESTATÍSTICAS ═══════════ -->
   <div class="stats-row">
-    <div class="stat"><div class="stat-label">Trades</div><div class="stat-value" id="sTotalOps">-</div></div>
-    <div class="stat"><div class="stat-label">Win Rate</div><div class="stat-value" id="sWinRate">-</div></div>
+    <div class="stat"><div class="stat-label">Operações</div><div class="stat-value" id="sTotalOps">-</div></div>
+    <div class="stat"><div class="stat-label">Taxa de Acerto</div><div class="stat-value" id="sWinRate">-</div></div>
     <div class="stat"><div class="stat-label">Payoff</div><div class="stat-value" id="sPayoff">-</div></div>
-    <div class="stat"><div class="stat-label">Expectancy</div><div class="stat-value" id="sExpect">-</div></div>
-    <div class="stat"><div class="stat-label">Net Realized</div><div class="stat-value" id="sNet">-</div></div>
-    <div class="stat"><div class="stat-label">Violations</div><div class="stat-value" id="sRegras">-</div></div>
-    <div class="stat"><div class="stat-label">Avg Score</div><div class="stat-value" id="sScore">-</div></div>
+    <div class="stat"><div class="stat-label">Expectativa</div><div class="stat-value" id="sExpect">-</div></div>
+    <div class="stat"><div class="stat-label">Result. Líquido</div><div class="stat-value" id="sNet">-</div></div>
+    <div class="stat"><div class="stat-label">Infrações</div><div class="stat-value" id="sRegras">-</div></div>
+    <div class="stat"><div class="stat-label">Nota Média</div><div class="stat-value" id="sScore">-</div></div>
   </div>
 
-  <!-- ═══════════ ANALYTICS ═══════════ -->
+  <!-- ═══════════ ANALÍTICOS ═══════════ -->
   <div class="analytics-grid">
     <div class="analytics-card">
-      <div class="analytics-title">By Session</div>
-      <div id="analyticsSessao"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">No data yet</div></div>
+      <div class="analytics-title">Por Sessão</div>
+      <div id="analyticsSessao"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Sem dados ainda</div></div>
     </div>
     <div class="analytics-card">
-      <div class="analytics-title">By Asset</div>
-      <div id="analyticsAtivo"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">No data yet</div></div>
+      <div class="analytics-title">Por Ativo</div>
+      <div id="analyticsAtivo"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Sem dados ainda</div></div>
     </div>
     <div class="analytics-card">
-      <div class="analytics-title">By Setup</div>
-      <div id="analyticsSetup"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">No data yet</div></div>
+      <div class="analytics-title">Por Setup</div>
+      <div id="analyticsSetup"><div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">Sem dados ainda</div></div>
     </div>
   </div>
 
-  <!-- ═══════════ CHARTS ═══════════ -->
+  <!-- ═══════════ GRÁFICOS ═══════════ -->
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title">Equity Curve - <span id="equityLabel" style="color:var(--blue)">DEMO</span></div>
-      <div class="chart-wrap"><canvas id="equityChart" style="display:none"></canvas><div class="chart-empty" id="equityEmpty">Record trades with realized result<br>to see the equity curve</div></div>
+      <div class="chart-title">Curva de Capital - <span id="equityLabel" style="color:var(--blue)">DEMO</span></div>
+      <div class="chart-wrap"><canvas id="equityChart" style="display:none"></canvas><div class="chart-empty" id="equityEmpty">Registre operações com resultado realizado<br>para ver a curva de capital</div></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Daily Candles - <span id="candleLabel" style="color:var(--blue)">DEMO</span></div>
-      <div class="chart-wrap"><canvas id="candleChart" style="display:none"></canvas><div class="chart-empty" id="candleEmpty">Record at least 1 day<br>to see daily candles</div></div>
+      <div class="chart-title">Candles Diários - <span id="candleLabel" style="color:var(--blue)">DEMO</span></div>
+      <div class="chart-wrap"><canvas id="candleChart" style="display:none"></canvas><div class="chart-empty" id="candleEmpty">Registre pelo menos 1 dia<br>para ver os candles diários</div></div>
     </div>
   </div>
 
-  <!-- ═══════════ WEEKLY JOURNAL ═══════════ -->
+  <!-- ═══════════ DIÁRIO SEMANAL ═══════════ -->
   <div class="weekly-card">
     <div class="weekly-title">
-      <span>Weekly Journal - Reflection</span>
+      <span>Diário Semanal - Reflexão</span>
       <div style="display:flex;gap:8px;align-items:center">
         <span id="weekLabel" style="font-size:10px;color:var(--text2)"></span>
-        <button class="btn-sm" id="btnSaveWeekly" style="padding:6px 12px;font-size:10px">Save Reflection</button>
+        <button class="btn-sm" id="btnSaveWeekly" style="padding:6px 12px;font-size:10px">Salvar Reflexão</button>
       </div>
     </div>
     <div class="weekly-grid">
       <div class="weekly-group">
-        <span class="weekly-label">What worked this week?</span>
-        <textarea class="weekly-textarea" id="weeklyFuncionou" placeholder="Setups that performed well, good decisions, discipline maintained..."></textarea>
+        <span class="weekly-label">O que funcionou esta semana?</span>
+        <textarea class="weekly-textarea" id="weeklyFuncionou" placeholder="Setups que performaram bem, boas decisões, disciplina mantida..."></textarea>
       </div>
       <div class="weekly-group">
-        <span class="weekly-label">What needs improvement?</span>
-        <textarea class="weekly-textarea" id="weeklyMelhorar" placeholder="Violations committed, emotions that hindered, points to work on..."></textarea>
+        <span class="weekly-label">O que precisa melhorar?</span>
+        <textarea class="weekly-textarea" id="weeklyMelhorar" placeholder="Infrações cometidas, emoções que atrapalharam, pontos a trabalhar..."></textarea>
       </div>
       <div class="weekly-group">
-        <span class="weekly-label">Plan for next week</span>
-        <textarea class="weekly-textarea" id="weeklyPlano" placeholder="Specific goals, setups to focus on, rules to reinforce..."></textarea>
+        <span class="weekly-label">Plano para próxima semana</span>
+        <textarea class="weekly-textarea" id="weeklyPlano" placeholder="Metas específicas, setups a focar, regras a reforçar..."></textarea>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════ TRADE FORM ═══════════ -->
+  <!-- ═══════════ FORMULÁRIO DE OPERAÇÃO ═══════════ -->
   <div class="form-card">
-    <div class="form-title">Record Trade <span class="account-badge demo" id="formAccountBadge">DEMO</span></div>
+    <div class="form-title">Registrar Operação <span class="account-badge demo" id="formAccountBadge">DEMO</span></div>
     <div class="form-grid">
-      <div class="form-group"><label>Date / Time</label><input type="datetime-local" id="fDateTime" step="60"></div>
+      <div class="form-group"><label>Data / Hora</label><input type="datetime-local" id="fDateTime" step="60"></div>
       <div class="form-group">
-        <label>Asset</label>
+        <label>Ativo</label>
         <select id="fAtivo"></select>
-        <input type="text" id="outroAtivo" placeholder="Type asset name">
+        <input type="text" id="outroAtivo" placeholder="Digite o nome do ativo">
       </div>
-      <div class="form-group"><label>Direction</label><select id="fLado"><option value="compra">BUY (LONG)</option><option value="venda">SELL (SHORT)</option></select></div>
-      <div class="form-group"><label>Entry</label><input type="number" id="fEntrada" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>Direção</label><select id="fLado"><option value="compra">COMPRA (LONG)</option><option value="venda">VENDA (SHORT)</option></select></div>
+      <div class="form-group"><label>Entrada</label><input type="number" id="fEntrada" step="0.01" placeholder="0.00"></div>
       <div class="form-group"><label>Stop Loss</label><input type="number" id="fStop" step="0.01" placeholder="0.00"></div>
       <div class="form-group"><label>TP1</label><input type="number" id="fTp1" step="0.01" placeholder="0.00"></div>
-      <div class="form-group"><label>TP2 (optional)</label><input type="number" id="fTp2" step="0.01" placeholder="0.00"></div>
-      <div class="form-group"><label>TP3 (optional)</label><input type="number" id="fTp3" step="0.01" placeholder="0.00"></div>
-      <div class="form-group"><label>Qty / Lots</label><input type="number" id="fQtd" step="0.01" value="1" min="0.01"></div>
-      <div class="form-group"><label>Multiplier Factor</label><input type="number" id="fFator" step="0.01" value="10" min="0.01"></div>
+      <div class="form-group"><label>TP2 (opcional)</label><input type="number" id="fTp2" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>TP3 (opcional)</label><input type="number" id="fTp3" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>Qtd / Lotes</label><input type="number" id="fQtd" step="0.01" value="1" min="0.01"></div>
+      <div class="form-group"><label>Fator Multiplicador</label><input type="number" id="fFator" step="0.01" value="10" min="0.01"></div>
     </div>
 
-    <!-- Risk -->
+    <!-- Risco -->
     <div class="risco-bar">
       <div class="risco-box" id="riscoBoxReais">
-        <div class="risco-box-label">Risk ($)</div>
-        <div class="risco-val" id="riscoReais" style="color:var(--red)">$ 0.00</div>
-        <div class="risco-alert" id="riscoAlertReais">Above limit!</div>
+        <div class="risco-box-label">Risco ($)</div>
+        <div class="risco-val" id="riscoReais" style="color:var(--red)">$ 0,00</div>
+        <div class="risco-alert" id="riscoAlertReais">Acima do limite!</div>
       </div>
       <div class="risco-box" id="riscoBoxPct">
-        <div class="risco-box-label">% of Capital</div>
+        <div class="risco-box-label">% do Capital</div>
         <div class="risco-val" id="riscoPct" style="color:var(--text2)">-%</div>
-        <div class="risco-alert" id="riscoAlert2pct">Risk &gt; 2% of capital!</div>
+        <div class="risco-alert" id="riscoAlert2pct">Risco > 2% do capital!</div>
       </div>
       <div class="risco-box">
-        <div class="risco-box-label">Risk/Reward</div>
+        <div class="risco-box-label">Risco/Retorno</div>
         <div class="risco-val" id="riscoRatio" style="color:var(--text2)">1 : -</div>
       </div>
       <div class="risco-box">
-        <div class="risco-box-label">Potential Profit</div>
+        <div class="risco-box-label">Lucro Potencial</div>
         <div class="risco-val" id="lucroPot" style="color:var(--green)">$ -</div>
       </div>
     </div>
@@ -655,95 +655,95 @@ td{padding:10px;vertical-align:middle;font-size:12px}
     <!-- Setup -->
     <div class="setup-section">
       <div class="setup-section-title">
-        <span>Setup Used</span>
-        <button class="btn-manage-setup" id="btnOpenSetups">Manage Setups</button>
+        <span>Setup Utilizado</span>
+        <button class="btn-manage-setup" id="btnOpenSetups">Gerenciar Setups</button>
       </div>
       <div class="setup-select-row">
-        <select id="fSetup"><option value="">Select a setup</option></select>
+        <select id="fSetup"><option value="">Selecione um setup</option></select>
       </div>
       <div class="setup-preview" id="setupPreview"></div>
     </div>
 
-    <!-- Session -->
+    <!-- Sessão -->
     <div style="margin-bottom:10px">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Market Session</div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Sessão de Mercado</div>
       <div class="sessao-row">
-        <div class="sessao-chip" data-sessao="Asia">Asia</div>
-        <div class="sessao-chip" data-sessao="Londres">London</div>
-        <div class="sessao-chip active" data-sessao="Nova York">New York</div>
+        <div class="sessao-chip" data-sessao="Asia">Ásia</div>
+        <div class="sessao-chip" data-sessao="Londres">Londres</div>
+        <div class="sessao-chip active" data-sessao="Nova York">Nova York</div>
         <div class="sessao-chip" data-sessao="Overlap">Overlap Lon/NY</div>
         <div class="sessao-chip" data-sessao="Pre-market">Pre-Market</div>
       </div>
     </div>
 
-    <!-- Score -->
+    <!-- Nota -->
     <div style="margin-bottom:12px">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Setup Quality</div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Qualidade do Setup</div>
       <div style="display:flex;align-items:center;gap:10px">
         <div style="display:flex;gap:4px">
           <span class="star active" data-v="1">*</span><span class="star" data-v="2">*</span>
           <span class="star" data-v="3">*</span><span class="star" data-v="4">*</span><span class="star" data-v="5">*</span>
         </div>
-        <span id="scoreLabel" style="font-size:10px;color:var(--text2)">1 - Weak Setup</span>
+        <span id="scoreLabel" style="font-size:10px;color:var(--text2)">1 - Setup Fraco</span>
       </div>
     </div>
 
-    <!-- Exit -->
+    <!-- Saída -->
     <div class="resultado-real-section">
-      <div class="resultado-real-title">How Did the Trade Close? <span style="color:var(--text2);font-size:10px">(fill after exit)</span></div>
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Exit Type</div>
+      <div class="resultado-real-title">Como a Operação Fechou? <span style="color:var(--text2);font-size:10px">(preencher após saída)</span></div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Tipo de Saída</div>
       <div class="saida-badge-row">
-        <div class="saida-badge active-pending" data-saida="pending">Open</div>
+        <div class="saida-badge active-pending" data-saida="pending">Aberta</div>
         <div class="saida-badge" data-saida="loss">Stop (Loss)</div>
-        <div class="saida-badge" data-saida="parcial">Partial Exit</div>
+        <div class="saida-badge" data-saida="parcial">Saída Parcial</div>
         <div class="saida-badge" data-saida="tp1">TP1</div>
         <div class="saida-badge" data-saida="tp2">TP2</div>
-        <div class="saida-badge" data-saida="tp3">TP3 (Full)</div>
+        <div class="saida-badge" data-saida="tp3">TP3 (Total)</div>
       </div>
       <div class="saida-grid">
-        <div class="form-group"><label>Realized Result ($)</label><input type="number" id="fResultadoReal" step="0.01" placeholder="e.g. -150.00 or +320.00"></div>
-        <div class="form-group"><label>Estimated Result</label><div class="preview-box" id="previewBox">waiting data...</div></div>
+        <div class="form-group"><label>Resultado Realizado ($)</label><input type="number" id="fResultadoReal" step="0.01" placeholder="ex: -150,00 ou +320,00"></div>
+        <div class="form-group"><label>Resultado Estimado</label><div class="preview-box" id="previewBox">aguardando dados...</div></div>
       </div>
     </div>
 
-    <!-- Violations -->
+    <!-- Infrações -->
     <div class="rules-section">
-      <div class="rules-title">Violations Committed <span style="color:var(--text2);font-size:10px">(check if occurred)</span></div>
+      <div class="rules-title">Infrações Cometidas <span style="color:var(--text2);font-size:10px">(marque se ocorreram)</span></div>
       <div class="rules-grid">
-        <label class="rule-check"><input type="checkbox" value="Entered without setup"><div class="box"></div>Entered without setup</label>
-        <label class="rule-check"><input type="checkbox" value="Moved stop"><div class="box"></div>Moved stop loss</label>
-        <label class="rule-check"><input type="checkbox" value="FOMO trade"><div class="box"></div>Traded by FOMO</label>
-        <label class="rule-check"><input type="checkbox" value="Exited before TP"><div class="box"></div>Exited before target (fear)</label>
-        <label class="rule-check"><input type="checkbox" value="Oversizing"><div class="box"></div>Oversizing</label>
-        <label class="rule-check"><input type="checkbox" value="Revenge trade"><div class="box"></div>Revenge trade</label>
-        <label class="rule-check"><input type="checkbox" value="Ignored trend"><div class="box"></div>Ignored the trend</label>
-        <label class="rule-check"><input type="checkbox" value="Traded against plan"><div class="box"></div>Traded against the plan</label>
+        <label class="rule-check"><input type="checkbox" value="Entrou sem setup"><div class="box"></div>Entrou sem setup</label>
+        <label class="rule-check"><input type="checkbox" value="Moveu o stop"><div class="box"></div>Moveu o stop loss</label>
+        <label class="rule-check"><input type="checkbox" value="Operou por FOMO"><div class="box"></div>Operou por FOMO</label>
+        <label class="rule-check"><input type="checkbox" value="Saiu antes do TP"><div class="box"></div>Saiu antes do alvo (medo)</label>
+        <label class="rule-check"><input type="checkbox" value="Aumentou demais o lote"><div class="box"></div>Aumentou demais o lote</label>
+        <label class="rule-check"><input type="checkbox" value="Operação de vingança"><div class="box"></div>Operação de vingança</label>
+        <label class="rule-check"><input type="checkbox" value="Ignorou a tendência"><div class="box"></div>Ignorou a tendência</label>
+        <label class="rule-check"><input type="checkbox" value="Operou contra o plano"><div class="box"></div>Operou contra o plano</label>
       </div>
     </div>
 
-    <!-- Notes + Actions -->
+    <!-- Observações + Ações -->
     <div class="form-grid">
       <div class="form-group wider">
-        <label>Notes / Strategy / Emotions / Lessons</label>
-        <textarea id="fObs" rows="5" placeholder="Strategy used, entry triggers, how you felt, what happened differently, the main lesson from this trade..."></textarea>
+        <label>Anotações / Estratégia / Emoções / Aprendizados</label>
+        <textarea id="fObs" rows="5" placeholder="Estratégia utilizada, gatilhos de entrada, como se sentiu, o que aconteceu de diferente, o principal aprendizado desta operação..."></textarea>
       </div>
       <div class="form-group btn-actions">
-        <button class="btn btn-primary" id="btnAdd">Record Trade</button>
-        <button class="btn btn-cancel" id="cancelEdit" style="display:none">Cancel Edit</button>
-        <button class="btn btn-report" id="btnPrintReport">Print</button>
-        <button class="btn btn-csv" id="btnExportCSV">Export CSV</button>
+        <button class="btn btn-primary" id="btnAdd">Registrar Operação</button>
+        <button class="btn btn-cancel" id="cancelEdit" style="display:none">Cancelar Edição</button>
+        <button class="btn btn-report" id="btnPrintReport">Imprimir</button>
+        <button class="btn btn-csv" id="btnExportCSV">Exportar CSV</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════ TRADE TABLE ═══════════ -->
+  <!-- ═══════════ TABELA DE OPERAÇÕES ═══════════ -->
   <div class="filter-row">
     <div class="filter-tabs">
-      <button class="tab active" data-filter="all">All</button>
-      <button class="tab" data-filter="win">Wins</button>
-      <button class="tab" data-filter="loss">Losses</button>
-      <button class="tab" data-filter="pending">Open</button>
-      <button class="tab" data-filter="regras">Violations</button>
+      <button class="tab active" data-filter="all">Todas</button>
+      <button class="tab" data-filter="win">Ganhos</button>
+      <button class="tab" data-filter="loss">Perdas</button>
+      <button class="tab" data-filter="pending">Abertas</button>
+      <button class="tab" data-filter="regras">Infrações</button>
     </div>
     <div class="trade-count" id="tradeCount">-</div>
   </div>
@@ -751,43 +751,43 @@ td{padding:10px;vertical-align:middle;font-size:12px}
     <div class="table-scroll">
       <table>
         <thead><tr>
-          <th>Date/Time</th><th>Asset</th><th>Setup</th><th>Session</th><th>Dir.</th>
-          <th>Entry</th><th>Stop</th><th>Targets</th><th>Qty</th><th>Factor</th>
-          <th>Exit</th><th>Est.</th><th>Realized</th>
-          <th>Score</th><th>Violations</th><th>Notes</th><th>Actions</th>
+          <th>Data/Hora</th><th>Ativo</th><th>Setup</th><th>Sessão</th><th>Dir.</th>
+          <th>Entrada</th><th>Stop</th><th>Alvos</th><th>Qtd</th><th>Fator</th>
+          <th>Saída</th><th>Est.</th><th>Realizado</th>
+          <th>Nota</th><th>Infrações</th><th>Anotações</th><th>Ações</th>
         </tr></thead>
-        <tbody id="tradesBody"><tr class="empty-row"><td colspan="17">Loading trades...</td></tr></tbody>
+        <tbody id="tradesBody"><tr class="empty-row"><td colspan="17">Carregando operações...</td></tr></tbody>
       </table>
     </div>
   </div>
 
-  <!-- ═══════════ FOOTER ═══════════ -->
+  <!-- ═══════════ RODAPÉ ═══════════ -->
   <div class="footer">
     <div class="footer-quote">
-      <p><strong>The most important rule:</strong> The journal only works if you fill it with <strong>honesty</strong>.</p>
-      <p style="margin-top:8px"><strong>Golden tip:</strong> Professional traders report that re-reading the journal once a week was the most important factor in their evolution.</p>
-      <p style="margin-top:8px">"Wait for the right moment with patience and act with precision." - Alexandre Stormer</p>
+      <p><strong>A regra mais importante:</strong> O diário só funciona se você preencher com <strong>honestidade</strong>.</p>
+      <p style="margin-top:8px"><strong>Dica de ouro:</strong> Traders profissionais relatam que reler o diário uma vez por semana foi o fator mais importante na evolução deles.</p>
+      <p style="margin-top:8px">"Espere o momento certo com paciência e aja com precisão." - Alexandre Stormer</p>
     </div>
     <div class="footer-meta">
-      <p>TRADE WINNER PRO v5 - Demo &amp; Real - Setups - Analytics - Education - Supabase Cloud</p>
-      <p style="margin-top:6px">Rule #1: never move the stop. Rule #2: never forget rule #1.</p>
+      <p>TRADE WINNER PRO v5 - Demo &amp; Real - Setups - Analíticos - Educação - Supabase Cloud</p>
+      <p style="margin-top:6px">Regra #1: nunca mova o stop. Regra #2: nunca esqueça da regra #1.</p>
     </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-   JAVASCRIPT - DECLARATION BY BLOCK
+   JAVASCRIPT
    ═══════════════════════════════════════════════════════ -->
 <script>
 // ╔══════════════════════════════════════════════════════╗
-// ║           CONFIGURATION & INITIALIZATION            ║
+// ║           CONFIGURAÇÃO E INICIALIZAÇÃO              ║
 // ╚══════════════════════════════════════════════════════╝
 var SUPABASE_URL = 'https://omgcjhvhezcikfjyfonw.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_06GuHSVCvqZ7OlwgXJdtfw_RwM5d663';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                UTILITY FUNCTIONS                    ║
+// ║                FUNÇÕES UTILITÁRIAS                  ║
 // ╚══════════════════════════════════════════════════════╝
 function gid(id) {
   return document.getElementById(id);
@@ -840,60 +840,60 @@ function calcResultado(e, t1, t2, t3, q, f, lado) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  CONSTANTS                          ║
+// ║                  CONSTANTES                         ║
 // ╚══════════════════════════════════════════════════════╝
-var SCORE_LABELS = ['', '1 - Weak Setup', '2 - Average Setup', '3 - Good Setup', '4 - Strong Setup', '5 - Perfect Setup'];
+var SCORE_LABELS = ['', '1 - Setup Fraco', '2 - Setup Mediano', '3 - Setup Bom', '4 - Setup Forte', '5 - Setup Perfeito'];
 var ASSETS_KEY = 'twp_assets_v5';
 var WEEKLY_KEY = 'twp_weekly_v5';
 var META_KEY = 'twp_meta_v5';
 
 var DEFAULT_ASSETS = [
-  { name: 'GOLD (XAUUSD)', symbol: 'OANDA:XAUUSD', fator: 10 },
+  { name: 'OURO (XAUUSD)', symbol: 'OANDA:XAUUSD', fator: 10 },
   { name: 'NASDAQ (NDX)', symbol: 'OANDA:NAS100USD', fator: 20 },
   { name: 'S&P500 (SPX)', symbol: 'OANDA:SPX500USD', fator: 50 },
   { name: 'DOW JONES (DJI)', symbol: 'OANDA:US30USD', fator: 5 },
-  { name: 'SILVER (XAGUSD)', symbol: 'OANDA:XAGUSD', fator: 50 }
+  { name: 'PRATA (XAGUSD)', symbol: 'OANDA:XAGUSD', fator: 50 }
 ];
 
 var EDU_DATA = [
-  { cat: 'Candlesticks', title: 'What is a Candlestick?', preview: 'Visual representation of price movement in a period.', full: '<p>Each candlestick represents <strong>4 data points</strong>: open, close, high and low.</p><ul><li><strong>Green Candle:</strong> close above open</li><li><strong>Red Candle:</strong> close below open</li></ul>' },
-  { cat: 'Candlesticks', title: 'Pin Bar', preview: 'Candle with long wick indicating strong level rejection.', full: '<p>Wick at least 2x the body size. Confirms better at key level.</p>' },
-  { cat: 'Candlesticks', title: 'Engulfing', preview: 'Candle that completely engulfs the previous candle.', full: '<p>One of the most reliable reversal patterns. High volume confirms the reversal.</p>' },
-  { cat: 'Candlesticks', title: 'Inside Bar', preview: 'Candle within the range of the previous candle.', full: '<p>100% within the high/low of the previous candle. Breakout defines direction.</p>' },
-  { cat: 'Support & Resistance', title: 'Support & Resistance', preview: 'Price levels where the asset tends to change direction.', full: '<p><strong>Support</strong> = buyers prevent fall. <strong>Resistance</strong> = sellers prevent rise.</p>' },
-  { cat: 'Support & Resistance', title: 'Supply & Demand Zones', preview: 'Institutional regions where big players left orders.', full: '<p>Fresh zone (1st revisit) has higher probability of respecting the level.</p>' },
-  { cat: 'Trend', title: 'Dow Theory', preview: 'Foundation of modern technical analysis.', full: '<p>Trend persists until clear signs of reversal. Volume confirms movement.</p>' },
-  { cat: 'Trend', title: 'Trend Line', preview: 'How to draw and use trend lines on the chart.', full: '<p>More touches = stronger and more reliable. Breakout with volume = trend change.</p>' },
-  { cat: 'Indicators', title: 'Moving Averages (EMA/SMA)', preview: 'Smooth fluctuations to reveal trend direction.', full: '<p>EMA 9/21 for day trade. Pullback to MA in trend = entry opportunity.</p>' },
-  { cat: 'Indicators', title: 'RSI', preview: 'Measures if the asset is overbought or oversold.', full: '<p>RSI above 70 = overbought. RSI below 30 = oversold. Divergences are strong signals.</p>' },
-  { cat: 'Indicators', title: 'OBV - On Balance Volume', preview: 'Uses volume to predict future price changes.', full: '<p>Divergences between OBV and price are strong reversal signals.</p>' },
-  { cat: 'Risk Management', title: '2% Rule per Trade', preview: 'Never risk more than 2% of capital in a single trade.', full: '<p>Capital $10,000 max $200 per trade. Allows surviving negative sequences.</p>' },
-  { cat: 'Risk Management', title: 'Minimum 1:2 Risk/Reward', preview: 'Only enter trades with at least 1:2 risk/reward ratio.', full: '<p>With 40% win rate and 1:2 R/R you are already profitable.</p>' },
-  { cat: 'Risk Management', title: 'Stop Loss - Never Move', preview: 'The most important rule: stop loss is sacred.', full: '<p>A moved stop can turn a 2% loss into a 20% loss. Never move the stop.</p>' },
-  { cat: 'Chart Patterns', title: 'Head and Shoulders', preview: 'Classic reversal pattern with 3 tops.', full: '<p>Sell signal: neckline breakout after the right shoulder.</p>' },
-  { cat: 'Chart Patterns', title: 'Triangles and Breakouts', preview: 'Consolidation patterns before directional movement.', full: '<p>Volatility compression before breakout. Wait for the breakout direction.</p>' },
-  { cat: 'Fibonacci', title: 'Fibonacci Retracement', preview: 'Mathematical levels where price tends to retrace and resume.', full: '<p>61.8% is the Golden Ratio. Fibonacci + S/R + candle = 5-star setup.</p>' }
+  { cat: 'Candles', title: 'O que é um Candlestick?', preview: 'Representação visual do movimento do preço em um período.', full: '<p>Cada candle representa <strong>4 pontos de dados</strong>: abertura, fechamento, máxima e mínima.</p><ul><li><strong>Candle Verde:</strong> fechamento acima da abertura</li><li><strong>Candle Vermelho:</strong> fechamento abaixo da abertura</li></ul>' },
+  { cat: 'Candles', title: 'Pin Bar (Martelo/Estrela)', preview: 'Candle com pavio longo indicando forte rejeição de nível.', full: '<p>Pavio pelo menos 2x o tamanho do corpo. Confirma melhor em nível chave.</p>' },
+  { cat: 'Candles', title: 'Engolfo (Engulfing)', preview: 'Candle que engole completamente o candle anterior.', full: '<p>Um dos padrões de reversão mais confiáveis. Volume alto confirma a reversão.</p>' },
+  { cat: 'Candles', title: 'Inside Bar (Barra Interna)', preview: 'Candle dentro do intervalo do candle anterior.', full: '<p>100% dentro da máxima/mínima do candle anterior. Rompimento define direção.</p>' },
+  { cat: 'Suporte e Resistência', title: 'Suporte e Resistência', preview: 'Níveis de preço onde o ativo tende a mudar de direção.', full: '<p><strong>Suporte</strong> = compradores impedem queda. <strong>Resistência</strong> = vendedores impedem alta.</p>' },
+  { cat: 'Suporte e Resistência', title: 'Zonas de Oferta e Demanda', preview: 'Regiões institucionais onde grandes players deixaram ordens.', full: '<p>Zona fresca (1ª revisita) tem maior probabilidade de respeitar o nível.</p>' },
+  { cat: 'Tendência', title: 'Teoria de Dow', preview: 'Fundamento da análise técnica moderna.', full: '<p>Tendência persiste até sinais claros de reversão. Volume confirma movimento.</p>' },
+  { cat: 'Tendência', title: 'Linha de Tendência', preview: 'Como traçar e usar linhas de tendência no gráfico.', full: '<p>Mais toques = mais forte e confiável. Rompimento com volume = mudança de tendência.</p>' },
+  { cat: 'Indicadores', title: 'Médias Móveis (EMA/SMA)', preview: 'Suavizam flutuações para revelar direção da tendência.', full: '<p>EMA 9/21 para day trade. Pullback na MA em tendência = oportunidade de entrada.</p>' },
+  { cat: 'Indicadores', title: 'RSI (Índice de Força Relativa)', preview: 'Mede se o ativo está sobrecomprado ou sobrevendido.', full: '<p>RSI acima de 70 = sobrecomprado. RSI abaixo de 30 = sobrevendido. Divergências são fortes sinais.</p>' },
+  { cat: 'Indicadores', title: 'OBV - On Balance Volume', preview: 'Usa volume para prever mudanças futuras de preço.', full: '<p>Divergências entre OBV e preço são fortes sinais de reversão.</p>' },
+  { cat: 'Gerenciamento de Risco', title: 'Regra dos 2% por Operação', preview: 'Nunca arrisque mais de 2% do capital em uma única operação.', full: '<p>Capital $10.000 máximo $200 por trade. Permite sobreviver a sequências negativas.</p>' },
+  { cat: 'Gerenciamento de Risco', title: 'Risco/Retorno Mínimo 1:2', preview: 'Só entre em operações com pelo menos 1:2 de risco/retorno.', full: '<p>Com 40% de acerto e 1:2 de R/R você já é lucrativo.</p>' },
+  { cat: 'Gerenciamento de Risco', title: 'Stop Loss - Nunca Mova', preview: 'A regra mais importante: stop loss é sagrado.', full: '<p>Um stop movido pode transformar uma perda de 2% em uma perda de 20%. Nunca mova o stop.</p>' },
+  { cat: 'Padrões Gráficos', title: 'Ombro-Cabeça-Ombro', preview: 'Padrão clássico de reversão com 3 topos.', full: '<p>Sinal de venda: rompimento da linha de pescoço após o ombro direito.</p>' },
+  { cat: 'Padrões Gráficos', title: 'Triângulos e Rompimentos', preview: 'Padrões de consolidação antes do movimento direcional.', full: '<p>Compressão de volatilidade antes do rompimento. Aguarde a direção do breakout.</p>' },
+  { cat: 'Fibonacci', title: 'Retração de Fibonacci', preview: 'Níveis matemáticos onde o preço tende a retrair e retomar.', full: '<p>61,8% é a Proporção Áurea. Fibonacci + S/R + candle = setup 5 estrelas.</p>' }
 ];
 
 var INSIGHTS = [
-  { tag: 'Risk Management', text: 'Maximum risk of 2% per trade. With 10 consecutive losses you still have 82% of capital.' },
-  { tag: 'Stop Loss', text: 'Never move the stop loss. A controlled loss is part of the process.' },
-  { tag: 'Risk/Reward', text: 'Only enter trades with minimum 1:2 R/R. With 40% win rate and 1:2 R/R you are already profitable.' },
-  { tag: 'Candlestick', text: 'Pin Bar at key level with 2x body wick = powerful reversal signal. Score: 4-5 stars.' },
-  { tag: 'Trend', text: 'The trend is your friend. Always trade in favor of the main flow identified on the higher chart.' },
-  { tag: 'Fibonacci', text: 'The 61.8% retracement is the Golden Ratio. Confluence with S/R at this level = high probability setup.' },
-  { tag: 'Volume', text: 'Volume confirms movement. A breakout without volume is suspicious - it may be false.' },
-  { tag: 'Dow Theory', text: 'A trend remains active until definitive reversal signs. Do not anticipate - always confirm.' },
-  { tag: 'Psychology', text: 'FOMO and Revenge Trade are the trader\'s biggest enemies. The journal helps identify these patterns.' },
-  { tag: 'Stormer', text: 'Market crocodile: wait for the right moment with patience and act with precision. - Alexandre Stormer' },
-  { tag: 'Supply & Demand', text: 'Institutional S&D zones on the first revisit have higher probability of respecting the level.' },
-  { tag: 'Weekly Journal', text: 'Reserve 20 minutes every Sunday to reread the week\'s journal. It\'s the most transformative habit.' },
-  { tag: 'Selectivity', text: 'Fewer quality trades are better than many mediocre trades. Wait for the 4-5 star setup.' },
-  { tag: 'Capital', text: 'Preserving capital is more important than profiting. Without capital, there is no recovery.' }
+  { tag: 'Gerenciamento de Risco', text: 'Risco máximo de 2% por operação. Com 10 perdas consecutivas você ainda tem 82% do capital.' },
+  { tag: 'Stop Loss', text: 'Nunca mova o stop loss. Uma perda controlada faz parte do processo.' },
+  { tag: 'Risco/Retorno', text: 'Só entre em operações com mínimo 1:2 de R/R. Com 40% de acerto e 1:2 de R/R você já é lucrativo.' },
+  { tag: 'Candlestick', text: 'Pin Bar em nível chave com pavio 2x o corpo = sinal de reversão poderoso. Nota: 4-5 estrelas.' },
+  { tag: 'Tendência', text: 'A tendência é sua amiga. Sempre opere a favor do fluxo principal identificado no gráfico superior.' },
+  { tag: 'Fibonacci', text: 'A retração de 61,8% é a Proporção Áurea. Confluência com S/R neste nível = setup de alta probabilidade.' },
+  { tag: 'Volume', text: 'Volume confirma o movimento. Um rompimento sem volume é suspeito - pode ser falso.' },
+  { tag: 'Teoria de Dow', text: 'Uma tendência permanece ativa até sinais definitivos de reversão. Não antecipe - sempre confirme.' },
+  { tag: 'Psicologia', text: 'FOMO e Operação de Vingança são os maiores inimigos do trader. O diário ajuda a identificar esses padrões.' },
+  { tag: 'Stormer', text: 'Jacaré do mercado: espere o momento certo com paciência e aja com precisão. - Alexandre Stormer' },
+  { tag: 'Oferta e Demanda', text: 'Zonas institucionais de O&D na primeira revisita têm maior probabilidade de respeitar o nível.' },
+  { tag: 'Diário Semanal', text: 'Reserve 20 minutos todo domingo para reler o diário da semana. É o hábito mais transformador.' },
+  { tag: 'Seletividade', text: 'Menos operações de qualidade valem mais que muitas operações medíocres. Espere o setup 4-5 estrelas.' },
+  { tag: 'Capital', text: 'Preservar capital é mais importante que lucrar. Sem capital, não há recuperação.' }
 ];
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  GLOBAL STATE                       ║
+// ║                  ESTADO GLOBAL                      ║
 // ╚══════════════════════════════════════════════════════╝
 var trades = [];
 var setups = [];
@@ -912,10 +912,10 @@ var candleChart = null;
 var assets = JSON.parse(localStorage.getItem(ASSETS_KEY) || 'null') || DEFAULT_ASSETS;
 var insightIdx = 0;
 var insightTimer = null;
-var eduActiveCat = 'All';
+var eduActiveCat = 'Todas';
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  CLOCK                              ║
+// ║                  RELÓGIO                            ║
 // ╚══════════════════════════════════════════════════════╝
 function updateClock() {
   var n = new Date();
@@ -952,30 +952,30 @@ function updateMetaProgress(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  STREAK                             ║
+// ║                  SEQUÊNCIA                          ║
 // ╚══════════════════════════════════════════════════════╝
 function updateStreak(acct) {
   var sorted = acct.filter(function(t) { return t.resultado_real != null || t.tipo_saida !== 'pending'; }).sort(function(a, b) { return new Date(b.date_time_raw || b.created_at) - new Date(a.date_time_raw || a.created_at); });
-  if (!sorted.length) { gid('streakVal').textContent = '-'; gid('streakVal').className = 'streak-val neutral'; gid('streakLabel').textContent = 'no trades'; return; }
+  if (!sorted.length) { gid('streakVal').textContent = '-'; gid('streakVal').className = 'streak-val neutral'; gid('streakLabel').textContent = 'sem operações'; return; }
   var fn = function(t) { return t.resultado_real != null ? t.resultado_real : (t.resultado || 0); };
   var first = fn(sorted[0]) >= 0;
   var count = 0;
   for (var i = 0; i < sorted.length; i++) { if ((fn(sorted[i]) >= 0) === first) count++; else break; }
   gid('streakVal').textContent = (first ? '+' : '-') + count;
   gid('streakVal').className = 'streak-val ' + (first ? 'win' : 'loss');
-  gid('streakLabel').textContent = first ? count + ' consecutive wins' : count + ' consecutive losses';
-  if (!first && count >= 3) { gid('streakLabel').style.color = 'var(--red)'; gid('streakLabel').textContent = 'WARNING: ' + count + ' consecutive losses!'; }
+  gid('streakLabel').textContent = first ? count + ' ganhos consecutivos' : count + ' perdas consecutivas';
+  if (!first && count >= 3) { gid('streakLabel').style.color = 'var(--red)'; gid('streakLabel').textContent = 'ATENÇÃO: ' + count + ' perdas consecutivas!'; }
   else gid('streakLabel').style.color = 'var(--text2)';
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║             WEEKLY JOURNAL (LocalStorage)           ║
+// ║             DIÁRIO SEMANAL (LocalStorage)           ║
 // ╚══════════════════════════════════════════════════════╝
 function getWeekKey() {
   var d = new Date();
   var jan1 = new Date(d.getFullYear(), 0, 1);
   var week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
-  return d.getFullYear() + '-W' + String(week).padStart(2, '0');
+  return d.getFullYear() + '-S' + String(week).padStart(2, '0');
 }
 
 function loadWeekly() {
@@ -985,7 +985,7 @@ function loadWeekly() {
   gid('weeklyFuncionou').value = data.funcionou || '';
   gid('weeklyMelhorar').value = data.melhorar || '';
   gid('weeklyPlano').value = data.plano || '';
-  gid('weekLabel').textContent = 'Week ' + key;
+  gid('weekLabel').textContent = 'Semana ' + key;
 }
 
 function saveWeekly() {
@@ -993,8 +993,8 @@ function saveWeekly() {
   var saved = JSON.parse(localStorage.getItem(WEEKLY_KEY) || '{}');
   saved[key] = { funcionou: gid('weeklyFuncionou').value, melhorar: gid('weeklyMelhorar').value, plano: gid('weeklyPlano').value };
   localStorage.setItem(WEEKLY_KEY, JSON.stringify(saved));
-  gid('btnSaveWeekly').textContent = 'Saved!';
-  setTimeout(function() { gid('btnSaveWeekly').textContent = 'Save Reflection'; }, 2000);
+  gid('btnSaveWeekly').textContent = 'Salvo!';
+  setTimeout(function() { gid('btnSaveWeekly').textContent = 'Salvar Reflexão'; }, 2000);
 }
 
 // ╔══════════════════════════════════════════════════════╗
@@ -1019,14 +1019,14 @@ function showInsight(i) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  ANALYTICS                          ║
+// ║                  ANALÍTICOS                         ║
 // ╚══════════════════════════════════════════════════════╝
 function renderAnalytics(acct) {
   var fn = function(t) { return t.resultado_real != null ? t.resultado_real : (t.resultado || 0); };
   function groupBy(key, labelFn) {
     var map = {};
     acct.forEach(function(t) {
-      var k = labelFn ? labelFn(t) : (t[key] || 'No ' + key);
+      var k = labelFn ? labelFn(t) : (t[key] || 'Sem ' + key);
       if (!map[k]) map[k] = { wins: 0, total: 0, net: 0 };
       var r = fn(t);
       map[k].total++;
@@ -1037,18 +1037,18 @@ function renderAnalytics(acct) {
   }
   function renderGroup(elId, entries) {
     var el = gid(elId);
-    if (!entries.length) { el.innerHTML = '<div style="color:var(--muted);font-size:11px;text-align:center;padding:16px">No data</div>'; return; }
+    if (!entries.length) { el.innerHTML = '<div style="color:var(--muted);font-size:11px;text-align:center;padding:16px">Sem dados</div>'; return; }
     el.innerHTML = entries.map(function(entry) {
       var name = entry[0], data = entry[1];
       var wr = data.total ? ((data.wins / data.total) * 100).toFixed(0) : 0;
       var cls = data.net > 0 ? 'pos' : data.net < 0 ? 'neg' : 'neu';
-      return '<div class="analytics-row"><span class="name" title="' + name + '">' + name + '</span><div style="display:flex;align-items:center;gap:4px"><span class="val ' + cls + '">' + (data.net >= 0 ? '+' : '') + '$' + Math.abs(data.net).toFixed(0) + '</span><span class="wr">' + wr + '%WR</span></div></div>';
+      return '<div class="analytics-row"><span class="name" title="' + name + '">' + name + '</span><div style="display:flex;align-items:center;gap:4px"><span class="val ' + cls + '">' + (data.net >= 0 ? '+' : '') + '$' + Math.abs(data.net).toFixed(0) + '</span><span class="wr">' + wr + '%TA</span></div></div>';
     }).join('');
   }
   renderGroup('analyticsSessao', groupBy('sessao'));
   renderGroup('analyticsAtivo', groupBy('ativo'));
   var setupEntries = groupBy('setup_id', function(t) {
-    if (!t.setup_id) return 'No setup';
+    if (!t.setup_id) return 'Sem setup';
     var s = setups.find(function(x) { return x.id === t.setup_id; });
     return s ? s.nome : 'Setup #' + t.setup_id;
   });
@@ -1056,13 +1056,13 @@ function renderAnalytics(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  EDUCATION                          ║
+// ║                  EDUCAÇÃO                           ║
 // ╚══════════════════════════════════════════════════════╝
 function openEdu() { gid('eduPanel').classList.add('open'); gid('eduOverlay').classList.add('show'); buildEduCats(); renderEduCards(); }
 function closeEdu() { gid('eduPanel').classList.remove('open'); gid('eduOverlay').classList.remove('show'); }
 
 function buildEduCats() {
-  var cats = ['All'].concat([...new Set(EDU_DATA.map(function(e) { return e.cat; }))]);
+  var cats = ['Todas'].concat([...new Set(EDU_DATA.map(function(e) { return e.cat; }))]);
   gid('eduCats').innerHTML = cats.map(function(c) { return '<div class="edu-cat' + (c === eduActiveCat ? ' active' : '') + '" data-cat="' + c + '">' + c + '</div>'; }).join('');
   gid('eduCats').querySelectorAll('.edu-cat').forEach(function(el) { el.addEventListener('click', function() { eduActiveCat = el.dataset.cat; buildEduCats(); renderEduCards(); }); });
 }
@@ -1070,20 +1070,20 @@ function buildEduCats() {
 function renderEduCards() {
   var q = gid('eduSearch').value.toLowerCase();
   var filtered = EDU_DATA.filter(function(e) {
-    var catOk = eduActiveCat === 'All' || e.cat === eduActiveCat;
+    var catOk = eduActiveCat === 'Todas' || e.cat === eduActiveCat;
     var searchOk = !q || e.title.toLowerCase().includes(q) || e.preview.toLowerCase().includes(q) || e.cat.toLowerCase().includes(q);
     return catOk && searchOk;
   });
   gid('eduContent').innerHTML = filtered.length ? filtered.map(function(e, i) {
-    return '<div class="edu-card"><div class="edu-card-cat">' + e.cat + '</div><div class="edu-card-title">' + e.title + '</div><div class="edu-card-preview">' + e.preview + '</div><div class="edu-card-full" id="eduFull_' + i + '">' + e.full + '</div><span class="edu-expand" data-i="' + i + '">See more</span></div>';
-  }).join('') : '<div style="color:var(--muted);text-align:center;padding:40px;font-size:12px">No results for "' + q + '"</div>';
+    return '<div class="edu-card"><div class="edu-card-cat">' + e.cat + '</div><div class="edu-card-title">' + e.title + '</div><div class="edu-card-preview">' + e.preview + '</div><div class="edu-card-full" id="eduFull_' + i + '">' + e.full + '</div><span class="edu-expand" data-i="' + i + '">Ver mais</span></div>';
+  }).join('') : '<div style="color:var(--muted);text-align:center;padding:40px;font-size:12px">Nenhum resultado para "' + q + '"</div>';
   gid('eduContent').querySelectorAll('.edu-expand').forEach(function(btn) {
-    btn.addEventListener('click', function() { var f = gid('eduFull_' + btn.dataset.i); var show = !f.classList.contains('show'); f.classList.toggle('show', show); btn.textContent = show ? 'Close' : 'See more'; });
+    btn.addEventListener('click', function() { var f = gid('eduFull_' + btn.dataset.i); var show = !f.classList.contains('show'); f.classList.toggle('show', show); btn.textContent = show ? 'Fechar' : 'Ver mais'; });
   });
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              TICKER & ASSETS                        ║
+// ║              TICKER E ATIVOS                        ║
 // ╚══════════════════════════════════════════════════════╝
 function rebuildTicker() {
   var c = gid('tvContainer'); c.innerHTML = '';
@@ -1097,26 +1097,26 @@ function rebuildTicker() {
 function rebuildSelect() {
   var sel = gid('fAtivo'), cur = sel.value; sel.innerHTML = '';
   assets.forEach(function(a) { var o = document.createElement('option'); o.value = a.name; o.textContent = a.name; sel.appendChild(o); });
-  var outro = document.createElement('option'); outro.value = 'Other'; outro.textContent = 'Other...'; sel.appendChild(outro);
+  var outro = document.createElement('option'); outro.value = 'Outro'; outro.textContent = 'Outro...'; sel.appendChild(outro);
   if ([...sel.options].some(function(o) { return o.value === cur; })) sel.value = cur;
   else sel.value = assets[0] ? assets[0].name : '';
   var a = assets.find(function(x) { return x.name === sel.value; }); if (a) gid('fFator').value = a.fator;
 }
 
-function getAtivo() { return gid('fAtivo').value === 'Other' ? (gid('outroAtivo').value.trim() || 'Other') : gid('fAtivo').value; }
+function getAtivo() { return gid('fAtivo').value === 'Outro' ? (gid('outroAtivo').value.trim() || 'Outro') : gid('fAtivo').value; }
 
 function renderAssetList() {
   var list = gid('assetList'); list.innerHTML = '';
-  assets.forEach(function(a) { var row = document.createElement('div'); row.className = 'asset-row'; row.innerHTML = '<input type="text" class="a-name" value="' + a.name + '" placeholder="e.g. EUR/USD"><input type="text" class="a-symbol" value="' + a.symbol + '" placeholder="e.g. OANDA:EURUSD"><input type="number" class="a-fator" value="' + a.fator + '" min="0.01" step="0.01"><button class="btn-del-asset" onclick="this.closest(\'.asset-row\').remove()">X</button>'; list.appendChild(row); });
+  assets.forEach(function(a) { var row = document.createElement('div'); row.className = 'asset-row'; row.innerHTML = '<input type="text" class="a-name" value="' + a.name + '" placeholder="ex: EUR/USD"><input type="text" class="a-symbol" value="' + a.symbol + '" placeholder="ex: OANDA:EURUSD"><input type="number" class="a-fator" value="' + a.fator + '" min="0.01" step="0.01"><button class="btn-del-asset" onclick="this.closest(\'.asset-row\').remove()">X</button>'; list.appendChild(row); });
 }
 
-function addAssetRowFn() { var row = document.createElement('div'); row.className = 'asset-row'; row.innerHTML = '<input type="text" class="a-name" placeholder="e.g. EUR/USD"><input type="text" class="a-symbol" placeholder="e.g. OANDA:EURUSD"><input type="number" class="a-fator" value="10" min="0.01" step="0.01"><button class="btn-del-asset" onclick="this.closest(\'.asset-row\').remove()">X</button>'; gid('assetList').appendChild(row); }
+function addAssetRowFn() { var row = document.createElement('div'); row.className = 'asset-row'; row.innerHTML = '<input type="text" class="a-name" placeholder="ex: EUR/USD"><input type="text" class="a-symbol" placeholder="ex: OANDA:EURUSD"><input type="number" class="a-fator" value="10" min="0.01" step="0.01"><button class="btn-del-asset" onclick="this.closest(\'.asset-row\').remove()">X</button>'; gid('assetList').appendChild(row); }
 
 function saveAssetsFn() {
   var rows = document.querySelectorAll('#assetList .asset-row'); var na = []; var ok = true;
   rows.forEach(function(r) { var n = r.querySelector('.a-name').value.trim(), s = r.querySelector('.a-symbol').value.trim(), f = parseFloat(r.querySelector('.a-fator').value) || 10; if (!n || !s) { ok = false; return; } na.push({ name: n, symbol: s, fator: f }); });
-  if (!ok) { alert('Fill in Name and Symbol for all assets.'); return; }
-  if (!na.length) { alert('Add at least one asset.'); return; }
+  if (!ok) { alert('Preencha Nome e Símbolo para todos os ativos.'); return; }
+  if (!na.length) { alert('Adicione pelo menos um ativo.'); return; }
   assets = na; localStorage.setItem(ASSETS_KEY, JSON.stringify(assets)); rebuildTicker(); rebuildSelect(); closeModal('assetModal');
 }
 
@@ -1131,15 +1131,15 @@ async function fetchSetups() {
 
 function rebuildSetupSelect() {
   var sel = gid('fSetup'), cur = selectedSetupId;
-  sel.innerHTML = '<option value="">Select a setup</option>';
-  setups.forEach(function(s) { var o = document.createElement('option'); o.value = s.id; o.textContent = s.nome + ' (' + s.score + ' stars)'; sel.appendChild(o); });
+  sel.innerHTML = '<option value="">Selecione um setup</option>';
+  setups.forEach(function(s) { var o = document.createElement('option'); o.value = s.id; o.textContent = s.nome + ' (' + s.score + ' estrelas)'; sel.appendChild(o); });
   if (cur) sel.value = cur;
 }
 
 function onSetupChange() {
   var v = gid('fSetup').value; selectedSetupId = v ? parseInt(v) : null;
   var prev = gid('setupPreview');
-  if (v) { var s = setups.find(function(x) { return x.id === parseInt(v); }); if (s) { prev.className = 'setup-preview show'; prev.innerHTML = '<strong>' + s.nome + '</strong><br><span style="color:var(--text2)">' + (s.descricao || 'No description.') + '</span>'; } }
+  if (v) { var s = setups.find(function(x) { return x.id === parseInt(v); }); if (s) { prev.className = 'setup-preview show'; prev.innerHTML = '<strong>' + s.nome + '</strong><br><span style="color:var(--text2)">' + (s.descricao || 'Sem descrição.') + '</span>'; } }
   else { prev.className = 'setup-preview'; }
 }
 
@@ -1149,7 +1149,7 @@ function renderSetupList() {
     var row = document.createElement('div'); row.className = 'setup-row';
     var stars = Array.from({ length: 5 }, function(_, j) { return '<span class="setup-star' + (j < (s.score || 3) ? ' active' : '') + '" data-v="' + (j + 1) + '">*</span>'; }).join('');
     row.dataset.id = s.id;
-    row.innerHTML = '<div class="setup-row-top"><input type="text" class="s-nome" value="' + s.nome + '" placeholder="Setup name"><button class="btn-del-setup" data-sid="' + s.id + '">Remove</button></div><div class="setup-row-desc"><textarea class="s-desc" placeholder="When to use, required confluences, rules...">' + (s.descricao || '') + '</textarea></div><div class="setup-stars-edit"><span style="font-size:11px;color:var(--text2);margin-right:4px">Score:</span>' + stars + '<input type="number" class="s-score" value="' + (s.score || 3) + '" min="1" max="5" style="display:none"><span class="s-score-label" style="font-size:10px;color:var(--gold);margin-left:8px">' + (SCORE_LABELS[s.score || 3] || '') + '</span></div>';
+    row.innerHTML = '<div class="setup-row-top"><input type="text" class="s-nome" value="' + s.nome + '" placeholder="Nome do setup"><button class="btn-del-setup" data-sid="' + s.id + '">Remover</button></div><div class="setup-row-desc"><textarea class="s-desc" placeholder="Quando usar, confluências necessárias, regras...">' + (s.descricao || '') + '</textarea></div><div class="setup-stars-edit"><span style="font-size:11px;color:var(--text2);margin-right:4px">Nota:</span>' + stars + '<input type="number" class="s-score" value="' + (s.score || 3) + '" min="1" max="5" style="display:none"><span class="s-score-label" style="font-size:10px;color:var(--gold);margin-left:8px">' + (SCORE_LABELS[s.score || 3] || '') + '</span></div>';
     row.querySelectorAll('.setup-star').forEach(function(star) { star.addEventListener('click', function() { var v = parseInt(star.dataset.v); row.querySelector('.s-score').value = v; row.querySelectorAll('.setup-star').forEach(function(s2, j) { s2.classList.toggle('active', j < v); }); row.querySelector('.s-score-label').textContent = SCORE_LABELS[v] || ''; }); });
     row.querySelector('.btn-del-setup').addEventListener('click', function() { removeSetupRowFn(s.id, row); });
     list.appendChild(row);
@@ -1158,7 +1158,7 @@ function renderSetupList() {
 
 async function removeSetupRowFn(id, row) {
   if (String(id).startsWith('new_')) { row.remove(); setups = setups.filter(function(s) { return s.id !== id; }); return; }
-  if (!confirm('Remove this setup?')) return;
+  if (!confirm('Remover este setup?')) return;
   try { await sb.from('setups').delete().eq('id', id); row.remove(); setups = setups.filter(function(s) { return s.id !== id; }); } catch (e) { alert(e.message); }
 }
 
@@ -1179,12 +1179,12 @@ async function saveSetupsFn() {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                  EXPORT CSV                         ║
+// ║                  EXPORTAR CSV                       ║
 // ╚══════════════════════════════════════════════════════╝
 function exportCSV() {
   var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
-  if (!acct.length) { alert('No trades to export.'); return; }
-  var headers = ['Date/Time', 'Asset', 'Setup', 'Session', 'Direction', 'Entry', 'Stop', 'TP1', 'TP2', 'TP3', 'Qty', 'Factor', 'Exit', 'Estimated', 'Realized', 'Score', 'Violations', 'Notes'];
+  if (!acct.length) { alert('Nenhuma operação para exportar.'); return; }
+  var headers = ['Data/Hora', 'Ativo', 'Setup', 'Sessão', 'Direção', 'Entrada', 'Stop', 'TP1', 'TP2', 'TP3', 'Qtd', 'Fator', 'Saída', 'Estimado', 'Realizado', 'Nota', 'Infrações', 'Anotações'];
   var rows = acct.map(function(t) {
     var s = setups.find(function(x) { return x.id === t.setup_id; });
     var setupNome = s ? s.nome : '';
@@ -1203,7 +1203,7 @@ function exportCSV() {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              ACCOUNT SWITCHING                      ║
+// ║              TROCA DE CONTA                         ║
 // ╚══════════════════════════════════════════════════════╝
 function setAccount(acc) {
   currentAccount = acc; document.body.className = acc + '-mode';
@@ -1214,7 +1214,7 @@ function setAccount(acc) {
   gid('candleLabel').textContent = acc.toUpperCase(); gid('candleLabel').style.color = col;
   gid('formAccountBadge').textContent = acc === 'demo' ? 'DEMO' : 'REAL';
   gid('formAccountBadge').className = 'account-badge ' + acc;
-  gid('capitalLabel').textContent = (acc === 'demo' ? 'Demo' : 'Real') + ' Capital';
+  gid('capitalLabel').textContent = (acc === 'demo' ? 'Capital Demo' : 'Capital Real');
   gid('capitalInput').value = acc === 'demo' ? capitalDemo : capitalReal;
   loadMeta(); renderAll();
 }
@@ -1229,7 +1229,7 @@ async function fetchCapital() {
 }
 
 async function saveCapital() {
-  var v = parseFloat(gid('capitalInput').value); if (isNaN(v) || v <= 0) { alert('Invalid value.'); return; }
+  var v = parseFloat(gid('capitalInput').value); if (isNaN(v) || v <= 0) { alert('Valor inválido.'); return; }
   if (currentAccount === 'demo') capitalDemo = v; else capitalReal = v;
   try { await sb.from('capital').upsert({ conta_tipo: currentAccount, valor: v, updated_at: new Date().toISOString() }, { onConflict: 'conta_tipo' }); }
   catch (e) { console.warn('capital save:', e.message); }
@@ -1237,27 +1237,27 @@ async function saveCapital() {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              TRADES (Supabase)                      ║
+// ║              OPERAÇÕES (Supabase)                   ║
 // ╚══════════════════════════════════════════════════════╝
 async function fetchTrades() {
   showLoading(true);
-  try { var res = await sb.from('trades').select('*').order('created_at', { ascending: false }); if (res.error) throw res.error; trades = res.data || []; setDbStatus('ok', 'database connected'); }
+  try { var res = await sb.from('trades').select('*').order('created_at', { ascending: false }); if (res.error) throw res.error; trades = res.data || []; setDbStatus('ok', 'banco de dados conectado'); }
   catch (e) { console.error(e); setDbStatus('err', e.message); trades = []; }
   finally { showLoading(false); renderAll(); }
 }
 
-async function insertTrade(p) { showLoading(true); try { var res = await sb.from('trades').insert([p]); if (res.error) throw res.error; } catch (e) { alert('Error saving: ' + e.message); } finally { showLoading(false); } }
+async function insertTrade(p) { showLoading(true); try { var res = await sb.from('trades').insert([p]); if (res.error) throw res.error; } catch (e) { alert('Erro ao salvar: ' + e.message); } finally { showLoading(false); } }
 
-async function updateTradeDB(id, p) { showLoading(true); try { var res = await sb.from('trades').update(p).eq('id', id); if (res.error) throw res.error; } catch (e) { alert('Error updating: ' + e.message); } finally { showLoading(false); } }
+async function updateTradeDB(id, p) { showLoading(true); try { var res = await sb.from('trades').update(p).eq('id', id); if (res.error) throw res.error; } catch (e) { alert('Erro ao atualizar: ' + e.message); } finally { showLoading(false); } }
 
 async function deleteTradeDB(id) {
-  if (!confirm('Confirm deletion?')) return; showLoading(true);
+  if (!confirm('Confirmar exclusão?')) return; showLoading(true);
   try { var res = await sb.from('trades').delete().eq('id', id); if (res.error) throw res.error; await fetchTrades(); }
   catch (e) { alert(e.message); showLoading(false); }
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              RENDER ALL                             ║
+// ║              RENDERIZAR TUDO                        ║
 // ╚══════════════════════════════════════════════════════╝
 function renderAll() {
   var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
@@ -1292,11 +1292,11 @@ function updateStats(acct) {
   gid('sExpect').textContent = '$ ' + expect.toFixed(2); gid('sExpect').className = 'stat-value ' + (expect >= 0 ? 'pos' : 'neg');
   gid('sNet').textContent = '$ ' + net.toFixed(2); gid('sNet').className = 'stat-value ' + (net >= 0 ? 'pos' : 'neg');
   gid('sRegras').textContent = totalReg; gid('sRegras').className = 'stat-value ' + (totalReg > 0 ? 'neg' : 'pos');
-  gid('sScore').textContent = avgSc ? avgSc + ' stars' : '-'; gid('sScore').className = 'stat-value';
+  gid('sScore').textContent = avgSc ? avgSc + ' estrelas' : '-'; gid('sScore').className = 'stat-value';
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              CHARTS                                 ║
+// ║              GRÁFICOS                               ║
 // ╚══════════════════════════════════════════════════════╝
 function renderEquity(acct) {
   var sorted = acct.filter(function(t) { return t.resultado_real != null; }).sort(function(a, b) { return new Date(a.date_time_raw || a.created_at) - new Date(b.date_time_raw || b.created_at); });
@@ -1315,7 +1315,7 @@ function renderEquity(acct) {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0b1020', borderColor: 'rgba(255,185,70,.2)', borderWidth: 1, titleColor: '#8898c0', bodyColor: '#dde4f5', callbacks: { label: function(c) { return ' $ ' + c.parsed.y.toFixed(2); } } } },
       scales: {
-        x: { type: 'linear', grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { size: 10 }, callback: function(v) { return v === 0 ? 'Start' : '#' + v; } } },
+        x: { type: 'linear', grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { size: 10 }, callback: function(v) { return v === 0 ? 'Início' : '#' + v; } } },
         y: { grid: { color: 'rgba(255,185,70,.04)' }, ticks: { color: '#4a5980', font: { size: 10 }, callback: function(v) { return '$ ' + v.toLocaleString('en-US'); } } }
       }
     }
@@ -1371,17 +1371,17 @@ function renderCandles(acct) {
           callbacks: {
             title: function(items) {
               var d = ohlc[items[0].dataIndex];
-              return new Date(d.day + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', day: '2-digit', month: 'long' });
+              return new Date(d.day + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
             },
             label: function(item) {
               var d = ohlc[item.dataIndex];
               var res = d.close - d.open;
               return [
-                'Open: $ ' + d.open.toFixed(2),
-                'High: $ ' + d.high.toFixed(2),
-                'Low: $ ' + d.low.toFixed(2),
-                'Close: $ ' + d.close.toFixed(2),
-                'Result: ' + (res >= 0 ? '+' : '') + '$ ' + res.toFixed(2)
+                'Abertura: $ ' + d.open.toFixed(2),
+                'Máxima: $ ' + d.high.toFixed(2),
+                'Mínima: $ ' + d.low.toFixed(2),
+                'Fechamento: $ ' + d.close.toFixed(2),
+                'Resultado: ' + (res >= 0 ? '+' : '') + '$ ' + res.toFixed(2)
               ];
             }
           }
@@ -1397,7 +1397,7 @@ function renderCandles(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              TABLE                                  ║
+// ║              TABELA                                 ║
 // ╚══════════════════════════════════════════════════════╝
 function renderTable(acct) {
   var f = acct;
@@ -1405,9 +1405,9 @@ function renderTable(acct) {
   else if (currentFilter === 'loss') f = acct.filter(function(t) { var r = t.resultado_real != null ? t.resultado_real : (t.resultado || 0); return r <= 0 && t.tipo_saida !== 'pending'; });
   else if (currentFilter === 'pending') f = acct.filter(function(t) { return !t.tipo_saida || t.tipo_saida === 'pending'; });
   else if (currentFilter === 'regras') f = acct.filter(function(t) { return t.regras_quebradas && t.regras_quebradas.length > 0; });
-  gid('tradeCount').textContent = f.length + ' trade' + (f.length === 1 ? '' : 's');
-  if (!f.length) { gid('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="17">No trades found.</td></tr>'; return; }
-  var sMap = { pending: 'Open', loss: 'Stop', parcial: 'Partial', tp1: 'TP1', tp2: 'TP2', tp3: 'TP3' };
+  gid('tradeCount').textContent = f.length + ' oper' + (f.length === 1 ? 'ação' : 'ações');
+  if (!f.length) { gid('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="17">Nenhuma operação encontrada.</td></tr>'; return; }
+  var sMap = { pending: 'Aberta', loss: 'Stop', parcial: 'Parcial', tp1: 'TP1', tp2: 'TP2', tp3: 'TP3' };
   gid('tradesBody').innerHTML = f.map(function(t) {
     var rE = t.resultado || 0, rR = t.resultado_real;
     var rCE = rE >= 0 ? 'res-pos' : 'res-neg', rCR = rR == null ? 'res-na' : (rR >= 0 ? 'res-pos' : 'res-neg');
@@ -1434,7 +1434,7 @@ function renderTable(acct) {
       + '<td style="color:var(--gold);font-size:11px;letter-spacing:1px">' + stars + '</td>'
       + '<td style="max-width:130px">' + (regras || '<span style="color:var(--muted);font-size:10px">-</span>') + '</td>'
       + '<td><div class="obs-short" title="' + obsTitle + '">' + obs + '</div></td>'
-      + '<td><div class="action-cell"><button class="act-btn" data-edit="' + t.id + '">Edit</button><button class="act-btn del" data-del="' + t.id + '">Del</button></div></td>'
+      + '<td><div class="action-cell"><button class="act-btn" data-edit="' + t.id + '">Editar</button><button class="act-btn del" data-del="' + t.id + '">Excluir</button></div></td>'
       + '</tr>';
   }).join('');
   gid('tradesBody').querySelectorAll('[data-edit]').forEach(function(btn) { btn.addEventListener('click', function() { startEdit(parseInt(btn.dataset.edit)); }); });
@@ -1442,7 +1442,7 @@ function renderTable(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              PREVIEW / RISK                         ║
+// ║              PRÉ-VISUALIZAÇÃO / RISCO               ║
 // ╚══════════════════════════════════════════════════════╝
 function updatePreview() {
   var e = parseFloat(gid('fEntrada').value), s = parseFloat(gid('fStop').value);
@@ -1454,7 +1454,7 @@ function updatePreview() {
     var r = calcResultado(e, t1, parseFloat(gid('fTp2').value), parseFloat(gid('fTp3').value), q, f, lado);
     pb.textContent = (r >= 0 ? '+ ' : '') + '$ ' + r.toFixed(2); pb.className = 'preview-box ' + (r >= 0 ? 'pos' : 'neg');
     gid('lucroPot').textContent = '$ ' + r.toFixed(2); gid('lucroPot').style.color = r >= 0 ? 'var(--green)' : 'var(--red)';
-  } else { pb.textContent = 'waiting data...'; pb.className = 'preview-box'; gid('lucroPot').textContent = '$ -'; }
+  } else { pb.textContent = 'aguardando dados...'; pb.className = 'preview-box'; gid('lucroPot').textContent = '$ -'; }
   if (!isNaN(e) && !isNaN(s)) {
     var risco = Math.abs((lado === 'compra' ? s - e : e - s) * q * f);
     gid('riscoReais').textContent = '$ ' + risco.toFixed(2);
@@ -1467,20 +1467,20 @@ function updatePreview() {
     gid('riscoAlert2pct').classList.toggle('show', over2);
     if (cap > 0) { gid('riscoPct').textContent = pct.toFixed(2) + '%'; gid('riscoPct').style.color = pct > 2 ? 'var(--red)' : pct > 1 ? 'var(--orange)' : 'var(--green)'; }
     if (!isNaN(t1)) { var ret = Math.abs((lado === 'compra' ? t1 - e : e - t1) * q * f); var ratio = risco > 0 ? ret / risco : 0; gid('riscoRatio').textContent = '1 : ' + ratio.toFixed(2); gid('riscoRatio').style.color = ratio >= 2 ? 'var(--green)' : ratio >= 1 ? 'var(--gold)' : 'var(--red)'; }
-  } else { gid('riscoReais').textContent = '$ 0.00'; gid('riscoRatio').textContent = '1 : -'; gid('riscoPct').textContent = '-%'; gid('riscoBoxReais').className = 'risco-box'; gid('riscoBoxPct').className = 'risco-box'; }
+  } else { gid('riscoReais').textContent = '$ 0,00'; gid('riscoRatio').textContent = '1 : -'; gid('riscoPct').textContent = '-%'; gid('riscoBoxReais').className = 'risco-box'; gid('riscoBoxPct').className = 'risco-box'; }
 }
 
 function resetForm() {
   ['fEntrada', 'fStop', 'fTp1', 'fTp2', 'fTp3', 'fObs', 'fResultadoReal'].forEach(function(id) { gid(id).value = ''; });
   gid('fQtd').value = '1'; gid('fDateTime').value = nowLocal();
   gid('outroAtivo').style.display = 'none';
-  var pb = gid('previewBox'); pb.textContent = 'waiting data...'; pb.className = 'preview-box';
+  var pb = gid('previewBox'); pb.textContent = 'aguardando dados...'; pb.className = 'preview-box';
   selectedSaida = 'pending'; document.querySelectorAll('.saida-badge').forEach(function(b) { b.className = 'saida-badge'; if (b.dataset.saida === 'pending') b.classList.add('active-pending'); });
   document.querySelectorAll('.rule-check input[type=checkbox]').forEach(function(cb) { cb.checked = false; cb.closest('.rule-check').classList.remove('checked'); });
   selectedScore = 1; document.querySelectorAll('.star').forEach(function(s, i) { s.classList.toggle('active', i < 1); }); gid('scoreLabel').textContent = SCORE_LABELS[1];
   selectedSessao = 'Nova York'; document.querySelectorAll('.sessao-chip').forEach(function(c) { c.classList.toggle('active', c.dataset.sessao === 'Nova York'); });
   selectedSetupId = null; gid('fSetup').value = ''; gid('setupPreview').className = 'setup-preview';
-  gid('riscoReais').textContent = '$ 0.00'; gid('riscoRatio').textContent = '1 : -'; gid('riscoPct').textContent = '-%'; gid('lucroPot').textContent = '$ -';
+  gid('riscoReais').textContent = '$ 0,00'; gid('riscoRatio').textContent = '1 : -'; gid('riscoPct').textContent = '-%'; gid('lucroPot').textContent = '$ -';
   gid('riscoBoxReais').className = 'risco-box'; gid('riscoBoxPct').className = 'risco-box';
   gid('riscoAlertReais').classList.remove('show'); gid('riscoAlert2pct').classList.remove('show');
   rebuildSelect();
@@ -1491,7 +1491,7 @@ function startEdit(id) {
   editingId = id; gid('fDateTime').value = t.date_time_raw || nowLocal();
   var opts = Array.from(gid('fAtivo').options).map(function(o) { return o.value; });
   if (opts.includes(t.ativo)) { gid('fAtivo').value = t.ativo; gid('outroAtivo').style.display = 'none'; }
-  else { gid('fAtivo').value = 'Other'; gid('outroAtivo').value = t.ativo; gid('outroAtivo').style.display = 'block'; }
+  else { gid('fAtivo').value = 'Outro'; gid('outroAtivo').value = t.ativo; gid('outroAtivo').style.display = 'block'; }
   gid('fFator').value = t.fator; gid('fLado').value = t.lado; gid('fEntrada').value = t.entrada; gid('fStop').value = t.stop;
   gid('fTp1').value = t.tp1; gid('fTp2').value = t.tp2 != null ? t.tp2 : ''; gid('fTp3').value = t.tp3 != null ? t.tp3 : ''; gid('fQtd').value = t.qtd;
   gid('fObs').value = t.observacao || ''; gid('fResultadoReal').value = t.resultado_real != null ? t.resultado_real : '';
@@ -1500,12 +1500,12 @@ function startEdit(id) {
   selectedScore = t.score || 1; document.querySelectorAll('.star').forEach(function(s, i) { s.classList.toggle('active', i < selectedScore); }); gid('scoreLabel').textContent = SCORE_LABELS[selectedScore] || '';
   selectedSessao = t.sessao || 'Nova York'; document.querySelectorAll('.sessao-chip').forEach(function(c) { c.classList.toggle('active', c.dataset.sessao === selectedSessao); });
   selectedSetupId = t.setup_id || null; gid('fSetup').value = selectedSetupId || ''; onSetupChange();
-  updatePreview(); gid('btnAdd').textContent = 'Update Trade'; gid('cancelEdit').style.display = 'flex';
+  updatePreview(); gid('btnAdd').textContent = 'Atualizar Operação'; gid('cancelEdit').style.display = 'flex';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              DOM READY                              ║
+// ║              DOM PRONTO                             ║
 // ╚══════════════════════════════════════════════════════╝
 document.addEventListener('DOMContentLoaded', function() {
   updateClock(); setInterval(updateClock, 1000);
@@ -1548,8 +1548,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.rule-check').forEach(function(l) { l.addEventListener('change', function() { l.classList.toggle('checked', l.querySelector('input').checked); }); });
 
   gid('fAtivo').addEventListener('change', function() {
-    gid('outroAtivo').style.display = gid('fAtivo').value === 'Other' ? 'block' : 'none';
-    if (gid('fAtivo').value !== 'Other') { var a = assets.find(function(x) { return x.name === gid('fAtivo').value; }); if (a) gid('fFator').value = a.fator; }
+    gid('outroAtivo').style.display = gid('fAtivo').value === 'Outro' ? 'block' : 'none';
+    if (gid('fAtivo').value !== 'Outro') { var a = assets.find(function(x) { return x.name === gid('fAtivo').value; }); if (a) gid('fFator').value = a.fator; }
     updatePreview();
   });
 
@@ -1559,19 +1559,19 @@ document.addEventListener('DOMContentLoaded', function() {
   gid('btnAdd').addEventListener('click', async function() {
     var e = parseFloat(gid('fEntrada').value), s = parseFloat(gid('fStop').value);
     var t1 = parseFloat(gid('fTp1').value), q = parseFloat(gid('fQtd').value), f = parseFloat(gid('fFator').value), lado = gid('fLado').value;
-    if ([e, s, t1, q, f].some(isNaN)) { alert('Fill in Entry, Stop, TP1, Quantity and Factor.'); return; }
-    if (lado === 'compra' && (s >= e || t1 <= e)) { alert('Buy: Stop must be less than Entry and TP1 greater than Entry.'); return; }
-    if (lado === 'venda' && (s <= e || t1 >= e)) { alert('Sell: Stop must be greater than Entry and TP1 less than Entry.'); return; }
+    if ([e, s, t1, q, f].some(isNaN)) { alert('Preencha Entrada, Stop, TP1, Quantidade e Fator.'); return; }
+    if (lado === 'compra' && (s >= e || t1 <= e)) { alert('Compra: Stop deve ser menor que Entrada e TP1 maior que Entrada.'); return; }
+    if (lado === 'venda' && (s <= e || t1 >= e)) { alert('Venda: Stop deve ser maior que Entrada e TP1 menor que Entrada.'); return; }
     var resultado = calcResultado(e, t1, parseFloat(gid('fTp2').value), parseFloat(gid('fTp3').value), q, f, lado);
     var rReal = parseFloat(gid('fResultadoReal').value);
     var regras = Array.from(document.querySelectorAll('.rule-check input[type=checkbox]:checked')).map(function(c) { return c.value; });
     var payload = { date_time_raw: gid('fDateTime').value || nowLocal(), ativo: getAtivo(), lado: lado, entrada: e, stop: s, tp1: t1, tp2: parseFloat(gid('fTp2').value) || null, tp3: parseFloat(gid('fTp3').value) || null, qtd: q, fator: f, observacao: gid('fObs').value.trim(), resultado: resultado, tipo_saida: selectedSaida, resultado_real: isNaN(rReal) ? null : rReal, regras_quebradas: regras, score: selectedScore, sessao: selectedSessao, conta_tipo: currentAccount, setup_id: selectedSetupId || null };
-    if (editingId !== null) { await updateTradeDB(editingId, payload); editingId = null; gid('btnAdd').textContent = 'Record Trade'; gid('cancelEdit').style.display = 'none'; }
+    if (editingId !== null) { await updateTradeDB(editingId, payload); editingId = null; gid('btnAdd').textContent = 'Registrar Operação'; gid('cancelEdit').style.display = 'none'; }
     else { await insertTrade(payload); }
     resetForm(); await fetchTrades();
   });
 
-  gid('cancelEdit').addEventListener('click', function() { editingId = null; gid('btnAdd').textContent = 'Record Trade'; gid('cancelEdit').style.display = 'none'; resetForm(); });
+  gid('cancelEdit').addEventListener('click', function() { editingId = null; gid('btnAdd').textContent = 'Registrar Operação'; gid('cancelEdit').style.display = 'none'; resetForm(); });
 
   document.querySelectorAll('.tab').forEach(function(tab) { tab.addEventListener('click', function() { document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); }); tab.classList.add('active'); currentFilter = tab.dataset.filter; renderTable(trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; })); }); });
 
