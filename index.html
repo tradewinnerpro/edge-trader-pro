@@ -303,6 +303,24 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 .act-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
 
 /* ═══════════════════════════════════════════════════════
+   PERÍODO FILTER - NOVO
+   ═══════════════════════════════════════════════════════ */
+.periodo-row{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center}
+.periodo-tab{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:10px;cursor:pointer;transition:all .2s;color:var(--text2);font-family:var(--font-m);white-space:nowrap}
+.periodo-tab:hover{border-color:var(--blue);color:var(--blue)}
+.periodo-tab.active{background:rgba(77,184,255,.15);border-color:var(--blue);color:var(--blue)}
+.periodo-custom{display:none;align-items:center;gap:6px;flex-wrap:wrap}
+.periodo-custom.show{display:flex}
+.periodo-custom input[type="date"]{background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font-m);font-size:11px;padding:5px 10px;outline:none;width:130px}
+.periodo-custom input[type="date"]:focus{border-color:var(--blue)}
+.periodo-custom span{color:var(--text2);font-size:10px}
+.btn-aplicar-periodo{background:var(--blue);border:none;border-radius:8px;color:#fff;padding:5px 12px;font-size:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;transition:all .2s}
+.btn-aplicar-periodo:hover{background:#0077cc}
+.btn-limpar-periodo{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);padding:5px 10px;font-size:10px;cursor:pointer;font-family:var(--font-m);transition:all .2s}
+.btn-limpar-periodo:hover{border-color:var(--red);color:var(--red)}
+.periodo-info{font-size:10px;color:var(--blue);margin-left:4px}
+
+/* ═══════════════════════════════════════════════════════
    EDUCATION PANEL
    ═══════════════════════════════════════════════════════ */
 .edu-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,.6);z-index:500;backdrop-filter:blur(2px)}
@@ -385,7 +403,7 @@ td{padding:10px;vertical-align:middle;font-size:12px}
   .btn-manage-ticker,.btn-sm,.btn-actions,.action-cell,.filter-row,
   .form-card,.insights-bar,.sessao-row,.rules-section,.resultado-real-section,
   .loading-overlay,.modal-overlay,.edu-overlay,.edu-panel,.btn-edu,
-  .weekly-card,.meta-bar,.streak-badge,
+  .weekly-card,.meta-bar,.streak-badge,.periodo-row,
   thead th:last-child,tbody td:last-child{display:none !important}
   *{color:black !important;background:white !important;border-color:#ccc !important;box-shadow:none !important;animation:none !important}
   body{font-family:Arial,sans-serif;font-size:11px}
@@ -740,14 +758,37 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 
   <!-- ═══════════ TABELA DE OPERAÇÕES ═══════════ -->
   <div class="filter-row">
-    <div class="filter-tabs">
-      <button class="tab active" data-filter="all">Todas</button>
-      <button class="tab" data-filter="win">Ganhos</button>
-      <button class="tab" data-filter="loss">Perdas</button>
-      <button class="tab" data-filter="pending">Abertas</button>
-      <button class="tab" data-filter="regras">Infrações</button>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+      <!-- LINHA 1: FILTROS DE PERÍODO -->
+      <div class="periodo-row">
+        <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-right:4px">Período:</span>
+        <div class="periodo-tab active" data-periodo="todos">Todos</div>
+        <div class="periodo-tab" data-periodo="hoje">Hoje</div>
+        <div class="periodo-tab" data-periodo="semana">Esta Semana</div>
+        <div class="periodo-tab" data-periodo="mes">Este Mês</div>
+        <div class="periodo-tab" data-periodo="ano">Este Ano</div>
+        <div class="periodo-tab" data-periodo="custom">Personalizado</div>
+        <div class="periodo-custom" id="periodoCustom">
+          <input type="date" id="periodoInicio" title="Data inicial">
+          <span>até</span>
+          <input type="date" id="periodoFim" title="Data final">
+          <button class="btn-aplicar-periodo" id="btnAplicarPeriodo">Aplicar</button>
+          <button class="btn-limpar-periodo" id="btnLimparPeriodo">Limpar</button>
+        </div>
+        <span class="periodo-info" id="periodoInfo"></span>
+      </div>
+      <!-- LINHA 2: FILTROS DE TIPO -->
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+        <div class="filter-tabs">
+          <button class="tab active" data-filter="all">Todas</button>
+          <button class="tab" data-filter="win">Ganhos</button>
+          <button class="tab" data-filter="loss">Perdas</button>
+          <button class="tab" data-filter="pending">Abertas</button>
+          <button class="tab" data-filter="regras">Infrações</button>
+        </div>
+        <div class="trade-count" id="tradeCount">-</div>
+      </div>
     </div>
-    <div class="trade-count" id="tradeCount">-</div>
   </div>
   <div class="table-wrap">
     <div class="table-scroll">
@@ -791,9 +832,7 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ╔══════════════════════════════════════════════════════╗
 // ║                FUNÇÕES UTILITÁRIAS                  ║
 // ╚══════════════════════════════════════════════════════╝
-function gid(id) {
-  return document.getElementById(id);
-}
+function gid(id) { return document.getElementById(id); }
 
 function nowLocal() {
   var d = new Date();
@@ -830,9 +869,7 @@ function closeModal(id) {
 }
 
 function calcResultado(e, t1, t2, t3, q, f, lado) {
-  var valid = [t1, t2, t3].map(Number).filter(function(v) {
-    return !isNaN(v) && v > 0;
-  });
+  var valid = [t1, t2, t3].map(Number).filter(function(v) { return !isNaN(v) && v > 0; });
   if (!valid.length || isNaN(e)) return 0;
   var w = { 1: [1.0], 2: [0.6, 0.4], 3: [0.5, 0.3, 0.2] }[valid.length];
   return parseFloat(valid.reduce(function(tot, tp, i) {
@@ -915,6 +952,115 @@ var assets = JSON.parse(localStorage.getItem(ASSETS_KEY) || 'null') || DEFAULT_A
 var insightIdx = 0;
 var insightTimer = null;
 var eduActiveCat = 'Todas';
+
+// ╔══════════════════════════════════════════════════════╗
+// ║          NOVO: ESTADO DE PERÍODO                    ║
+// ╚══════════════════════════════════════════════════════╝
+var periodoAtivo = 'todos';      // 'todos', 'hoje', 'semana', 'mes', 'ano', 'custom'
+var periodoCustomInicio = null;   // string 'YYYY-MM-DD' ou null
+var periodoCustomFim = null;      // string 'YYYY-MM-DD' ou null
+
+// ╔══════════════════════════════════════════════════════╗
+// ║          FUNÇÕES DE PERÍODO (NOVO)                  ║
+// ╚══════════════════════════════════════════════════════╝
+function getDateRange() {
+  var now = new Date();
+  var inicio, fim;
+  
+  switch (periodoAtivo) {
+    case 'hoje':
+      inicio = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      fim = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      break;
+    case 'semana':
+      var diaSemana = now.getDay(); // 0=dom, 1=seg...
+      var diffSeg = diaSemana === 0 ? -6 : 1 - diaSemana; // segunda-feira
+      inicio = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffSeg);
+      fim = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffSeg + 6, 23, 59, 59, 999);
+      break;
+    case 'mes':
+      inicio = new Date(now.getFullYear(), now.getMonth(), 1);
+      fim = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      break;
+    case 'ano':
+      inicio = new Date(now.getFullYear(), 0, 1);
+      fim = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+      break;
+    case 'custom':
+      if (periodoCustomInicio) {
+        inicio = new Date(periodoCustomInicio + 'T00:00:00');
+      }
+      if (periodoCustomFim) {
+        fim = new Date(periodoCustomFim + 'T23:59:59.999');
+      }
+      if (periodoCustomInicio && !periodoCustomFim) {
+        fim = new Date(periodoCustomInicio + 'T23:59:59.999');
+      }
+      if (!periodoCustomInicio && periodoCustomFim) {
+        inicio = new Date(periodoCustomFim + 'T00:00:00');
+      }
+      break;
+    default: // 'todos'
+      return null;
+  }
+  return { inicio: inicio, fim: fim };
+}
+
+function filterByPeriodo(lista) {
+  var range = getDateRange();
+  if (!range) return lista;
+  
+  return lista.filter(function(t) {
+    var dt = new Date(t.date_time_raw || t.created_at);
+    return dt >= range.inicio && dt <= range.fim;
+  });
+}
+
+function setPeriodo(p) {
+  periodoAtivo = p;
+  // Atualiza botões
+  document.querySelectorAll('.periodo-tab').forEach(function(tab) {
+    tab.classList.toggle('active', tab.dataset.periodo === p);
+  });
+  
+  // Mostra/esconde campo personalizado
+  var customDiv = gid('periodoCustom');
+  if (p === 'custom') {
+    customDiv.classList.add('show');
+    // Preenche com valores atuais se existirem
+    if (periodoCustomInicio) gid('periodoInicio').value = periodoCustomInicio;
+    if (periodoCustomFim) gid('periodoFim').value = periodoCustomFim;
+  } else {
+    customDiv.classList.remove('show');
+  }
+  
+  // Atualiza info de período
+  updatePeriodoInfo();
+  
+  // Re-renderiza
+  renderAll();
+}
+
+function updatePeriodoInfo() {
+  var info = gid('periodoInfo');
+  var range = getDateRange();
+  
+  if (!range) {
+    info.textContent = '';
+    return;
+  }
+  
+  var fmt = function(d) {
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+  
+  info.textContent = '(' + fmt(range.inicio) + ' - ' + fmt(range.fim) + ')';
+  
+  // Conta operações no período
+  var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
+  var filtradas = filterByPeriodo(acct);
+  info.textContent += ' - ' + filtradas.length + ' ops';
+}
 
 // ╔══════════════════════════════════════════════════════╗
 // ║                  RELÓGIO                            ║
@@ -1185,6 +1331,7 @@ async function saveSetupsFn() {
 // ╚══════════════════════════════════════════════════════╝
 function exportCSV() {
   var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
+  acct = filterByPeriodo(acct);
   if (!acct.length) { alert('Nenhuma operação para exportar.'); return; }
   var headers = ['Data/Hora', 'Ativo', 'Setup', 'Sessão', 'Direção', 'Entrada', 'Stop', 'TP1', 'TP2', 'TP3', 'Qtd', 'Fator', 'Saída', 'Estimado', 'Realizado', 'Nota', 'Infrações', 'Anotações'];
   var rows = acct.map(function(t) {
@@ -1218,7 +1365,7 @@ function setAccount(acc) {
   gid('formAccountBadge').className = 'account-badge ' + acc;
   gid('capitalLabel').textContent = (acc === 'demo' ? 'Capital Demo' : 'Capital Real');
   gid('capitalInput').value = acc === 'demo' ? capitalDemo : capitalReal;
-  loadMeta(); renderAll();
+  loadMeta(); updatePeriodoInfo(); renderAll();
 }
 
 // ╔══════════════════════════════════════════════════════╗
@@ -1245,7 +1392,7 @@ async function fetchTrades() {
   showLoading(true);
   try { var res = await sb.from('trades').select('*').order('created_at', { ascending: false }); if (res.error) throw res.error; trades = res.data || []; setDbStatus('ok', 'banco de dados conectado'); }
   catch (e) { console.error(e); setDbStatus('err', e.message); trades = []; }
-  finally { showLoading(false); renderAll(); }
+  finally { showLoading(false); updatePeriodoInfo(); renderAll(); }
 }
 
 async function insertTrade(p) { showLoading(true); try { var res = await sb.from('trades').insert([p]); if (res.error) throw res.error; } catch (e) { alert('Erro ao salvar: ' + e.message); } finally { showLoading(false); } }
@@ -1263,8 +1410,16 @@ async function deleteTradeDB(id) {
 // ╚══════════════════════════════════════════════════════╝
 function renderAll() {
   var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
-  updateStats(acct); renderTable(acct); renderEquity(acct); renderCandles(acct); updateCapitalBadge(acct);
-  renderAnalytics(acct); updateStreak(acct); updateMetaProgress(acct);
+  var acctFiltrado = filterByPeriodo(acct);
+  updateStats(acctFiltrado);
+  renderTable(acctFiltrado);
+  renderEquity(acctFiltrado);
+  renderCandles(acctFiltrado);
+  updateCapitalBadge(acct);
+  renderAnalytics(acctFiltrado);
+  updateStreak(acctFiltrado);
+  updateMetaProgress(acctFiltrado);
+  updatePeriodoInfo();
 }
 
 function updateCapitalBadge(acct) {
@@ -1403,12 +1558,15 @@ function renderCandles(acct) {
 // ╚══════════════════════════════════════════════════════╝
 function renderTable(acct) {
   var f = acct;
-  if (currentFilter === 'win') f = acct.filter(function(t) { return (t.resultado_real != null ? t.resultado_real : (t.resultado || 0)) > 0; });
-  else if (currentFilter === 'loss') f = acct.filter(function(t) { var r = t.resultado_real != null ? t.resultado_real : (t.resultado || 0); return r <= 0 && t.tipo_saida !== 'pending'; });
-  else if (currentFilter === 'pending') f = acct.filter(function(t) { return !t.tipo_saida || t.tipo_saida === 'pending'; });
-  else if (currentFilter === 'regras') f = acct.filter(function(t) { return t.regras_quebradas && t.regras_quebradas.length > 0; });
+  
+  // Aplica filtro de tipo (ganhos, perdas, etc)
+  if (currentFilter === 'win') f = f.filter(function(t) { return (t.resultado_real != null ? t.resultado_real : (t.resultado || 0)) > 0; });
+  else if (currentFilter === 'loss') f = f.filter(function(t) { var r = t.resultado_real != null ? t.resultado_real : (t.resultado || 0); return r <= 0 && t.tipo_saida !== 'pending'; });
+  else if (currentFilter === 'pending') f = f.filter(function(t) { return !t.tipo_saida || t.tipo_saida === 'pending'; });
+  else if (currentFilter === 'regras') f = f.filter(function(t) { return t.regras_quebradas && t.regras_quebradas.length > 0; });
+  
   gid('tradeCount').textContent = f.length + ' oper' + (f.length === 1 ? 'ação' : 'ações');
-  if (!f.length) { gid('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="17">Nenhuma operação encontrada.</td></tr>'; return; }
+  if (!f.length) { gid('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="17">Nenhuma operação encontrada para o período e filtro selecionados.</td></tr>'; return; }
   var sMap = { pending: 'Aberta', loss: 'Stop', parcial: 'Parcial', tp1: 'TP1', tp2: 'TP2', tp3: 'TP3' };
   gid('tradesBody').innerHTML = f.map(function(t) {
     var rE = t.resultado || 0, rR = t.resultado_real;
@@ -1575,7 +1733,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
   gid('cancelEdit').addEventListener('click', function() { editingId = null; gid('btnAdd').textContent = 'Registrar Operação'; gid('cancelEdit').style.display = 'none'; resetForm(); });
 
-  document.querySelectorAll('.tab').forEach(function(tab) { tab.addEventListener('click', function() { document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); }); tab.classList.add('active'); currentFilter = tab.dataset.filter; renderTable(trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; })); }); });
+  document.querySelectorAll('.tab').forEach(function(tab) { tab.addEventListener('click', function() { document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); }); tab.classList.add('active'); currentFilter = tab.dataset.filter; renderAll(); }); });
+
+  // ═══════════ NOVO: EVENTOS DE PERÍODO ═══════════
+  document.querySelectorAll('.periodo-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var p = tab.dataset.periodo;
+      if (p === 'custom') {
+        // Só mostra os campos, não aplica ainda
+        periodoAtivo = 'custom';
+        document.querySelectorAll('.periodo-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        gid('periodoCustom').classList.add('show');
+        // Se já tem datas, aplica
+        if (periodoCustomInicio || periodoCustomFim) {
+          updatePeriodoInfo();
+          renderAll();
+        }
+      } else {
+        setPeriodo(p);
+      }
+    });
+  });
+
+  gid('btnAplicarPeriodo').addEventListener('click', function() {
+    var ini = gid('periodoInicio').value;
+    var fim = gid('periodoFim').value;
+    
+    if (!ini && !fim) {
+      alert('Selecione pelo menos uma data (início ou fim).');
+      return;
+    }
+    
+    periodoCustomInicio = ini || null;
+    periodoCustomFim = fim || null;
+    periodoAtivo = 'custom';
+    
+    updatePeriodoInfo();
+    renderAll();
+  });
+
+  gid('btnLimparPeriodo').addEventListener('click', function() {
+    periodoCustomInicio = null;
+    periodoCustomFim = null;
+    gid('periodoInicio').value = '';
+    gid('periodoFim').value = '';
+    setPeriodo('todos');
+  });
 
   gid('btnPrintReport').addEventListener('click', function() { window.print(); });
   gid('btnExportCSV').addEventListener('click', exportCSV);
