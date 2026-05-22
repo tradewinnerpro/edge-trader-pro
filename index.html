@@ -135,14 +135,15 @@ body.demo-mode .brand-icon{background:linear-gradient(135deg,var(--blue),#0077cc
 .analytics-row .wr{font-size:10px;color:var(--text2);margin-left:6px}
 
 /* ═══════════════════════════════════════════════════════
-   CHARTS
+   CHARTS - RESPONSIVOS
    ═══════════════════════════════════════════════════════ */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:900px){.charts-grid{grid-template-columns:1fr}}
-.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:20px}
-.chart-title{font-family:var(--font-h);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.chart-wrap{height:200px;position:relative}
-.chart-empty{display:flex;align-items:center;justify-content:center;height:200px;color:var(--muted);font-size:12px;text-align:center;line-height:1.8}
+.chart-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:20px;min-width:0}
+.chart-title{font-family:var(--font-h);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-wrap{position:relative;width:100%}
+.chart-wrap canvas{width:100% !important;height:100% !important}
+.chart-empty{display:flex;align-items:center;justify-content:center;width:100%;color:var(--muted);font-size:12px;text-align:center;line-height:1.8}
 
 /* ═══════════════════════════════════════════════════════
    WEEKLY JOURNAL
@@ -244,10 +245,9 @@ textarea{resize:vertical;min-height:110px}
 .rule-check.checked{border-color:rgba(255,94,107,.3);color:var(--red);background:rgba(255,94,107,.05)}
 
 /* ═══════════════════════════════════════════════════════
-   BUTTONS
+   BUTTONS - EM LINHA HORIZONTAL
    ═══════════════════════════════════════════════════════ */
-.btn-actions{display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
-.btn-actions .btn{width:100%;justify-content:center}
+.btn-actions-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn{border:none;border-radius:10px;cursor:pointer;font-family:var(--font-m);font-weight:600;font-size:12px;padding:10px 20px;transition:transform .15s;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--gold),#c87800);color:#05080f;box-shadow:0 4px 20px rgba(255,185,70,.25)}
 .btn-cancel{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
@@ -303,7 +303,7 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 .act-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
 
 /* ═══════════════════════════════════════════════════════
-   PERÍODO FILTER - NOVO
+   PERÍODO FILTER
    ═══════════════════════════════════════════════════════ */
 .periodo-row{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center}
 .periodo-tab{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:10px;cursor:pointer;transition:all .2s;color:var(--text2);font-family:var(--font-m);white-space:nowrap}
@@ -397,10 +397,19 @@ td{padding:10px;vertical-align:middle;font-size:12px}
    ANIMATIONS & MEDIA
    ═══════════════════════════════════════════════════════ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.form-group.wider{grid-column:span 1}.brand-name{font-size:16px}.stat-value{font-size:18px}.edu-panel{width:100vw}.weekly-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .form-group.wider{grid-column:span 1}
+  .brand-name{font-size:16px}
+  .stat-value{font-size:18px}
+  .edu-panel{width:100vw}
+  .weekly-grid{grid-template-columns:1fr}
+  .btn-actions-row{justify-content:center}
+  .chart-wrap{height:180px !important}
+  .chart-empty{height:180px !important}
+}
 
 @media print{
-  .btn-manage-ticker,.btn-sm,.btn-actions,.action-cell,.filter-row,
+  .btn-manage-ticker,.btn-sm,.btn-actions-row,.action-cell,.filter-row,
   .form-card,.insights-bar,.sessao-row,.rules-section,.resultado-real-section,
   .loading-overlay,.modal-overlay,.edu-overlay,.edu-panel,.btn-edu,
   .weekly-card,.meta-bar,.streak-badge,.periodo-row,
@@ -418,9 +427,6 @@ td{padding:10px;vertical-align:middle;font-size:12px}
   .analytics-card{border:1px solid #ccc !important;padding:8px !important}
   .charts-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;page-break-inside:avoid}
   .chart-card{border:1px solid #ccc !important;padding:8px !important;page-break-inside:avoid;overflow:hidden}
-  .chart-wrap{height:160px !important;position:relative !important;overflow:hidden !important}
-  .chart-wrap canvas{display:block !important;width:100% !important;max-width:100% !important;height:160px !important;max-height:160px !important;position:static !important}
-  .chart-empty{height:160px !important}
   .ticker-outer{display:none !important}
   .table-wrap{border:1px solid #ccc !important}
   .table-scroll{overflow:visible}
@@ -741,17 +747,19 @@ td{padding:10px;vertical-align:middle;font-size:12px}
       </div>
     </div>
 
-    <!-- Observações + Ações -->
+    <!-- Observações + Ações EM LINHA -->
     <div class="form-grid">
       <div class="form-group wider">
         <label>Anotações / Estratégia / Emoções / Aprendizados</label>
         <textarea id="fObs" rows="5" placeholder="Estratégia utilizada, gatilhos de entrada, como se sentiu, o que aconteceu de diferente, o principal aprendizado desta operação..."></textarea>
       </div>
-      <div class="form-group btn-actions">
-        <button class="btn btn-primary" id="btnAdd">Registrar Operação</button>
-        <button class="btn btn-cancel" id="cancelEdit" style="display:none">Cancelar Edição</button>
-        <button class="btn btn-report" id="btnPrintReport">Imprimir</button>
-        <button class="btn btn-csv" id="btnExportCSV">Exportar CSV</button>
+      <div class="form-group wider">
+        <div class="btn-actions-row">
+          <button class="btn btn-primary" id="btnAdd">Registrar Operação</button>
+          <button class="btn btn-cancel" id="cancelEdit" style="display:none">Cancelar Edição</button>
+          <button class="btn btn-report" id="btnPrintReport">Imprimir</button>
+          <button class="btn btn-csv" id="btnExportCSV">Exportar CSV</button>
+        </div>
       </div>
     </div>
   </div>
@@ -952,16 +960,12 @@ var assets = JSON.parse(localStorage.getItem(ASSETS_KEY) || 'null') || DEFAULT_A
 var insightIdx = 0;
 var insightTimer = null;
 var eduActiveCat = 'Todas';
+var periodoAtivo = 'todos';
+var periodoCustomInicio = null;
+var periodoCustomFim = null;
 
 // ╔══════════════════════════════════════════════════════╗
-// ║          NOVO: ESTADO DE PERÍODO                    ║
-// ╚══════════════════════════════════════════════════════╝
-var periodoAtivo = 'todos';      // 'todos', 'hoje', 'semana', 'mes', 'ano', 'custom'
-var periodoCustomInicio = null;   // string 'YYYY-MM-DD' ou null
-var periodoCustomFim = null;      // string 'YYYY-MM-DD' ou null
-
-// ╔══════════════════════════════════════════════════════╗
-// ║          FUNÇÕES DE PERÍODO (NOVO)                  ║
+// ║          FUNÇÕES DE PERÍODO                         ║
 // ╚══════════════════════════════════════════════════════╝
 function getDateRange() {
   var now = new Date();
@@ -973,8 +977,8 @@ function getDateRange() {
       fim = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
       break;
     case 'semana':
-      var diaSemana = now.getDay(); // 0=dom, 1=seg...
-      var diffSeg = diaSemana === 0 ? -6 : 1 - diaSemana; // segunda-feira
+      var diaSemana = now.getDay();
+      var diffSeg = diaSemana === 0 ? -6 : 1 - diaSemana;
       inicio = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffSeg);
       fim = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffSeg + 6, 23, 59, 59, 999);
       break;
@@ -987,20 +991,12 @@ function getDateRange() {
       fim = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
       break;
     case 'custom':
-      if (periodoCustomInicio) {
-        inicio = new Date(periodoCustomInicio + 'T00:00:00');
-      }
-      if (periodoCustomFim) {
-        fim = new Date(periodoCustomFim + 'T23:59:59.999');
-      }
-      if (periodoCustomInicio && !periodoCustomFim) {
-        fim = new Date(periodoCustomInicio + 'T23:59:59.999');
-      }
-      if (!periodoCustomInicio && periodoCustomFim) {
-        inicio = new Date(periodoCustomFim + 'T00:00:00');
-      }
+      if (periodoCustomInicio) { inicio = new Date(periodoCustomInicio + 'T00:00:00'); }
+      if (periodoCustomFim) { fim = new Date(periodoCustomFim + 'T23:59:59.999'); }
+      if (periodoCustomInicio && !periodoCustomFim) { fim = new Date(periodoCustomInicio + 'T23:59:59.999'); }
+      if (!periodoCustomInicio && periodoCustomFim) { inicio = new Date(periodoCustomFim + 'T00:00:00'); }
       break;
-    default: // 'todos'
+    default:
       return null;
   }
   return { inicio: inicio, fim: fim };
@@ -1009,7 +1005,6 @@ function getDateRange() {
 function filterByPeriodo(lista) {
   var range = getDateRange();
   if (!range) return lista;
-  
   return lista.filter(function(t) {
     var dt = new Date(t.date_time_raw || t.created_at);
     return dt >= range.inicio && dt <= range.fim;
@@ -1018,45 +1013,27 @@ function filterByPeriodo(lista) {
 
 function setPeriodo(p) {
   periodoAtivo = p;
-  // Atualiza botões
   document.querySelectorAll('.periodo-tab').forEach(function(tab) {
     tab.classList.toggle('active', tab.dataset.periodo === p);
   });
-  
-  // Mostra/esconde campo personalizado
   var customDiv = gid('periodoCustom');
   if (p === 'custom') {
     customDiv.classList.add('show');
-    // Preenche com valores atuais se existirem
     if (periodoCustomInicio) gid('periodoInicio').value = periodoCustomInicio;
     if (periodoCustomFim) gid('periodoFim').value = periodoCustomFim;
   } else {
     customDiv.classList.remove('show');
   }
-  
-  // Atualiza info de período
   updatePeriodoInfo();
-  
-  // Re-renderiza
   renderAll();
 }
 
 function updatePeriodoInfo() {
   var info = gid('periodoInfo');
   var range = getDateRange();
-  
-  if (!range) {
-    info.textContent = '';
-    return;
-  }
-  
-  var fmt = function(d) {
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  };
-  
+  if (!range) { info.textContent = ''; return; }
+  var fmt = function(d) { return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); };
   info.textContent = '(' + fmt(range.inicio) + ' - ' + fmt(range.fim) + ')';
-  
-  // Conta operações no período
   var acct = trades.filter(function(t) { return (t.conta_tipo || 'demo') === currentAccount; });
   var filtradas = filterByPeriodo(acct);
   info.textContent += ' - ' + filtradas.length + ' ops';
@@ -1072,7 +1049,7 @@ function updateClock() {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║             META MENSAL (LocalStorage)              ║
+// ║             META MENSAL                             ║
 // ╚══════════════════════════════════════════════════════╝
 function loadMeta() {
   var saved = JSON.parse(localStorage.getItem(META_KEY) || '{}');
@@ -1117,7 +1094,7 @@ function updateStreak(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║             DIÁRIO SEMANAL (LocalStorage)           ║
+// ║             DIÁRIO SEMANAL                          ║
 // ╚══════════════════════════════════════════════════════╝
 function getWeekKey() {
   var d = new Date();
@@ -1453,18 +1430,33 @@ function updateStats(acct) {
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║              GRÁFICOS                               ║
+// ║              GRÁFICOS - RESPONSIVOS                 ║
 // ╚══════════════════════════════════════════════════════╝
+function getChartHeight() {
+  var w = window.innerWidth;
+  if (w < 500) return 160;
+  if (w < 700) return 180;
+  if (w < 900) return 200;
+  return 220;
+}
+
 function renderEquity(acct) {
   var sorted = acct.filter(function(t) { return t.resultado_real != null; }).sort(function(a, b) { return new Date(a.date_time_raw || a.created_at) - new Date(b.date_time_raw || b.created_at); });
   var cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
   var canvas = gid('equityChart'), empty = gid('equityEmpty');
+  var wrap = canvas.parentElement;
+  var h = getChartHeight();
+  wrap.style.height = h + 'px';
+  empty.style.height = h + 'px';
+  
   if (!sorted.length) { empty.style.display = 'flex'; canvas.style.display = 'none'; if (equityChart) { equityChart.destroy(); equityChart = null; } return; }
   empty.style.display = 'none'; canvas.style.display = 'block';
+  canvas.style.height = h + 'px';
+  
   var cum = cap; var data = [{ x: 0, y: cap }];
   sorted.forEach(function(t, i) { cum += t.resultado_real; data.push({ x: i + 1, y: parseFloat(cum.toFixed(2)) }); });
   var isPos = cum >= cap; var ctx = canvas.getContext('2d'); if (equityChart) equityChart.destroy();
-  var grad = ctx.createLinearGradient(0, 0, 0, 200); grad.addColorStop(0, isPos ? 'rgba(61,255,160,0.2)' : 'rgba(255,94,107,0.2)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+  var grad = ctx.createLinearGradient(0, 0, 0, h); grad.addColorStop(0, isPos ? 'rgba(61,255,160,0.2)' : 'rgba(255,94,107,0.2)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
   equityChart = new Chart(ctx, {
     type: 'line',
     data: { datasets: [{ data: data, borderColor: isPos ? '#3dffa0' : '#ff5e6b', backgroundColor: grad, borderWidth: 2, pointRadius: data.length > 30 ? 0 : 3, fill: true, tension: 0.35 }] },
@@ -1483,6 +1475,11 @@ function renderCandles(acct) {
   var sorted = acct.filter(function(t) { return t.resultado_real != null; }).sort(function(a, b) { return new Date(a.date_time_raw || a.created_at) - new Date(b.date_time_raw || b.created_at); });
   var cap = currentAccount === 'demo' ? capitalDemo : capitalReal;
   var canvas = gid('candleChart'), empty = gid('candleEmpty');
+  var wrap = canvas.parentElement;
+  var h = getChartHeight();
+  wrap.style.height = h + 'px';
+  empty.style.height = h + 'px';
+  
   var dayMap = {}; var running = cap;
   sorted.forEach(function(t) {
     var key = fmtDateKey(t.date_time_raw || t.created_at); if (!key) return;
@@ -1495,12 +1492,20 @@ function renderCandles(acct) {
   var days = Object.keys(dayMap).sort();
   if (!days.length) { empty.style.display = 'flex'; canvas.style.display = 'none'; if (candleChart) { candleChart.destroy(); candleChart = null; } return; }
   empty.style.display = 'none'; canvas.style.display = 'block';
+  canvas.style.height = h + 'px';
+  
   var ohlc = days.map(function(d) { return Object.assign({}, dayMap[d], { day: d }); });
   var bodyData = ohlc.map(function(d) { return [Math.min(d.open, d.close), Math.max(d.open, d.close) || Math.min(d.open, d.close) + 0.1]; });
   var bodyColors = ohlc.map(function(d) { return d.close >= d.open ? 'rgba(61,255,160,0.85)' : 'rgba(255,94,107,0.85)'; });
   var bodyBorder = ohlc.map(function(d) { return d.close >= d.open ? '#3dffa0' : '#ff5e6b'; });
   var labels = ohlc.map(function(d) { return new Date(d.day + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }); });
+  
   var ctx = canvas.getContext('2d'); if (candleChart) candleChart.destroy();
+  
+  // Candle width: grande e colado - base 10px por dia, mínimo 16px
+  var barW = Math.max(16, Math.min(40, Math.floor((wrap.clientWidth - 40) / ohlc.length)));
+  var categorySpacing = Math.max(2, Math.min(6, barW * 0.2));
+  
   var wickPlugin = {
     id: 'wicks',
     afterDatasetsDraw: function(chart) {
@@ -1515,10 +1520,10 @@ function renderCandles(acct) {
       c.restore();
     }
   };
-  var barW = Math.max(6, Math.min(26, Math.floor(260 / ohlc.length)));
+  
   candleChart = new Chart(ctx, {
     type: 'bar',
-    data: { labels: labels, datasets: [{ data: bodyData, backgroundColor: bodyColors, borderColor: bodyBorder, borderWidth: 1, borderSkipped: false, barThickness: barW }] },
+    data: { labels: labels, datasets: [{ data: bodyData, backgroundColor: bodyColors, borderColor: bodyBorder, borderWidth: 1, borderSkipped: false, barThickness: barW, categoryPercentage: 0.9, barPercentage: 0.9 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
@@ -1558,13 +1563,10 @@ function renderCandles(acct) {
 // ╚══════════════════════════════════════════════════════╝
 function renderTable(acct) {
   var f = acct;
-  
-  // Aplica filtro de tipo (ganhos, perdas, etc)
   if (currentFilter === 'win') f = f.filter(function(t) { return (t.resultado_real != null ? t.resultado_real : (t.resultado || 0)) > 0; });
   else if (currentFilter === 'loss') f = f.filter(function(t) { var r = t.resultado_real != null ? t.resultado_real : (t.resultado || 0); return r <= 0 && t.tipo_saida !== 'pending'; });
   else if (currentFilter === 'pending') f = f.filter(function(t) { return !t.tipo_saida || t.tipo_saida === 'pending'; });
   else if (currentFilter === 'regras') f = f.filter(function(t) { return t.regras_quebradas && t.regras_quebradas.length > 0; });
-  
   gid('tradeCount').textContent = f.length + ' oper' + (f.length === 1 ? 'ação' : 'ações');
   if (!f.length) { gid('tradesBody').innerHTML = '<tr class="empty-row"><td colspan="17">Nenhuma operação encontrada para o período e filtro selecionados.</td></tr>'; return; }
   var sMap = { pending: 'Aberta', loss: 'Stop', parcial: 'Parcial', tp1: 'TP1', tp2: 'TP2', tp3: 'TP3' };
@@ -1660,7 +1662,7 @@ function startEdit(id) {
   selectedScore = t.score || 1; document.querySelectorAll('.star').forEach(function(s, i) { s.classList.toggle('active', i < selectedScore); }); gid('scoreLabel').textContent = SCORE_LABELS[selectedScore] || '';
   selectedSessao = t.sessao || 'Nova York'; document.querySelectorAll('.sessao-chip').forEach(function(c) { c.classList.toggle('active', c.dataset.sessao === selectedSessao); });
   selectedSetupId = t.setup_id || null; gid('fSetup').value = selectedSetupId || ''; onSetupChange();
-  updatePreview(); gid('btnAdd').textContent = 'Atualizar Operação'; gid('cancelEdit').style.display = 'flex';
+  updatePreview(); gid('btnAdd').textContent = 'Atualizar Operação'; gid('cancelEdit').style.display = 'inline-flex';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1735,40 +1737,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.querySelectorAll('.tab').forEach(function(tab) { tab.addEventListener('click', function() { document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); }); tab.classList.add('active'); currentFilter = tab.dataset.filter; renderAll(); }); });
 
-  // ═══════════ NOVO: EVENTOS DE PERÍODO ═══════════
+  // EVENTOS DE PERÍODO
   document.querySelectorAll('.periodo-tab').forEach(function(tab) {
     tab.addEventListener('click', function() {
       var p = tab.dataset.periodo;
       if (p === 'custom') {
-        // Só mostra os campos, não aplica ainda
         periodoAtivo = 'custom';
         document.querySelectorAll('.periodo-tab').forEach(function(t) { t.classList.remove('active'); });
         tab.classList.add('active');
         gid('periodoCustom').classList.add('show');
-        // Se já tem datas, aplica
-        if (periodoCustomInicio || periodoCustomFim) {
-          updatePeriodoInfo();
-          renderAll();
-        }
-      } else {
-        setPeriodo(p);
-      }
+        if (periodoCustomInicio || periodoCustomFim) { updatePeriodoInfo(); renderAll(); }
+      } else { setPeriodo(p); }
     });
   });
 
   gid('btnAplicarPeriodo').addEventListener('click', function() {
     var ini = gid('periodoInicio').value;
     var fim = gid('periodoFim').value;
-    
-    if (!ini && !fim) {
-      alert('Selecione pelo menos uma data (início ou fim).');
-      return;
-    }
-    
+    if (!ini && !fim) { alert('Selecione pelo menos uma data (início ou fim).'); return; }
     periodoCustomInicio = ini || null;
     periodoCustomFim = fim || null;
     periodoAtivo = 'custom';
-    
     updatePeriodoInfo();
     renderAll();
   });
@@ -1779,6 +1768,11 @@ document.addEventListener('DOMContentLoaded', function() {
     gid('periodoInicio').value = '';
     gid('periodoFim').value = '';
     setPeriodo('todos');
+  });
+
+  // REDIMENSIONAR GRÁFICOS AO MUDAR TAMANHO DA TELA
+  window.addEventListener('resize', function() {
+    renderAll();
   });
 
   gid('btnPrintReport').addEventListener('click', function() { window.print(); });
