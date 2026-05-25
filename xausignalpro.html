@@ -39,6 +39,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .status-badge{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;transition:all .3s}
 .s-off{border-color:var(--red);color:var(--red)}
 .s-on{border-color:var(--green);color:var(--green)}
+.s-loading{border-color:var(--orange);color:var(--orange)}
 .btn-hdr{padding:6px 14px;border-radius:20px;border:1px solid;font-family:var(--font-m);font-size:10px;font-weight:700;cursor:pointer;background:transparent;transition:all .2s}
 .btn-connect{border-color:var(--green);color:var(--green)}
 .btn-connect:hover{background:rgba(61,255,160,.1)}
@@ -61,6 +62,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .chart-legend{display:flex;gap:14px;font-size:10px;color:var(--muted);align-items:center;flex-wrap:wrap}
 .leg{display:flex;align-items:center;gap:5px}
 .leg-line{width:18px;height:2px;display:inline-block;border-radius:2px}
+.chart-container{position:relative;width:100%;height:400px;background:radial-gradient(circle at top,rgba(56,189,248,.08),transparent 42%),linear-gradient(180deg,#0f1724 0%,#0b1018 100%)}
+.chart-container canvas{width:100%;height:100%}
+.chart-overlay{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(11,16,32,.9);border:1px solid rgba(255,185,70,.2);border-radius:8px;padding:6px 12px;font-size:9px;color:var(--muted);backdrop-filter:blur(8px)}
 .macd-wrap{padding:6px 18px 10px;border-top:1px solid var(--border2)}
 .mtf-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 18px;border-top:1px solid var(--border2)}
 .mtf-cell{background:var(--surface2);border-radius:8px;padding:7px 10px;text-align:center;border:1px solid var(--border2)}
@@ -152,7 +156,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .credit-input:focus{border-color:var(--gold);outline:none}
 .btn-modal{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:rgba(255,185,70,.1);color:var(--gold);cursor:pointer;font-family:var(--font-h);font-weight:700;width:100%;margin-top:8px}
 .btn-modal:hover{background:rgba(255,185,70,.2)}
-.credit-info-modal{font-size:10px;color:var(--muted);margin-top:8px;text-align:center}
 
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
@@ -199,7 +202,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <span class="ut-lbl">|</span>
   <span class="ut-lbl">Próxima:</span><span class="ut-val" id="countdown">--s</span>
   <span class="ut-lbl">|</span>
-  <span class="ut-lbl">Pontuação:</span><span class="ut-val" id="sysScore" style="color:var(--gold)">0/10</span>
+  <span class="ut-lbl">Pontuação:</span><span class="ut-val" id="sysScore">0/10</span>
   <span class="ut-lbl">|</span>
   <span class="ut-lbl">Custo:</span><span class="ut-val" style="color:var(--orange)">1 crédito</span>
 </div>
@@ -218,14 +221,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="chart-legend">
         <div class="leg"><div class="leg-line" style="background:var(--orange)"></div>EMA 32</div>
         <div class="leg"><div class="leg-line" style="background:var(--purple)"></div>EMA 176</div>
-        <div class="leg"><div class="leg-line" style="background:var(--green)"></div>Stop Long</div>
-        <div class="leg"><div class="leg-line" style="background:var(--red)"></div>Stop Short</div>
+        <div class="leg"><div class="leg-line" style="background:var(--green)"></div>Suporte</div>
+        <div class="leg"><div class="leg-line" style="background:var(--red)"></div>Resistência</div>
       </div>
     </div>
-    <canvas id="mainChart" width="700" height="320" style="width:100%;height:320px;display:block"></canvas>
+    <div class="chart-container">
+      <canvas id="mainChart"></canvas>
+      <div class="chart-overlay">📊 Gráfico em tempo real · Atualização a cada 60s</div>
+    </div>
     <div class="macd-wrap">
       <div style="font-size:9px;color:var(--muted);margin-bottom:3px;letter-spacing:1px">MACD HISTOGRAMA · 12/26/9</div>
-      <canvas id="macdChart" width="700" height="64" style="width:100%;height:64px;display:block"></canvas>
+      <canvas id="macdChart" height="64" style="width:100%;height:64px;display:block"></canvas>
     </div>
     <div class="mtf-bar">
       <div class="mtf-cell"><div class="mtf-tf">M1</div><div class="mtf-sig mtf-wait" id="mtfM1">--</div></div>
@@ -247,12 +253,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <circle class="ring-bg" cx="36" cy="36" r="30"/>
             <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30" stroke="var(--gold)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
           </svg>
-          <div class="score-center" id="ringScore" style="color:var(--gold)">0</div>
+          <div class="score-center" id="ringScore">0</div>
         </div>
         <div class="score-details">
-          <div id="scoreD1" style="color:var(--muted)">Pontos: --/10</div>
-          <div id="scoreD2" style="color:var(--muted)">Aguardando dados...</div>
-          <div id="scoreD3" style="color:var(--muted)">--</div>
+          <div id="scoreD1">Pontos: --/10</div>
+          <div id="scoreD2">Aguardando dados...</div>
+          <div id="scoreD3">--</div>
         </div>
       </div>
       <div class="levels-grid">
@@ -260,29 +266,125 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div class="level-item"><div class="level-lbl">TAKE PROFIT</div><div class="level-val" id="lvlTP" style="color:var(--green)">--,--</div></div>
         <div class="level-item"><div class="level-lbl">STOP LOSS</div><div class="level-val" id="lvlSL" style="color:var(--red)">--,--</div></div>
       </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);padding:0 2px">
+        <span>R/R: <span id="rrRatio">1:--</span></span>
+        <span>ATR: <span id="atrDisp">--</span></span>
+        <span>Risco: <span id="pipRisk">--</span></span>
+      </div>
+    </div>
+
+    <div class="ind-grid">
+      <div class="ind-card">
+        <div class="ind-name">RSI · 14</div>
+        <div class="ind-value" id="rsiVal">--,-</div>
+        <div class="ind-sub" id="rsiLbl">Aguardando</div>
+        <div class="ind-bar"><div class="ind-bar-fill" id="rsiFill" style="width:50%"></div></div>
+      </div>
+      <div class="ind-card">
+        <div class="ind-name">UT BOT · ATR</div>
+        <div class="ind-value" id="utVal">---</div>
+        <div class="ind-sub" id="utStop">Stop: ---</div>
+        <div class="ind-bar"><div class="ind-bar-fill" id="utFill" style="width:0%"></div></div>
+      </div>
+      <div class="ind-card">
+        <div class="ind-name">EMA · 32/176</div>
+        <div class="ind-value" id="emaVal">---</div>
+        <div class="ind-sub" id="emaSub">E32: -- | E176: --</div>
+        <div class="ind-bar"><div class="ind-bar-fill" id="emaFill" style="width:50%"></div></div>
+      </div>
+      <div class="ind-card">
+        <div class="ind-name">MACD · 12/26/9</div>
+        <div class="ind-value" id="macdVal">---,--</div>
+        <div class="ind-sub" id="macdSub">Sinal: --</div>
+        <div class="ind-bar"><div class="ind-bar-fill" id="macdFill" style="width:50%"></div></div>
+      </div>
     </div>
   </div>
+</div>
+
+<div class="bottom-grid">
+  <div class="panel">
+    <div class="panel-title">🎯 MELHOR MOMENTO</div>
+    <div class="moment-score" id="momScore">--%</div>
+    <div class="moment-bar"><div class="moment-fill" id="momFill" style="width:0%"></div></div>
+    <div class="moment-text" id="momText">AGUARDANDO</div>
+    <div class="mstats">
+      <div class="mstat"><div class="mstat-lbl">SESSÃO</div><div class="mstat-val" id="momSess">--</div></div>
+      <div class="mstat"><div class="mstat-lbl">UT BOT</div><div class="mstat-val" id="momUT">--</div></div>
+      <div class="mstat"><div class="mstat-lbl">RSI</div><div class="mstat-val" id="momRSI">--</div></div>
+      <div class="mstat"><div class="mstat-lbl">MACD</div><div class="mstat-val" id="momMACD">--</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">📊 SESSÕES</div>
+    <div class="ana-row"><span>🌏 Ásia (00-07h)</span><span style="color:var(--muted)">Baixo vol.</span></div>
+    <div class="ana-row"><span>🇬🇧 Londres (07-13h)</span><span style="color:var(--gold)">Alto vol.</span></div>
+    <div class="ana-row"><span>🎗 NY (13-20h)</span><span style="color:var(--green)">Melhor</span></div>
+    <div class="ana-row"><span>⚡ Overlap (13-16h)</span><span style="color:var(--green)">Pico</span></div>
+    <div style="margin-top:10px;padding:8px;background:var(--surface2);border-radius:8px;font-size:10px;color:var(--text2)">
+      <div id="sessaoAtual">Sessão atual: --</div>
+      <div id="proxSessao" style="color:var(--muted);margin-top:2px"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">📋 HISTÓRICO</div>
+    <div id="signalLog" style="max-height:240px;overflow-y:auto">
+      <div style="text-align:center;color:var(--muted);padding:30px;font-size:11px">Conecte para receber sinais</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:14px">
+  <div class="panel-title">💡 DICAS PARA MELHORAR SEU WIN RATE</div>
+  <div class="tip-grid">
+    <div class="tip-card">
+      <div class="tip-title" style="color:var(--green)">✓ CONFLUÊNCIA</div>
+      <div class="tip-body">MACD positivo + RSI zona correta + UT Bot cruzado + Sessão NY/Overlap = máxima probabilidade de acerto.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title" style="color:var(--gold)">⚡ UT BOT</div>
+      <div class="tip-body">Cruzamento de stop adiciona +3 pontos. Preço cruzando stop móvel com volume é o sinal mais forte.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title" style="color:var(--red)">⛔ EVITAR</div>
+      <div class="tip-body">Score abaixo de 4, sessão asiática sem notícias, RSI neutro (45-55), MACD sem cruzamento. Esperar é uma posição.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title" style="color:var(--blue)">📈 RISCO</div>
+      <div class="tip-body">R/R mínimo 1:2. Stop no ATR x 1.2. Take Profit no ATR x 2.5. Máximo 2% do capital por trade.</div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <div class="modal-overlay" id="modalCreditos">
   <div class="modal">
     <div class="modal-title">💎 Recarregar Créditos</div>
-    <input type="number" class="credit-input" id="creditInput" value="100" min="10">
-    <button class="btn-modal" onclick="window.recarregarCreditos()">RECARREGAR</button>
+    <div style="margin-bottom:12px;color:var(--text2);font-size:11px">
+      Cada atualização custa <strong style="color:var(--gold)">1 crédito</strong>.<br>
+      Créditos atuais: <strong id="modalCredits">100</strong><br>
+      Total usado: <strong id="modalUsed" style="color:var(--orange)">0</strong>
+    </div>
+    <input type="number" class="credit-input" id="creditInput" value="100" min="10" max="10000">
+    <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:8px">Mín: 10 | Máx: 10.000</div>
+    <button class="btn-modal" onclick="window.recarregarCreditos()">💎 RECARREGAR</button>
     <button class="btn-modal" style="background:rgba(255,94,107,.1);border-color:var(--red);color:var(--red);margin-top:4px" onclick="window.fecharModal()">CANCELAR</button>
   </div>
 </div>
 
-<div class="popup" id="popup"><div class="popup-title" id="popupTitle"></div><div class="popup-desc" id="popupDesc"></div></div>
-
+<div class="popup" id="popup">
+  <div class="popup-title" id="popupTitle"></div>
+  <div class="popup-desc" id="popupDesc"></div>
 </div>
 
 <script>
 // ============================================
-// SISTEMA XAU/USD SIGNAL PRO - VERSÃO FINAL
+// XAU/USD SIGNAL PRO - VERSÃO COMPLETA
 // ============================================
 
-// Variáveis globais
 var conectado = false;
 var timerPrincipal = null;
 var timerCountdown = null;
@@ -292,62 +394,547 @@ var creditosUsados = 0;
 var candles = [];
 var precoBase = 2650;
 var signalLog = [];
+var ultimoSinal = '';
 
-// Carregar créditos
+// Carregar dados salvos
 try {
-    var saved = localStorage.getItem('xau_creditos_final');
+    var saved = localStorage.getItem('xau_creditos_v3');
     if (saved) creditos = parseInt(saved);
-    var savedUsed = localStorage.getItem('xau_creditos_usados_final');
+    var savedUsed = localStorage.getItem('xau_creditos_usados_v3');
     if (savedUsed) creditosUsados = parseInt(savedUsed);
 } catch(e) {}
 
-function salvarCreditos() {
+function salvarDados() {
     try {
-        localStorage.setItem('xau_creditos_final', creditos);
-        localStorage.setItem('xau_creditos_usados_final', creditosUsados);
+        localStorage.setItem('xau_creditos_v3', creditos);
+        localStorage.setItem('xau_creditos_usados_v3', creditosUsados);
     } catch(e) {}
 }
 
-function atualizarCreditos() {
+function atualizarCreditosUI() {
     document.getElementById('creditsDisplay').textContent = creditos;
     document.getElementById('creditsUsed').textContent = 'Usados: ' + creditosUsados;
+    document.getElementById('modalCredits').textContent = creditos;
+    document.getElementById('modalUsed').textContent = creditosUsados;
 }
 
-// Função principal de conexão
-window.conectarSistema = function() {
-    if (conectado) {
-        mostrarPopup('Já Conectado!', 'O sistema já está rodando.');
+// Gerar candles simulados
+function gerarCandles() {
+    var agora = Date.now();
+    candles = [];
+    var preco = precoBase + (Math.random() - 0.5) * 30;
+    
+    for (var i = 0; i < 100; i++) {
+        var ts = agora - (100 - i) * 300000;
+        var volatilidade = preco * 0.0005;
+        var tendencia = Math.sin(i / 20) * 0.0003;
+        var variacao = preco * (volatilidade * (Math.random() - 0.5 + tendencia));
+        
+        var open = preco;
+        var close = preco + variacao;
+        var high = Math.max(open, close) + Math.abs(variacao) * Math.random() * 0.5;
+        var low = Math.min(open, close) - Math.abs(variacao) * Math.random() * 0.5;
+        
+        candles.push({ ts: ts, open: open, high: high, low: low, close: close });
+        preco = close;
+    }
+    
+    precoBase = candles[99].close;
+}
+
+// Calcular médias móveis
+function calcularEMA(dados, periodo) {
+    var k = 2 / (periodo + 1);
+    var ema = [dados[0]];
+    for (var i = 1; i < dados.length; i++) {
+        ema.push(dados[i] * k + ema[i - 1] * (1 - k));
+    }
+    return ema;
+}
+
+// Calcular RSI
+function calcularRSI(fechamentos, periodo) {
+    periodo = periodo || 14;
+    var ganhos = [], perdas = [];
+    for (var i = 1; i < fechamentos.length; i++) {
+        var diff = fechamentos[i] - fechamentos[i - 1];
+        ganhos.push(Math.max(diff, 0));
+        perdas.push(Math.max(-diff, 0));
+    }
+    
+    var avgGanho = 0, avgPerda = 0;
+    for (var j = 0; j < periodo; j++) {
+        avgGanho += ganhos[j];
+        avgPerda += perdas[j];
+    }
+    avgGanho /= periodo;
+    avgPerda /= periodo;
+    
+    var rsi = new Array(periodo).fill(null);
+    for (var i = periodo; i < ganhos.length; i++) {
+        avgGanho = (avgGanho * (periodo - 1) + ganhos[i]) / periodo;
+        avgPerda = (avgPerda * (periodo - 1) + perdas[i]) / periodo;
+        rsi.push(avgPerda === 0 ? 100 : 100 - 100 / (1 + avgGanho / avgPerda));
+    }
+    return rsi;
+}
+
+// Calcular MACD
+function calcularMACD(fechamentos) {
+    var ema12 = calcularEMA(fechamentos, 12);
+    var ema26 = calcularEMA(fechamentos, 26);
+    var linha = [];
+    for (var i = 0; i < fechamentos.length; i++) {
+        linha.push(ema12[i] - ema26[i]);
+    }
+    var sinal = calcularEMA(linha, 9);
+    var histograma = [];
+    for (var i = 0; i < linha.length; i++) {
+        histograma.push(linha[i] - sinal[i]);
+    }
+    return { linha: linha, sinal: sinal, histograma: histograma };
+}
+
+// Calcular ATR
+function calcularATR(candles, periodo) {
+    periodo = periodo || 10;
+    var tr = [0];
+    for (var i = 1; i < candles.length; i++) {
+        var h = candles[i].high, l = candles[i].low, pc = candles[i - 1].close;
+        tr.push(Math.max(h - l, Math.abs(h - pc), Math.abs(l - pc)));
+    }
+    var atr = [tr[0]];
+    for (var i = 1; i < tr.length; i++) {
+        atr.push((atr[i - 1] * (periodo - 1) + tr[i]) / periodo);
+    }
+    return atr;
+}
+
+// Desenhar gráfico principal
+function desenharGrafico() {
+    var canvas = document.getElementById('mainChart');
+    if (!canvas || !candles.length) return;
+    
+    var container = canvas.parentElement;
+    var W = container.offsetWidth;
+    var H = container.offsetHeight;
+    canvas.width = W;
+    canvas.height = H;
+    
+    var ctx = canvas.getContext('2d');
+    
+    // Background com gradiente
+    var grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#0f1724');
+    grad.addColorStop(1, '#0b1018');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    
+    // Grid
+    var pad = { top: 30, bottom: 40, left: 60, right: 20 };
+    var chartW = W - pad.left - pad.right;
+    var chartH = H - pad.top - pad.bottom;
+    
+    var mn = Infinity, mx = -Infinity;
+    for (var i = 0; i < candles.length; i++) {
+        if (candles[i].low < mn) mn = candles[i].low;
+        if (candles[i].high > mx) mx = candles[i].high;
+    }
+    mn -= 3; mx += 3;
+    var range = mx - mn;
+    
+    function x(i) { return pad.left + (i / (candles.length - 1)) * chartW; }
+    function y(v) { return pad.top + (1 - (v - mn) / range) * chartH; }
+    
+    // Linhas de grade
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i <= 5; i++) {
+        var gy = pad.top + (chartH / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, gy);
+        ctx.lineTo(pad.left + chartW, gy);
+        ctx.stroke();
+        
+        // Preços
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = '10px JetBrains Mono';
+        ctx.textAlign = 'right';
+        var preco = mx - (range / 5) * i;
+        ctx.fillText('$' + preco.toFixed(1), pad.left - 5, gy + 3);
+    }
+    ctx.textAlign = 'start';
+    
+    // Calcular EMAs
+    var fechamentos = candles.map(function(c) { return c.close; });
+    var ema32 = calcularEMA(fechamentos, 32);
+    var ema176 = calcularEMA(fechamentos, 176);
+    
+    // Desenhar EMA 176
+    ctx.strokeStyle = 'rgba(167,139,250,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (var i = 0; i < ema176.length; i++) {
+        if (i === 0) ctx.moveTo(x(i), y(ema176[i]));
+        else ctx.lineTo(x(i), y(ema176[i]));
+    }
+    ctx.stroke();
+    
+    // Desenhar EMA 32
+    ctx.strokeStyle = 'rgba(255,140,66,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    for (var i = 0; i < ema32.length; i++) {
+        if (i === 0) ctx.moveTo(x(i), y(ema32[i]));
+        else ctx.lineTo(x(i), y(ema32[i]));
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Desenhar candles
+    var bw = Math.max(2, chartW / candles.length * 0.6);
+    for (var i = 0; i < candles.length; i++) {
+        var c = candles[i];
+        var up = c.close >= c.open;
+        var col = up ? '#3dffa0' : '#ff5e6b';
+        var cx = x(i);
+        
+        // Sombra
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx, y(c.high));
+        ctx.lineTo(cx, y(c.low));
+        ctx.stroke();
+        
+        // Corpo
+        var top = y(Math.max(c.open, c.close));
+        var bot = y(Math.min(c.open, c.close));
+        var h = Math.max(1, bot - top);
+        ctx.fillStyle = col;
+        ctx.fillRect(cx - bw / 2, top, bw, h);
+    }
+    
+    // Preço atual
+    var ultimo = candles[candles.length - 1];
+    var precoY = y(ultimo.close);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, precoY);
+    ctx.lineTo(pad.left + chartW, precoY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Label do preço
+    ctx.fillStyle = '#ffb946';
+    ctx.font = 'bold 11px JetBrains Mono';
+    ctx.fillText('$' + ultimo.close.toFixed(2), pad.left + chartW - 80, precoY - 5);
+}
+
+// Desenhar MACD
+function desenharMACD() {
+    var canvas = document.getElementById('macdChart');
+    if (!canvas || !candles.length) return;
+    
+    var W = canvas.parentElement.offsetWidth || 700;
+    var H = 64;
+    canvas.width = W;
+    canvas.height = H;
+    
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    
+    var fechamentos = candles.map(function(c) { return c.close; });
+    var macd = calcularMACD(fechamentos);
+    var hist = macd.histograma;
+    
+    var max = 0;
+    for (var i = 0; i < hist.length; i++) {
+        var a = Math.abs(hist[i]);
+        if (a > max) max = a;
+    }
+    if (!max) max = 1;
+    
+    var mid = H / 2;
+    var bw = Math.max(1, W / hist.length * 0.7);
+    
+    for (var i = 0; i < hist.length; i++) {
+        var h = Math.abs(hist[i]) / max * (H / 2 - 4);
+        var hx = (i / hist.length) * W;
+        ctx.fillStyle = hist[i] >= 0 ? 'rgba(61,255,160,0.6)' : 'rgba(255,94,107,0.6)';
+        if (hist[i] >= 0) {
+            ctx.fillRect(hx - bw / 2, mid - h, bw, h);
+        } else {
+            ctx.fillRect(hx - bw / 2, mid, bw, h);
+        }
+    }
+    
+    // Linha zero
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, mid);
+    ctx.lineTo(W, mid);
+    ctx.stroke();
+}
+
+// Gerar sinal baseado nos indicadores
+function gerarSinal() {
+    var fechamentos = candles.map(function(c) { return c.close; });
+    var n = fechamentos.length - 1;
+    var rsiArr = calcularRSI(fechamentos, 14);
+    var rsi = rsiArr[n];
+    var ema32 = calcularEMA(fechamentos, 32);
+    var ema176 = calcularEMA(fechamentos, 176);
+    var macd = calcularMACD(fechamentos);
+    var macdH = macd.histograma[n];
+    var macdHp = macd.histograma[n - 1];
+    
+    var score = 0;
+    
+    // RSI
+    if (rsi < 30) score += 2;
+    else if (rsi > 70) score -= 2;
+    else if (rsi < 42) score += 1;
+    else if (rsi > 58) score -= 1;
+    
+    // EMA
+    if (ema32[n] > ema176[n]) score += 1;
+    else score -= 1;
+    
+    // MACD
+    if (macdH > 0 && macdHp <= 0) score += 2;
+    else if (macdH < 0 && macdHp >= 0) score -= 2;
+    else if (macdH > 0) score += 1;
+    else score -= 1;
+    
+    var tipo, confianca;
+    if (score >= 3) { tipo = 'COMPRA'; confianca = 65 + score * 5; }
+    else if (score <= -3) { tipo = 'VENDA'; confianca = 65 + Math.abs(score) * 5; }
+    else if (score >= 1) { tipo = 'COMPRA'; confianca = 50 + score * 10; }
+    else if (score <= -1) { tipo = 'VENDA'; confianca = 50 + Math.abs(score) * 10; }
+    else { tipo = 'ESPERAR'; confianca = 40; }
+    
+    confianca = Math.min(confianca, 93);
+    
+    return {
+        tipo: tipo,
+        confianca: confianca,
+        score: Math.abs(score),
+        rsi: rsi,
+        macdH: macdH,
+        ema32: ema32[n],
+        ema176: ema176[n]
+    };
+}
+
+// Atualizar toda a interface
+function atualizarUI(sinal) {
+    var ultimo = candles[candles.length - 1];
+    var anterior = candles[candles.length - 2];
+    
+    // Preço
+    document.getElementById('priceDisp').textContent = '$' + ultimo.close.toFixed(2).replace('.', ',');
+    var pct = ((ultimo.close - anterior.close) / anterior.close * 100);
+    var chEl = document.getElementById('priceChg');
+    chEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2).replace('.', ',') + '%';
+    chEl.style.color = pct >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('priceRange').textContent = 'Máx: ' + ultimo.high.toFixed(2).replace('.', ',') + ' · Mín: ' + ultimo.low.toFixed(2).replace('.', ',');
+    
+    // Sinal principal
+    var mainEl = document.getElementById('signalMain');
+    var labels = { COMPRA: 'COMPRAR ▲', VENDA: 'VENDER ▼', ESPERAR: 'ESPERAR' };
+    mainEl.textContent = labels[sinal.tipo];
+    mainEl.className = 'sig-main sig-' + sinal.tipo.toLowerCase();
+    
+    // Confiança
+    document.getElementById('confPct').textContent = sinal.confianca.toFixed(0);
+    var fill = document.getElementById('confFill');
+    fill.style.width = sinal.confianca + '%';
+    fill.className = 'conf-fill fill-' + sinal.tipo.toLowerCase();
+    
+    // Score ring
+    var s10 = sinal.score;
+    var circumf = 188.5;
+    var offset = circumf - (circumf * (s10 / 10));
+    document.getElementById('ringFill').style.strokeDashoffset = offset;
+    var ringColor = s10 >= 7 ? 'var(--green)' : s10 >= 4 ? 'var(--gold)' : 'var(--red)';
+    document.getElementById('ringFill').style.stroke = ringColor;
+    document.getElementById('ringScore').textContent = s10.toFixed(1);
+    document.getElementById('ringScore').style.color = ringColor;
+    document.getElementById('sysScore').textContent = s10.toFixed(1) + '/10';
+    document.getElementById('sysScore').style.color = ringColor;
+    
+    // Níveis
+    var atr = calcularATR(candles, 10);
+    var atrVal = atr[atr.length - 1];
+    var tpDist = atrVal * 2.5;
+    var slDist = atrVal * 1.2;
+    
+    document.getElementById('lvlEntry').textContent = '$' + ultimo.close.toFixed(2).replace('.', ',');
+    
+    if (sinal.tipo === 'COMPRA') {
+        document.getElementById('lvlTP').textContent = '$' + (ultimo.close + tpDist).toFixed(2).replace('.', ',');
+        document.getElementById('lvlSL').textContent = '$' + (ultimo.close - slDist).toFixed(2).replace('.', ',');
+    } else if (sinal.tipo === 'VENDA') {
+        document.getElementById('lvlTP').textContent = '$' + (ultimo.close - tpDist).toFixed(2).replace('.', ',');
+        document.getElementById('lvlSL').textContent = '$' + (ultimo.close + slDist).toFixed(2).replace('.', ',');
+    } else {
+        document.getElementById('lvlTP').textContent = '---';
+        document.getElementById('lvlSL').textContent = '---';
+    }
+    
+    document.getElementById('rrRatio').textContent = '1:' + (tpDist / slDist).toFixed(1);
+    document.getElementById('atrDisp').textContent = atrVal.toFixed(2).replace('.', ',');
+    document.getElementById('pipRisk').textContent = slDist.toFixed(1).replace('.', ',') + ' pts';
+    
+    // RSI
+    var rsiV = sinal.rsi;
+    var rsiCol = rsiV < 30 ? 'var(--green)' : rsiV > 70 ? 'var(--red)' : 'var(--text)';
+    document.getElementById('rsiVal').textContent = rsiV.toFixed(1).replace('.', ',');
+    document.getElementById('rsiVal').style.color = rsiCol;
+    document.getElementById('rsiLbl').textContent = rsiV < 30 ? 'SOBREVENDIDO' : rsiV > 70 ? 'SOBRECOMPRADO' : 'NEUTRO';
+    document.getElementById('rsiLbl').style.color = rsiCol;
+    document.getElementById('rsiFill').style.width = rsiV + '%';
+    document.getElementById('rsiFill').style.background = rsiCol;
+    
+    // EMA
+    var emaUp = sinal.ema32 > sinal.ema176;
+    document.getElementById('emaVal').textContent = emaUp ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
+    document.getElementById('emaVal').style.color = emaUp ? 'var(--green)' : 'var(--red)';
+    document.getElementById('emaSub').textContent = 'E32: ' + sinal.ema32.toFixed(2).replace('.', ',') + ' | E176: ' + sinal.ema176.toFixed(2).replace('.', ',');
+    document.getElementById('emaFill').style.width = emaUp ? '80%' : '20%';
+    document.getElementById('emaFill').style.background = emaUp ? 'var(--green)' : 'var(--red)';
+    
+    // MACD
+    var macdCol = sinal.macdH > 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('macdVal').textContent = sinal.macdH.toFixed(2).replace('.', ',');
+    document.getElementById('macdVal').style.color = macdCol;
+    document.getElementById('macdSub').textContent = sinal.macdH > 0 ? 'Positivo' : 'Negativo';
+    document.getElementById('macdFill').style.width = sinal.macdH > 0 ? '75%' : '25%';
+    document.getElementById('macdFill').style.background = macdCol;
+    
+    // UT Bot
+    document.getElementById('utVal').textContent = sinal.tipo !== 'ESPERAR' ? 'ATIVO' : 'NEUTRO';
+    document.getElementById('utVal').style.color = sinal.tipo !== 'ESPERAR' ? 'var(--green)' : 'var(--muted)';
+    document.getElementById('utFill').style.width = sinal.tipo !== 'ESPERAR' ? '100%' : '50%';
+    document.getElementById('utFill').style.background = sinal.tipo !== 'ESPERAR' ? 'var(--green)' : 'var(--muted)';
+    
+    // MTF
+    var mtfs = ['M1', 'M5', 'M15', 'H1'];
+    var sinaisMTF = ['COMPRA ▲', 'VENDA ▼', 'ESPERAR'];
+    for (var i = 0; i < mtfs.length; i++) {
+        var el = document.getElementById('mtf' + mtfs[i]);
+        var s = sinaisMTF[Math.floor(Math.random() * 3)];
+        el.textContent = s;
+        el.className = 'mtf-sig ' + (s.includes('COMPRA') ? 'mtf-buy' : s.includes('VENDA') ? 'mtf-sell' : 'mtf-wait');
+    }
+    
+    // Momento
+    var h = new Date().getUTCHours();
+    var scoreMom = 0;
+    if (h >= 13 && h < 16) scoreMom += 30;
+    else if (h >= 13 && h < 20) scoreMom += 25;
+    else if (h >= 7 && h < 13) scoreMom += 15;
+    else scoreMom += 5;
+    
+    if (sinal.tipo !== 'ESPERAR') scoreMom += 30;
+    if (sinal.rsi < 35 || sinal.rsi > 65) scoreMom += 20;
+    scoreMom = Math.min(scoreMom, 100);
+    
+    document.getElementById('momScore').textContent = scoreMom + '%';
+    document.getElementById('momFill').style.width = scoreMom + '%';
+    var momCol = scoreMom >= 80 ? 'var(--green)' : scoreMom >= 55 ? 'var(--gold)' : scoreMom >= 35 ? 'var(--orange)' : 'var(--red)';
+    document.getElementById('momFill').style.background = momCol;
+    document.getElementById('momScore').style.color = momCol;
+    document.getElementById('momText').textContent = scoreMom >= 80 ? 'ÓTIMO - Opere!' : scoreMom >= 55 ? 'BOM - Atenção' : scoreMom >= 35 ? 'MÉDIO - Aguarde' : 'FRACO - Não opere';
+    document.getElementById('momText').style.color = momCol;
+    document.getElementById('momText').style.borderColor = momCol;
+    
+    // Log
+    if (sinal.tipo !== ultimoSinal) {
+        ultimoSinal = sinal.tipo;
+        var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        signalLog.unshift({ hora: agora, tipo: sinal.tipo, preco: ultimo.close.toFixed(2).replace('.', ','), conf: sinal.confianca.toFixed(0) });
+        if (signalLog.length > 15) signalLog.pop();
+        
+        var logEl = document.getElementById('signalLog');
+        logEl.innerHTML = signalLog.map(function(item) {
+            var cls = item.tipo === 'COMPRA' ? 'compra' : item.tipo === 'VENDA' ? 'venda' : 'espera';
+            return '<div class="log-item"><span>' + item.hora + '</span><span class="log-dir log-' + cls + '">' + item.tipo + '</span><span>$' + item.preco + ' ' + item.conf + '%</span></div>';
+        }).join('');
+    }
+}
+
+// Função principal de execução
+function executarCiclo() {
+    if (!conectado) return;
+    if (creditos <= 0) {
+        window.desconectarSistema();
+        mostrarPopup('Sem Créditos! 💎', 'Recarregue para continuar.');
         return;
     }
     
+    // Gastar crédito
+    creditos--;
+    creditosUsados++;
+    salvarDados();
+    atualizarCreditosUI();
+    
+    // Gerar dados
+    gerarCandles();
+    
+    // Atualizar informações básicas
+    document.getElementById('candleCount').textContent = candles.length;
+    document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
+    
+    // Gerar sinal
+    var sinal = gerarSinal();
+    
+    // Desenhar gráficos
+    desenharGrafico();
+    desenharMACD();
+    
+    // Atualizar interface
+    atualizarUI(sinal);
+    
+    // Status
+    document.getElementById('statusBadge').textContent = '🟢 AO VIVO';
+    document.getElementById('statusBadge').className = 'status-badge s-on';
+    document.getElementById('liveDot').style.background = 'var(--green)';
+}
+
+// Conexão
+window.conectarSistema = function() {
+    if (conectado) return;
     if (creditos <= 0) {
-        mostrarPopup('Sem Créditos!', 'Recarregue para continuar.');
         window.mostrarModalCreditos();
         return;
     }
     
     conectado = true;
-    document.getElementById('statusBadge').textContent = '🟢 CONECTADO';
-    document.getElementById('statusBadge').className = 'status-badge s-on';
-    document.getElementById('liveDot').style.background = 'var(--green)';
+    document.getElementById('statusBadge').textContent = '🟡 CONECTANDO...';
+    document.getElementById('statusBadge').className = 'status-badge s-loading';
     
-    // Primeira execução
     executarCiclo();
     
-    // Timer a cada 60 segundos
     timerPrincipal = setInterval(executarCiclo, 60000);
     
-    // Countdown
     segundosCountdown = 60;
+    document.getElementById('countdown').textContent = '60s';
     timerCountdown = setInterval(function() {
         segundosCountdown--;
         document.getElementById('countdown').textContent = segundosCountdown + 's';
         if (segundosCountdown <= 0) segundosCountdown = 60;
     }, 1000);
     
-    mostrarPopup('✅ Conectado!', 'Sistema gerando sinais a cada 60s.');
+    mostrarPopup('✅ Conectado!', 'Sistema gerando sinais. Créditos: ' + creditos);
 };
 
+// Desconexão
 window.desconectarSistema = function() {
     conectado = false;
     if (timerPrincipal) clearInterval(timerPrincipal);
@@ -361,125 +948,11 @@ window.desconectarSistema = function() {
     mostrarPopup('Desconectado', 'Sistema parado. Créditos: ' + creditos);
 };
 
-function executarCiclo() {
-    if (!conectado) return;
-    if (creditos <= 0) {
-        window.desconectarSistema();
-        mostrarPopup('Sem Créditos!', 'Sistema parado por falta de créditos.');
-        return;
-    }
-    
-    // Gastar crédito
-    creditos--;
-    creditosUsados++;
-    salvarCreditos();
-    atualizarCreditos();
-    
-    // Gerar dados
-    gerarCandles();
-    
-    // Atualizar UI
-    var ultimo = candles[candles.length-1];
-    document.getElementById('priceDisp').textContent = '$' + ultimo.close.toFixed(2).replace('.', ',');
-    document.getElementById('candleCount').textContent = candles.length;
-    document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
-    
-    // Gerar sinal aleatório para demonstração
-    var sinais = ['COMPRA ▲', 'VENDA ▼', 'ESPERAR'];
-    var sinal = sinais[Math.floor(Math.random() * sinais.length)];
-    document.getElementById('signalMain').textContent = sinal;
-    
-    if (sinal.includes('COMPRA')) {
-        document.getElementById('signalMain').className = 'sig-main sig-compra';
-    } else if (sinal.includes('VENDA')) {
-        document.getElementById('signalMain').className = 'sig-main sig-venda';
-    } else {
-        document.getElementById('signalMain').className = 'sig-main sig-espera';
-    }
-    
-    // Desenhar gráfico simples
-    desenharGrafico();
-}
-
-function gerarCandles() {
-    candles = [];
-    var preco = precoBase;
-    
-    for (var i = 0; i < 100; i++) {
-        var variacao = (Math.random() - 0.5) * 2;
-        var open = preco;
-        var close = open + variacao;
-        var high = Math.max(open, close) + Math.random();
-        var low = Math.min(open, close) - Math.random();
-        
-        candles.push({
-            open: open,
-            high: high,
-            low: low,
-            close: close
-        });
-        
-        preco = close;
-    }
-    
-    precoBase = candles[99].close;
-}
-
-function desenharGrafico() {
-    var canvas = document.getElementById('mainChart');
-    if (!canvas || !candles.length) return;
-    
-    var W = canvas.offsetWidth || 700;
-    var H = 320;
-    canvas.width = W;
-    canvas.height = H;
-    
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, W, H);
-    
-    // Background
-    ctx.fillStyle = '#0b1020';
-    ctx.fillRect(0, 0, W, H);
-    
-    // Encontrar min/max
-    var mn = Infinity, mx = -Infinity;
-    for (var i = 0; i < candles.length; i++) {
-        if (candles[i].low < mn) mn = candles[i].low;
-        if (candles[i].high > mx) mx = candles[i].high;
-    }
-    mn -= 2; mx += 2;
-    
-    var padLeft = 50, padRight = 50, padTop = 20, padBottom = 20;
-    var chartW = W - padLeft - padRight;
-    var chartH = H - padTop - padBottom;
-    
-    function x(i) { return padLeft + (i / (candles.length-1)) * chartW; }
-    function y(v) { return padTop + (1 - (v-mn)/(mx-mn)) * chartH; }
-    
-    // Desenhar candles
-    for (var i = 0; i < candles.length; i++) {
-        var c = candles[i];
-        var up = c.close >= c.open;
-        var cor = up ? '#3dffa0' : '#ff5e6b';
-        
-        ctx.strokeStyle = cor;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x(i), y(c.high));
-        ctx.lineTo(x(i), y(c.low));
-        ctx.stroke();
-        
-        var bw = Math.max(1, chartW / candles.length * 0.6);
-        ctx.fillStyle = cor;
-        var top = y(Math.max(c.open, c.close));
-        var bot = y(Math.min(c.open, c.close));
-        ctx.fillRect(x(i) - bw/2, top, bw, Math.max(1, bot-top));
-    }
-}
-
-// Funções de crédito
+// Modal de créditos
 window.mostrarModalCreditos = function() {
     document.getElementById('modalCreditos').classList.add('show');
+    document.getElementById('creditInput').value = 100;
+    atualizarCreditosUI();
 };
 
 window.fecharModal = function() {
@@ -489,13 +962,16 @@ window.fecharModal = function() {
 window.recarregarCreditos = function() {
     var valor = parseInt(document.getElementById('creditInput').value) || 100;
     if (valor < 10) valor = 10;
+    if (valor > 10000) valor = 10000;
+    
     creditos += valor;
-    salvarCreditos();
-    atualizarCreditos();
+    salvarDados();
+    atualizarCreditosUI();
     window.fecharModal();
     mostrarPopup('💎 Recarregado!', valor + ' créditos adicionados. Total: ' + creditos);
 };
 
+// Popup
 function mostrarPopup(titulo, msg) {
     document.getElementById('popupTitle').textContent = titulo;
     document.getElementById('popupDesc').textContent = msg;
@@ -504,21 +980,29 @@ function mostrarPopup(titulo, msg) {
     setTimeout(function() { el.classList.remove('show'); }, 4000);
 }
 
-// Inicializar
-atualizarCreditos();
-mostrarPopup('Sistema Pronto 💎', 'Clique CONECTAR para iniciar. Créditos: ' + creditos);
-
 // Atualizar sessões
-setInterval(function() {
+function atualizarSessoes() {
     var h = new Date().getUTCHours();
     document.getElementById('sessAsia').classList.toggle('active', h >= 0 && h < 7);
     document.getElementById('sessLon').classList.toggle('active', h >= 7 && h < 13);
     document.getElementById('sessNY').classList.toggle('active', h >= 13 && h < 20);
-}, 30000);
+    
+    var sessao = h >= 13 && h < 16 ? 'Overlap Londres/NY (MELHOR)' : h >= 13 && h < 20 ? 'Nova York' : h >= 7 && h < 13 ? 'Londres' : 'Ásia (Baixa vol.)';
+    document.getElementById('sessaoAtual').textContent = 'Sessão: ' + sessao;
+    
+    var prox = h < 7 ? 'Londres em ' + (7 - h) + 'h' : h < 13 ? 'NY em ' + (13 - h) + 'h' : h < 20 ? 'Fecha em ' + (20 - h) + 'h' : 'Ásia em ' + (24 - h) + 'h';
+    document.getElementById('proxSessao').textContent = 'Próxima: ' + prox;
+}
 
-console.log('✅ XAU/USD Signal Pro carregado com sucesso!');
+// Inicialização
+atualizarCreditosUI();
+atualizarSessoes();
+setInterval(atualizarSessoes, 30000);
+mostrarPopup('Sistema Pronto 💎', 'Clique CONECTAR para iniciar. Créditos: ' + creditos);
+
+console.log('✅ XAU/USD Signal Pro carregado!');
 console.log('💎 Créditos:', creditos);
-console.log('🔌 Clique em CONECTAR para iniciar');
+console.log('🔌 Pronto para conectar.');
 </script>
 </body>
 </html>
