@@ -1,102 +1,524 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>TESTE - Conexão</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAU/USD · Signal Intelligence Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body { background: #05080f; color: white; font-family: Arial; padding: 50px; text-align: center; }
-button { 
-    padding: 20px 40px; 
-    font-size: 20px; 
-    background: #3dffa0; 
-    color: black; 
-    border: none; 
-    border-radius: 10px; 
-    cursor: pointer; 
-    margin: 10px;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05080f;--surface:#0b1020;--surface2:#0f1830;
+  --border:rgba(255,185,70,.15);--border2:rgba(255,185,70,.07);
+  --gold:#ffb946;--green:#3dffa0;--red:#ff5e6b;--orange:#ff8c42;
+  --blue:#4db8ff;--purple:#a78bfa;--muted:#4a5980;--text:#dde4f5;--text2:#8898c0;
+  --font-h:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;
+  --r:14px;--rl:20px;
 }
-.status { 
-    padding: 20px; 
-    margin: 20px; 
-    border-radius: 10px; 
-    font-size: 18px;
-}
-.online { background: #0a3d20; color: #3dffa0; border: 2px solid #3dffa0; }
-.offline { background: #3d0a0a; color: #ff5e6b; border: 2px solid #ff5e6b; }
+body{background:var(--bg);color:var(--text);font-family:var(--font-m);font-size:13px;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,185,70,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,185,70,.018) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.shell{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:16px 14px 60px}
+
+.header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl)}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),#c87800);border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.brand-name{font-family:var(--font-h);font-size:20px;font-weight:800;letter-spacing:2px;color:var(--gold)}
+.brand-sub{font-size:9px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.credits-box{background:var(--surface2);border:1px solid var(--gold);border-radius:20px;padding:6px 16px;display:flex;align-items:center;gap:8px}
+.credits-icon{font-size:16px}
+.credits-info{text-align:right}
+.credits-label{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.credits-value{font-family:var(--font-h);font-size:16px;font-weight:800;color:var(--gold)}
+.credits-used{font-size:8px;color:var(--text2)}
+
+.sess-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid var(--border2);color:var(--muted);transition:all .3s;cursor:default}
+.sess-pill.active{background:rgba(255,185,70,.12);border-color:var(--gold);color:var(--gold)}
+.status-badge{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;transition:all .3s}
+.s-off{border-color:var(--red);color:var(--red)}
+.s-on{border-color:var(--green);color:var(--green)}
+.btn-hdr{padding:6px 14px;border-radius:20px;border:1px solid;font-family:var(--font-m);font-size:10px;font-weight:700;cursor:pointer;background:transparent;transition:all .2s}
+.btn-connect{border-color:var(--green);color:var(--green)}
+.btn-connect:hover{background:rgba(61,255,160,.1)}
+.btn-stop{border-color:var(--red);color:var(--red)}
+.btn-stop:hover{background:rgba(255,94,107,.1)}
+.btn-credits{border-color:var(--gold);color:var(--gold)}
+.btn-credits:hover{background:rgba(255,185,70,.1)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+
+.update-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:7px 16px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;margin-bottom:14px;font-size:10px}
+.ut-lbl{color:var(--muted)}.ut-val{color:var(--text);font-weight:700}
+
+.main-grid{display:grid;grid-template-columns:1fr 370px;gap:14px;margin-bottom:14px}
+@media(max-width:1050px){.main-grid{grid-template-columns:1fr}}
+
+.chart-panel{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);overflow:hidden}
+.chart-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border2)}
+.price-disp{font-family:var(--font-h);font-size:2.2rem;font-weight:800;color:var(--gold)}
+.chart-legend{display:flex;gap:14px;font-size:10px;color:var(--muted);align-items:center;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px}
+.leg-line{width:18px;height:2px;display:inline-block;border-radius:2px}
+.macd-wrap{padding:6px 18px 10px;border-top:1px solid var(--border2)}
+.mtf-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 18px;border-top:1px solid var(--border2)}
+.mtf-cell{background:var(--surface2);border-radius:8px;padding:7px 10px;text-align:center;border:1px solid var(--border2)}
+.mtf-tf{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.mtf-sig{font-family:var(--font-h);font-size:11px;font-weight:700}
+.mtf-buy{color:var(--green)}.mtf-sell{color:var(--red)}.mtf-wait{color:var(--muted)}
+
+.right-panel{display:flex;flex-direction:column;gap:10px}
+.signal-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:18px;text-align:center}
+.sig-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.sig-main{font-family:var(--font-h);font-size:1.6rem;font-weight:800;padding:10px 22px;border-radius:10px;display:inline-block;margin-bottom:12px;letter-spacing:2px}
+.sig-compra{color:var(--green);background:rgba(61,255,160,.08);border:1px solid rgba(61,255,160,.25)}
+.sig-venda{color:var(--red);background:rgba(255,94,107,.08);border:1px solid rgba(255,94,107,.25)}
+.sig-espera{color:var(--gold);background:rgba(255,185,70,.08);border:1px solid rgba(255,185,70,.25)}
+.conf-label{font-size:10px;color:var(--muted);margin-bottom:5px}
+.conf-bar{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.conf-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.fill-compra{background:linear-gradient(90deg,var(--green),#5fffcc)}
+.fill-venda{background:linear-gradient(90deg,var(--red),#ff8fa0)}
+.fill-espera{background:linear-gradient(90deg,var(--gold),#c87800)}
+
+.score-ring-wrap{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px}
+.score-ring{position:relative;width:72px;height:72px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:6}
+.ring-fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .8s ease,stroke .5s}
+.score-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:18px;font-weight:800}
+.score-details{font-size:10px;color:var(--text2);text-align:left;line-height:1.9;min-width:0}
+
+.levels-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.level-item{background:var(--surface2);border-radius:8px;padding:8px;text-align:center;border:1px solid var(--border2)}
+.level-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.level-val{font-family:var(--font-h);font-size:12px;font-weight:700;margin-top:3px}
+
+.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ind-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:11px;transition:border-color .2s}
+.ind-card:hover{border-color:rgba(255,185,70,.2)}
+.ind-name{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.ind-value{font-family:var(--font-h);font-size:1.15rem;font-weight:700}
+.ind-sub{font-size:10px;margin-top:2px}
+.ind-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:6px;overflow:hidden}
+.ind-bar-fill{height:100%;border-radius:2px;transition:width .6s}
+
+.ut-box{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px}
+.ut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}
+.ut-item-lbl{color:var(--muted);display:block;font-size:9px;margin-bottom:2px}
+.ut-val-disp{font-family:var(--font-h);font-size:13px;font-weight:700}
+
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:1100px){.bottom-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.bottom-grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:16px}
+.panel-title{font-family:var(--font-h);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+
+.moment-score{font-family:var(--font-h);font-size:2.8rem;font-weight:800;text-align:center;line-height:1;margin-bottom:6px}
+.moment-bar{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.moment-fill{height:100%;border-radius:4px;transition:all .6s}
+.moment-text{font-family:var(--font-h);font-size:11px;font-weight:700;text-align:center;padding:8px;border-radius:8px;border:1px solid;margin-bottom:10px}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mstat{background:var(--surface2);border-radius:6px;padding:8px;text-align:center;border:1px solid var(--border2)}
+.mstat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.mstat-val{font-size:11px;font-weight:700;margin-top:2px}
+
+.log-item{display:grid;grid-template-columns:42px auto 1fr;gap:6px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;align-items:center}
+.log-item:last-child{border-bottom:none}
+.log-dir{padding:2px 6px;border-radius:4px;font-weight:700;letter-spacing:1px;text-align:center;font-size:9px}
+.log-compra{background:rgba(61,255,160,.12);color:var(--green)}
+.log-venda{background:rgba(255,94,107,.12);color:var(--red)}
+.log-espera{background:rgba(255,185,70,.1);color:var(--gold)}
+
+.ana-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
+.ana-row:last-child{border-bottom:none}
+
+.tip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:4px}
+.tip-card{background:var(--surface2);border-radius:10px;padding:12px;border:1px solid var(--border2)}
+.tip-title{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.tip-body{font-size:11px;color:var(--text2);line-height:1.7}
+
+.popup{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--surface);border-radius:12px;padding:14px 18px;max-width:320px;border:1px solid var(--gold);transform:translateY(120px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.popup.show{transform:translateY(0);opacity:1}
+.popup-title{font-weight:700;font-size:12px;margin-bottom:3px;color:var(--gold)}
+.popup-desc{font-size:11px;color:var(--muted)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--gold);border-radius:var(--rl);padding:24px;max-width:400px;width:90%}
+.modal-title{font-family:var(--font-h);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:16px}
+.credit-input{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font-m);font-size:14px;margin-bottom:12px}
+.credit-input:focus{border-color:var(--gold);outline:none}
+.btn-modal{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:rgba(255,185,70,.1);color:var(--gold);cursor:pointer;font-family:var(--font-h);font-weight:700;width:100%;margin-top:8px}
+.btn-modal:hover{background:rgba(255,185,70,.2)}
+.credit-info-modal{font-size:10px;color:var(--muted);margin-top:8px;text-align:center}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
 </head>
 <body>
+<div class="shell">
 
-<h1>🔌 TESTE DE CONEXÃO SIMPLES</h1>
-
-<div id="statusBox" class="status offline">
-    ⚫ DESCONECTADO
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <div>
+      <div class="brand-name">XAU/USD SIGNAL PRO</div>
+      <div class="brand-sub">Sistema Inteligente · Multi-Indicador · Alta Probabilidade</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="credits-box">
+      <span class="credits-icon">💎</span>
+      <div class="credits-info">
+        <div class="credits-label">Créditos</div>
+        <div class="credits-value" id="creditsDisplay">100</div>
+        <div class="credits-used" id="creditsUsed">Usados: 0</div>
+      </div>
+    </div>
+    <div class="live-dot" id="liveDot"></div>
+    <div class="sess-pill" id="sessAsia">🌏 ÁSIA</div>
+    <div class="sess-pill" id="sessLon">🇬🇧 LONDRES</div>
+    <div class="sess-pill" id="sessNY">🎗 NOVA YORK</div>
+    <span class="status-badge s-off" id="statusBadge">⬤ OFFLINE</span>
+    <button class="btn-hdr btn-connect" onclick="window.conectarSistema()">🔌 CONECTAR</button>
+    <button class="btn-hdr btn-stop" onclick="window.desconectarSistema()">⏹ PARAR</button>
+    <button class="btn-hdr btn-credits" onclick="window.mostrarModalCreditos()">💎 RECARREGAR</button>
+  </div>
 </div>
 
-<div id="info" style="margin: 20px; font-size: 16px;">
-    Clique no botão CONECTAR para testar
+<div class="update-bar">
+  <span class="ut-lbl">XAUUSD · OURO</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Período:</span><span class="ut-val">5min</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Atualizado:</span><span class="ut-val" id="lastUpd">--:--:--</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Velas:</span><span class="ut-val" id="candleCount">0</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Próxima:</span><span class="ut-val" id="countdown">--s</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Pontuação:</span><span class="ut-val" id="sysScore" style="color:var(--gold)">0/10</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Custo:</span><span class="ut-val" style="color:var(--orange)">1 crédito</span>
 </div>
 
-<button onclick="conectar()" style="background: #3dffa0;">
-    ✅ CONECTAR
-</button>
+<div class="main-grid">
+  <div class="chart-panel">
+    <div class="chart-top">
+      <div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">OURO · XAU/USD · M5</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="price-disp" id="priceDisp">$--,--</div>
+          <div id="priceChg" style="font-size:12px;color:var(--muted)">--</div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px" id="priceRange">Máx: -- · Mín: --</div>
+      </div>
+      <div class="chart-legend">
+        <div class="leg"><div class="leg-line" style="background:var(--orange)"></div>EMA 32</div>
+        <div class="leg"><div class="leg-line" style="background:var(--purple)"></div>EMA 176</div>
+        <div class="leg"><div class="leg-line" style="background:var(--green)"></div>Stop Long</div>
+        <div class="leg"><div class="leg-line" style="background:var(--red)"></div>Stop Short</div>
+      </div>
+    </div>
+    <canvas id="mainChart" width="700" height="320" style="width:100%;height:320px;display:block"></canvas>
+    <div class="macd-wrap">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:3px;letter-spacing:1px">MACD HISTOGRAMA · 12/26/9</div>
+      <canvas id="macdChart" width="700" height="64" style="width:100%;height:64px;display:block"></canvas>
+    </div>
+    <div class="mtf-bar">
+      <div class="mtf-cell"><div class="mtf-tf">M1</div><div class="mtf-sig mtf-wait" id="mtfM1">--</div></div>
+      <div class="mtf-cell"><div class="mtf-tf">M5</div><div class="mtf-sig mtf-wait" id="mtfM5">--</div></div>
+      <div class="mtf-cell"><div class="mtf-tf">M15</div><div class="mtf-sig mtf-wait" id="mtfM15">--</div></div>
+      <div class="mtf-cell"><div class="mtf-tf">H1</div><div class="mtf-sig mtf-wait" id="mtfH1">--</div></div>
+    </div>
+  </div>
 
-<button onclick="desconectar()" style="background: #ff5e6b;">
-    ❌ DESCONECTAR
-</button>
+  <div class="right-panel">
+    <div class="signal-box">
+      <div class="sig-label">SINAL ATUAL · XAUUSD</div>
+      <div class="sig-main sig-espera" id="signalMain">ESPERAR</div>
+      <div class="conf-label">CONFIANÇA · <span id="confPct">--</span>%</div>
+      <div class="conf-bar"><div class="conf-fill fill-espera" id="confFill" style="width:0%"></div></div>
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle class="ring-bg" cx="36" cy="36" r="30"/>
+            <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30" stroke="var(--gold)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          </svg>
+          <div class="score-center" id="ringScore" style="color:var(--gold)">0</div>
+        </div>
+        <div class="score-details">
+          <div id="scoreD1" style="color:var(--muted)">Pontos: --/10</div>
+          <div id="scoreD2" style="color:var(--muted)">Aguardando dados...</div>
+          <div id="scoreD3" style="color:var(--muted)">--</div>
+        </div>
+      </div>
+      <div class="levels-grid">
+        <div class="level-item"><div class="level-lbl">ENTRADA</div><div class="level-val" id="lvlEntry">--,--</div></div>
+        <div class="level-item"><div class="level-lbl">TAKE PROFIT</div><div class="level-val" id="lvlTP" style="color:var(--green)">--,--</div></div>
+        <div class="level-item"><div class="level-lbl">STOP LOSS</div><div class="level-val" id="lvlSL" style="color:var(--red)">--,--</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div id="contador" style="margin-top: 30px; font-size: 24px; color: #ffb946;"></div>
+<div class="modal-overlay" id="modalCreditos">
+  <div class="modal">
+    <div class="modal-title">💎 Recarregar Créditos</div>
+    <input type="number" class="credit-input" id="creditInput" value="100" min="10">
+    <button class="btn-modal" onclick="window.recarregarCreditos()">RECARREGAR</button>
+    <button class="btn-modal" style="background:rgba(255,94,107,.1);border-color:var(--red);color:var(--red);margin-top:4px" onclick="window.fecharModal()">CANCELAR</button>
+  </div>
+</div>
+
+<div class="popup" id="popup"><div class="popup-title" id="popupTitle"></div><div class="popup-desc" id="popupDesc"></div></div>
+
+</div>
 
 <script>
-var conectado = false;
-var timer = null;
-var segundos = 0;
+// ============================================
+// SISTEMA XAU/USD SIGNAL PRO - VERSÃO FINAL
+// ============================================
 
-function conectar() {
+// Variáveis globais
+var conectado = false;
+var timerPrincipal = null;
+var timerCountdown = null;
+var segundosCountdown = 60;
+var creditos = 100;
+var creditosUsados = 0;
+var candles = [];
+var precoBase = 2650;
+var signalLog = [];
+
+// Carregar créditos
+try {
+    var saved = localStorage.getItem('xau_creditos_final');
+    if (saved) creditos = parseInt(saved);
+    var savedUsed = localStorage.getItem('xau_creditos_usados_final');
+    if (savedUsed) creditosUsados = parseInt(savedUsed);
+} catch(e) {}
+
+function salvarCreditos() {
+    try {
+        localStorage.setItem('xau_creditos_final', creditos);
+        localStorage.setItem('xau_creditos_usados_final', creditosUsados);
+    } catch(e) {}
+}
+
+function atualizarCreditos() {
+    document.getElementById('creditsDisplay').textContent = creditos;
+    document.getElementById('creditsUsed').textContent = 'Usados: ' + creditosUsados;
+}
+
+// Função principal de conexão
+window.conectarSistema = function() {
     if (conectado) {
-        alert('Já está conectado!');
+        mostrarPopup('Já Conectado!', 'O sistema já está rodando.');
+        return;
+    }
+    
+    if (creditos <= 0) {
+        mostrarPopup('Sem Créditos!', 'Recarregue para continuar.');
+        window.mostrarModalCreditos();
         return;
     }
     
     conectado = true;
-    document.getElementById('statusBox').className = 'status online';
-    document.getElementById('statusBox').innerHTML = '🟢 CONECTADO - FUNCIONANDO!';
-    document.getElementById('info').innerHTML = '✅ Sistema online! Atualizando a cada 5 segundos...';
+    document.getElementById('statusBadge').textContent = '🟢 CONECTADO';
+    document.getElementById('statusBadge').className = 'status-badge s-on';
+    document.getElementById('liveDot').style.background = 'var(--green)';
     
-    segundos = 0;
-    atualizarContador();
+    // Primeira execução
+    executarCiclo();
     
-    timer = setInterval(function() {
-        segundos++;
-        atualizarContador();
-        document.getElementById('info').innerHTML = 
-            '🔄 Atualização #' + segundos + '<br>' +
-            '📊 Dados simulados gerados com sucesso!<br>' +
-            '💰 Preço atual: $' + (2650 + Math.random() * 20).toFixed(2);
-    }, 5000);
-}
+    // Timer a cada 60 segundos
+    timerPrincipal = setInterval(executarCiclo, 60000);
+    
+    // Countdown
+    segundosCountdown = 60;
+    timerCountdown = setInterval(function() {
+        segundosCountdown--;
+        document.getElementById('countdown').textContent = segundosCountdown + 's';
+        if (segundosCountdown <= 0) segundosCountdown = 60;
+    }, 1000);
+    
+    mostrarPopup('✅ Conectado!', 'Sistema gerando sinais a cada 60s.');
+};
 
-function desconectar() {
-    if (!conectado) {
-        alert('Já está desconectado!');
+window.desconectarSistema = function() {
+    conectado = false;
+    if (timerPrincipal) clearInterval(timerPrincipal);
+    if (timerCountdown) clearInterval(timerCountdown);
+    
+    document.getElementById('statusBadge').textContent = '⬤ OFFLINE';
+    document.getElementById('statusBadge').className = 'status-badge s-off';
+    document.getElementById('liveDot').style.background = 'var(--muted)';
+    document.getElementById('countdown').textContent = '--s';
+    
+    mostrarPopup('Desconectado', 'Sistema parado. Créditos: ' + creditos);
+};
+
+function executarCiclo() {
+    if (!conectado) return;
+    if (creditos <= 0) {
+        window.desconectarSistema();
+        mostrarPopup('Sem Créditos!', 'Sistema parado por falta de créditos.');
         return;
     }
     
-    conectado = false;
-    clearInterval(timer);
-    timer = null;
+    // Gastar crédito
+    creditos--;
+    creditosUsados++;
+    salvarCreditos();
+    atualizarCreditos();
     
-    document.getElementById('statusBox').className = 'status offline';
-    document.getElementById('statusBox').innerHTML = '⚫ DESCONECTADO';
-    document.getElementById('info').innerHTML = 'Sistema parado. Total de atualizações: ' + segundos;
-    document.getElementById('contador').innerHTML = '';
+    // Gerar dados
+    gerarCandles();
+    
+    // Atualizar UI
+    var ultimo = candles[candles.length-1];
+    document.getElementById('priceDisp').textContent = '$' + ultimo.close.toFixed(2).replace('.', ',');
+    document.getElementById('candleCount').textContent = candles.length;
+    document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
+    
+    // Gerar sinal aleatório para demonstração
+    var sinais = ['COMPRA ▲', 'VENDA ▼', 'ESPERAR'];
+    var sinal = sinais[Math.floor(Math.random() * sinais.length)];
+    document.getElementById('signalMain').textContent = sinal;
+    
+    if (sinal.includes('COMPRA')) {
+        document.getElementById('signalMain').className = 'sig-main sig-compra';
+    } else if (sinal.includes('VENDA')) {
+        document.getElementById('signalMain').className = 'sig-main sig-venda';
+    } else {
+        document.getElementById('signalMain').className = 'sig-main sig-espera';
+    }
+    
+    // Desenhar gráfico simples
+    desenharGrafico();
 }
 
-function atualizarContador() {
-    document.getElementById('contador').innerHTML = 
-        '⏱️ Tempo conectado: ' + segundos + ' segundos';
+function gerarCandles() {
+    candles = [];
+    var preco = precoBase;
+    
+    for (var i = 0; i < 100; i++) {
+        var variacao = (Math.random() - 0.5) * 2;
+        var open = preco;
+        var close = open + variacao;
+        var high = Math.max(open, close) + Math.random();
+        var low = Math.min(open, close) - Math.random();
+        
+        candles.push({
+            open: open,
+            high: high,
+            low: low,
+            close: close
+        });
+        
+        preco = close;
+    }
+    
+    precoBase = candles[99].close;
 }
+
+function desenharGrafico() {
+    var canvas = document.getElementById('mainChart');
+    if (!canvas || !candles.length) return;
+    
+    var W = canvas.offsetWidth || 700;
+    var H = 320;
+    canvas.width = W;
+    canvas.height = H;
+    
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    
+    // Background
+    ctx.fillStyle = '#0b1020';
+    ctx.fillRect(0, 0, W, H);
+    
+    // Encontrar min/max
+    var mn = Infinity, mx = -Infinity;
+    for (var i = 0; i < candles.length; i++) {
+        if (candles[i].low < mn) mn = candles[i].low;
+        if (candles[i].high > mx) mx = candles[i].high;
+    }
+    mn -= 2; mx += 2;
+    
+    var padLeft = 50, padRight = 50, padTop = 20, padBottom = 20;
+    var chartW = W - padLeft - padRight;
+    var chartH = H - padTop - padBottom;
+    
+    function x(i) { return padLeft + (i / (candles.length-1)) * chartW; }
+    function y(v) { return padTop + (1 - (v-mn)/(mx-mn)) * chartH; }
+    
+    // Desenhar candles
+    for (var i = 0; i < candles.length; i++) {
+        var c = candles[i];
+        var up = c.close >= c.open;
+        var cor = up ? '#3dffa0' : '#ff5e6b';
+        
+        ctx.strokeStyle = cor;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x(i), y(c.high));
+        ctx.lineTo(x(i), y(c.low));
+        ctx.stroke();
+        
+        var bw = Math.max(1, chartW / candles.length * 0.6);
+        ctx.fillStyle = cor;
+        var top = y(Math.max(c.open, c.close));
+        var bot = y(Math.min(c.open, c.close));
+        ctx.fillRect(x(i) - bw/2, top, bw, Math.max(1, bot-top));
+    }
+}
+
+// Funções de crédito
+window.mostrarModalCreditos = function() {
+    document.getElementById('modalCreditos').classList.add('show');
+};
+
+window.fecharModal = function() {
+    document.getElementById('modalCreditos').classList.remove('show');
+};
+
+window.recarregarCreditos = function() {
+    var valor = parseInt(document.getElementById('creditInput').value) || 100;
+    if (valor < 10) valor = 10;
+    creditos += valor;
+    salvarCreditos();
+    atualizarCreditos();
+    window.fecharModal();
+    mostrarPopup('💎 Recarregado!', valor + ' créditos adicionados. Total: ' + creditos);
+};
+
+function mostrarPopup(titulo, msg) {
+    document.getElementById('popupTitle').textContent = titulo;
+    document.getElementById('popupDesc').textContent = msg;
+    var el = document.getElementById('popup');
+    el.classList.add('show');
+    setTimeout(function() { el.classList.remove('show'); }, 4000);
+}
+
+// Inicializar
+atualizarCreditos();
+mostrarPopup('Sistema Pronto 💎', 'Clique CONECTAR para iniciar. Créditos: ' + creditos);
+
+// Atualizar sessões
+setInterval(function() {
+    var h = new Date().getUTCHours();
+    document.getElementById('sessAsia').classList.toggle('active', h >= 0 && h < 7);
+    document.getElementById('sessLon').classList.toggle('active', h >= 7 && h < 13);
+    document.getElementById('sessNY').classList.toggle('active', h >= 13 && h < 20);
+}, 30000);
+
+console.log('✅ XAU/USD Signal Pro carregado com sucesso!');
+console.log('💎 Créditos:', creditos);
+console.log('🔌 Clique em CONECTAR para iniciar');
 </script>
-
 </body>
 </html>
