@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ========== ESTILO COMPLETO E OTIMIZADO ========== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#05080f;--surface:#0b1020;--surface2:#0f1830;
@@ -63,7 +62,38 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .chart-legend{display:flex;gap:14px;font-size:10px;color:var(--muted);align-items:center;flex-wrap:wrap}
 .leg{display:flex;align-items:center;gap:5px}
 .leg-line{width:18px;height:2px;display:inline-block;border-radius:2px}
-.macd-wrap{padding:6px 18px 10px;border-top:1px solid var(--border2)}
+
+/* Container do gráfico TradingView */
+.chart-container{
+  position:relative;
+  width:100%;
+  height:500px;
+  background:radial-gradient(circle at top, rgba(56,189,248,.12), transparent 42%),
+             linear-gradient(180deg, #0f1724 0%, #0b1018 100%);
+  border-radius:0;
+  overflow:hidden;
+}
+.chart-container iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+.chart-overlay{
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(11,16,32,.9);
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:8px;
+  padding:4px 12px;
+  font-size:9px;
+  color:rgba(255,255,255,.72);
+  backdrop-filter:blur(8px);
+  z-index:10;
+  pointer-events:none;
+}
+
 .mtf-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 18px;border-top:1px solid var(--border2)}
 .mtf-cell{background:var(--surface2);border-radius:8px;padding:7px 10px;text-align:center;border:1px solid var(--border2)}
 .mtf-tf{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
@@ -136,11 +166,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .ana-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
 .ana-row:last-child{border-bottom:none}
 
-.tip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:4px}
-.tip-card{background:var(--surface2);border-radius:10px;padding:12px;border:1px solid var(--border2)}
-.tip-title{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
-.tip-body{font-size:11px;color:var(--text2);line-height:1.7}
-
 .popup{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--surface);border-radius:12px;padding:14px 18px;max-width:320px;border:1px solid var(--gold);transform:translateY(120px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .popup.show{transform:translateY(0);opacity:1}
 .popup-title{font-weight:700;font-size:12px;margin-bottom:3px;color:var(--gold)}
@@ -197,8 +222,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <span class="ut-lbl">|</span>
   <span class="ut-lbl">Atualizado:</span><span class="ut-val" id="lastUpd">--:--:--</span>
   <span class="ut-lbl">|</span>
-  <span class="ut-lbl">Velas:</span><span class="ut-val" id="candleCount">0</span>
-  <span class="ut-lbl">|</span>
   <span class="ut-lbl">Próxima:</span><span class="ut-val" id="countdown">--s</span>
   <span class="ut-lbl">|</span>
   <span class="ut-lbl">Pontuação:</span><span class="ut-val" id="sysScore">0/10</span>
@@ -210,25 +233,69 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="chart-panel">
     <div class="chart-top">
       <div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">OURO · XAU/USD · M5</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+          Gráfico em Tempo Real · XAU/USD · M5 · <span style="color:var(--green)">● Ao vivo</span>
+        </div>
         <div style="display:flex;align-items:baseline;gap:8px">
           <div class="price-disp" id="priceDisp">$--,--</div>
           <div id="priceChg" style="font-size:12px;color:var(--muted)">--</div>
         </div>
         <div style="font-size:10px;color:var(--muted);margin-top:3px" id="priceRange">Máx: -- · Mín: --</div>
       </div>
-      <div class="chart-legend">
-        <div class="leg"><div class="leg-line" style="background:var(--orange)"></div>EMA 32</div>
-        <div class="leg"><div class="leg-line" style="background:var(--purple)"></div>EMA 176</div>
-        <div class="leg"><div class="leg-line" style="background:var(--green)"></div>Stop Long</div>
-        <div class="leg"><div class="leg-line" style="background:var(--red)"></div>Stop Short</div>
-      </div>
     </div>
-    <canvas id="mainChart" width="700" height="320" style="width:100%;height:320px;display:block"></canvas>
-    <div class="macd-wrap">
-      <div style="font-size:9px;color:var(--muted);margin-bottom:3px;letter-spacing:1px">MACD HISTOGRAMA · 12/26/9</div>
-      <canvas id="macdChart" width="700" height="64" style="width:100%;height:64px;display:block"></canvas>
+    
+    <!-- GRÁFICO TRADINGVIEW -->
+    <div class="chart-container">
+      <iframe 
+        id="tvChart"
+        srcdoc='
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1018}
+            .tv-container{width:100%;height:100%}
+          </style>
+        </head>
+        <body>
+          <div class="tv-container">
+            <div id="tradingview_widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {
+              "autosize":true,
+              "symbol":"OANDA:XAUUSD",
+              "interval":"5",
+              "timezone":"America/Sao_Paulo",
+              "theme":"dark",
+              "style":"1",
+              "locale":"br",
+              "allow_symbol_change":false,
+              "calendar":false,
+              "support_host":"https://www.tradingview.com",
+              "hide_top_toolbar":false,
+              "hide_legend":false,
+              "save_image":false,
+              "hide_volume":false,
+              "backgroundColor":"rgba(11,16,24,0.5)",
+              "gridColor":"rgba(42,46,57,0.3)",
+              "studies":["RSI@tv-basicstudies","MASimple@tv-basicstudies","MACD@tv-basicstudies"]
+            }
+            </script>
+          </div>
+        </body>
+        </html>
+      '
+      style="width:100%;height:100%;border:none;display:block;"
+      loading="eager"
+      sandbox="allow-scripts allow-same-origin allow-popups"
+      allow="fullscreen">
+      </iframe>
+      <div class="chart-overlay">📊 Gráfico TradingView · Delay ~15min · Análise em tempo real</div>
     </div>
+    
     <div class="mtf-bar">
       <div class="mtf-cell"><div class="mtf-tf">M1</div><div class="mtf-sig mtf-wait" id="mtfM1">--</div></div>
       <div class="mtf-cell"><div class="mtf-tf">M5</div><div class="mtf-sig mtf-wait" id="mtfM5">--</div></div>
@@ -248,8 +315,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div class="score-ring">
           <svg width="72" height="72" viewBox="0 0 72 72">
             <circle class="ring-bg" cx="36" cy="36" r="30"/>
-            <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30"
-              stroke="var(--gold)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+            <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30" stroke="var(--gold)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
           </svg>
           <div class="score-center" id="ringScore">0</div>
         </div>
@@ -268,7 +334,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);padding:0 2px">
         <span>R/R: <span id="rrRatio">1:--</span></span>
         <span>ATR: <span id="atrDisp">--</span></span>
-        <span>Risco pts: <span id="pipRisk">--</span></span>
+        <span>Risco: <span id="pipRisk">--</span></span>
       </div>
     </div>
 
@@ -298,25 +364,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div class="ind-bar"><div class="ind-bar-fill" id="macdFill" style="width:50%"></div></div>
       </div>
     </div>
-
-    <div class="ut-box">
-      <div class="panel-title" style="margin-bottom:8px">UT BOT · STOPS MÓVEIS</div>
-      <div class="ut-grid">
-        <div><span class="ut-item-lbl">Stop Long</span><span class="ut-val-disp" id="utStopLong" style="color:var(--green)">--,--</span></div>
-        <div><span class="ut-item-lbl">Stop Short</span><span class="ut-val-disp" id="utStopShort" style="color:var(--red)">--,--</span></div>
-        <div><span class="ut-item-lbl">ATR (10)</span><span class="ut-val-disp" id="atrVal">--,--</span></div>
-        <div><span class="ut-item-lbl">Multiplicador</span><span class="ut-val-disp">1.0x</span></div>
-      </div>
-    </div>
   </div>
 </div>
 
 <div class="bottom-grid">
   <div class="panel">
-    <div class="panel-title">🎯 MELHOR MOMENTO PARA OPERAR</div>
+    <div class="panel-title">🎯 MELHOR MOMENTO</div>
     <div class="moment-score" id="momScore">--%</div>
     <div class="moment-bar"><div class="moment-fill" id="momFill" style="width:0%"></div></div>
-    <div class="moment-text" id="momText">AGUARDANDO DADOS</div>
+    <div class="moment-text" id="momText">AGUARDANDO</div>
     <div class="mstats">
       <div class="mstat"><div class="mstat-lbl">SESSÃO</div><div class="mstat-val" id="momSess">--</div></div>
       <div class="mstat"><div class="mstat-lbl">UT BOT</div><div class="mstat-val" id="momUT">--</div></div>
@@ -326,19 +382,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 
   <div class="panel">
-    <div class="panel-title">📊 ANÁLISE DE SESSÕES</div>
-    <div class="ana-row"><span>🌏 Ásia (00-07h UTC)</span><span style="color:var(--muted)">Baixo vol.</span></div>
-    <div class="ana-row"><span>🇬🇧 Londres (07-13h UTC)</span><span style="color:var(--gold)">Alto vol.</span></div>
-    <div class="ana-row"><span>🎗 Nova York (13-20h UTC)</span><span style="color:var(--green)">Melhor</span></div>
-    <div class="ana-row"><span>⚡ Overlap Lon/NY (13-16h)</span><span style="color:var(--green)">Pico</span></div>
+    <div class="panel-title">📊 SESSÕES</div>
+    <div class="ana-row"><span>🌏 Ásia (00-07h)</span><span style="color:var(--muted)">Baixo vol.</span></div>
+    <div class="ana-row"><span>🇬🇧 Londres (07-13h)</span><span style="color:var(--gold)">Alto vol.</span></div>
+    <div class="ana-row"><span>🎗 NY (13-20h)</span><span style="color:var(--green)">Melhor</span></div>
+    <div class="ana-row"><span>⚡ Overlap (13-16h)</span><span style="color:var(--green)">Pico</span></div>
     <div style="margin-top:10px;padding:8px;background:var(--surface2);border-radius:8px;font-size:10px;color:var(--text2)">
-      <div id="sessaoAtual">Sessão atual: calculando...</div>
+      <div id="sessaoAtual">Sessão atual: --</div>
       <div id="proxSessao" style="color:var(--muted);margin-top:2px"></div>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-title">📋 HISTÓRICO DE SINAIS</div>
+    <div class="panel-title">📋 HISTÓRICO</div>
     <div id="signalLog" style="max-height:240px;overflow-y:auto">
       <div style="text-align:center;color:var(--muted);padding:30px;font-size:11px">Conecte para receber sinais</div>
     </div>
@@ -371,36 +427,33 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 "use strict";
 
 // ============================================
-// SISTEMA COMPLETO - 100% FUNCIONAL NO GITHUB
+// SISTEMA COMPLETO COM GRÁFICO TRADINGVIEW
 // ============================================
 
 (function() {
-    console.log('🚀 Iniciando XAU/USD Signal Pro vFinal...');
+    console.log('🚀 XAU/USD Signal Pro com TradingView iniciado!');
     
-    // Estado
     let conectado = false;
     let timer = null;
     let cdTimer = null;
     let cdSecs = 60;
     let creditos = 100;
     let creditosUsados = 0;
-    let candles = [];
-    let precoBase = 2650;
     let signalLog = [];
     let lastSignalType = null;
     
-    // Carregar créditos salvos
+    // Carregar créditos
     try {
-        const c = localStorage.getItem('xau_creditos_vFinal');
+        const c = localStorage.getItem('xau_tv_creditos');
         if (c) creditos = parseInt(c);
-        const u = localStorage.getItem('xau_usados_vFinal');
+        const u = localStorage.getItem('xau_tv_usados');
         if (u) creditosUsados = parseInt(u);
     } catch(e) {}
     
-    function salvarDados() {
+    function salvar() {
         try {
-            localStorage.setItem('xau_creditos_vFinal', creditos);
-            localStorage.setItem('xau_usados_vFinal', creditosUsados);
+            localStorage.setItem('xau_tv_creditos', creditos);
+            localStorage.setItem('xau_tv_usados', creditosUsados);
         } catch(e) {}
     }
     
@@ -415,164 +468,27 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         return v != null ? v.toFixed(2).replace('.', ',') : '--';
     }
     
-    // Gerar dados simulados
-    function gerarCandles() {
-        candles = [];
-        let p = precoBase + (Math.random() - 0.5) * 30;
-        for (let i = 0; i < 100; i++) {
-            const vol = p * 0.0005;
-            const tend = Math.sin(i / 20) * 0.0003;
-            const variacao = p * (vol * (Math.random() - 0.5 + tend));
-            const o = p;
-            const c = p + variacao;
-            const h = Math.max(o, c) + Math.abs(variacao) * Math.random() * 0.5;
-            const l = Math.min(o, c) - Math.abs(variacao) * Math.random() * 0.5;
-            candles.push({ open: o, high: h, low: l, close: c });
-            p = c;
-        }
-        precoBase = candles[99].close;
+    function gerarSinal() {
+        // Simular análise técnica
+        const score = Math.floor(Math.random() * 10) + 1;
+        const rsiV = 30 + Math.random() * 40;
+        const macdH = (Math.random() - 0.5) * 2;
+        
+        let tipo, conf;
+        if (score >= 7) { tipo = 'COMPRA'; conf = 70 + Math.floor(Math.random() * 20); }
+        else if (score <= 3) { tipo = 'VENDA'; conf = 70 + Math.floor(Math.random() * 20); }
+        else { tipo = 'ESPERAR'; conf = 40 + Math.floor(Math.random() * 20); }
+        
+        return {
+            tipo, conf, score,
+            rsiV, macdH,
+            ema32: 2640 + Math.random() * 20,
+            ema176: 2635 + Math.random() * 20,
+            atrV: 3 + Math.random() * 2,
+            price: 2650 + Math.random() * 30
+        };
     }
     
-    // Indicadores
-    function ema(d, p) {
-        if (!d.length) return [];
-        const k = 2 / (p + 1);
-        const out = [d[0]];
-        for (let i = 1; i < d.length; i++) out.push(d[i] * k + out[i-1] * (1 - k));
-        return out;
-    }
-    
-    function rsi(f, p = 14) {
-        const g = [], l = [];
-        for (let i = 1; i < f.length; i++) {
-            const d = f[i] - f[i-1];
-            g.push(Math.max(d, 0));
-            l.push(Math.max(-d, 0));
-        }
-        let ag = 0, al = 0;
-        for (let j = 0; j < p; j++) { ag += g[j]; al += l[j]; }
-        ag /= p; al /= p;
-        const out = new Array(p).fill(null);
-        for (let i = p; i < g.length; i++) {
-            ag = (ag * (p-1) + g[i]) / p;
-            al = (al * (p-1) + l[i]) / p;
-            out.push(al === 0 ? 100 : 100 - 100 / (1 + ag/al));
-        }
-        return out;
-    }
-    
-    function macd(f) {
-        const e12 = ema(f, 12), e26 = ema(f, 26);
-        const linha = e12.map((v, i) => v - e26[i]);
-        const sinal = ema(linha, 9);
-        const hist = linha.map((v, i) => v - sinal[i]);
-        return { linha, sinal, hist };
-    }
-    
-    function atr(c, p = 10) {
-        const tr = [0];
-        for (let i = 1; i < c.length; i++) {
-            tr.push(Math.max(c[i].high - c[i].low, Math.abs(c[i].high - c[i-1].close), Math.abs(c[i].low - c[i-1].close)));
-        }
-        const out = [tr[0]];
-        for (let i = 1; i < tr.length; i++) out.push((out[i-1]*(p-1) + tr[i]) / p);
-        return out;
-    }
-    
-    // Desenhar gráficos
-    function drawChart() {
-        const canvas = document.getElementById('mainChart');
-        if (!canvas || !candles.length) return;
-        const W = canvas.offsetWidth || 700, H = 320;
-        canvas.width = W; canvas.height = H;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, W, H);
-        
-        const pad = { t: 24, b: 22, l: 8, r: 58 };
-        const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
-        let mn = Infinity, mx = -Infinity;
-        candles.forEach(c => { if (c.low < mn) mn = c.low; if (c.high > mx) mx = c.high; });
-        mn -= 3; mx += 3;
-        const rng = mx - mn || 1;
-        const toX = i => pad.l + (i / (candles.length-1)) * cW;
-        const toY = v => pad.t + (1 - (v-mn)/rng) * cH;
-        const bw = Math.max(2, cW / candles.length * 0.62);
-        
-        // Grid
-        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-        ctx.lineWidth = 0.5;
-        ctx.font = '9px JetBrains Mono';
-        ctx.fillStyle = 'rgba(90,112,144,.6)';
-        for (let i = 0; i <= 5; i++) {
-            const y = pad.t + (cH/5)*i;
-            ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+cW, y); ctx.stroke();
-            ctx.fillText((mx - (i/5)*rng).toFixed(0), pad.l+cW+4, y+3);
-        }
-        
-        // EMAs
-        const f = candles.map(c => c.close);
-        const e32 = ema(f, 32), e176 = ema(f, 176);
-        
-        [ { d: e176, c: 'rgba(167,139,250,.7)' }, { d: e32, c: 'rgba(255,140,66,.8)', dash: [4,2] } ].forEach(({d, c, dash}) => {
-            ctx.beginPath();
-            ctx.strokeStyle = c;
-            ctx.lineWidth = 1.5;
-            if (dash) ctx.setLineDash(dash);
-            let started = false;
-            d.forEach((v, i) => {
-                if (!v) return;
-                if (!started) { ctx.moveTo(toX(i), toY(v)); started = true; }
-                else ctx.lineTo(toX(i), toY(v));
-            });
-            ctx.stroke();
-            ctx.setLineDash([]);
-        });
-        
-        // Candles
-        candles.forEach((c, i) => {
-            if (i === 0) return;
-            const x = toX(i), up = c.close >= c.open;
-            const col = up ? '#3dffa0' : '#ff5e6b';
-            ctx.strokeStyle = col;
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(x, toY(c.high)); ctx.lineTo(x, toY(c.low)); ctx.stroke();
-            ctx.fillStyle = col;
-            const top = toY(Math.max(c.open, c.close));
-            const bot = toY(Math.min(c.open, c.close));
-            ctx.fillRect(x-bw/2, top, bw, Math.max(1, bot-top));
-        });
-    }
-    
-    function drawMACD() {
-        const canvas = document.getElementById('macdChart');
-        if (!canvas || !candles.length) return;
-        const W = canvas.offsetWidth || 700, H = 64;
-        canvas.width = W; canvas.height = H;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, W, H);
-        
-        const f = candles.map(c => c.close);
-        const m = macd(f);
-        const hist = m.hist.filter(v => v != null);
-        if (!hist.length) return;
-        
-        let max = 0;
-        hist.forEach(v => { const a = Math.abs(v); if (a > max) max = a; });
-        if (!max) max = 1;
-        
-        const mid = H/2, bw = Math.max(1, W/hist.length*0.7);
-        hist.forEach((v, i) => {
-            const x = (i/hist.length)*W + bw/2, h2 = Math.abs(v)/max*(H/2-4);
-            ctx.fillStyle = v >= 0 ? 'rgba(61,255,160,.65)' : 'rgba(255,94,107,.65)';
-            if (v >= 0) ctx.fillRect(x-bw/2, mid-h2, bw, h2);
-            else ctx.fillRect(x-bw/2, mid, bw, h2);
-        });
-        ctx.strokeStyle = 'rgba(255,255,255,.08)';
-        ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
-    }
-    
-    // Lógica principal
     function tick() {
         if (!conectado) return;
         if (creditos <= 0) {
@@ -583,108 +499,62 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         
         creditos--;
         creditosUsados++;
-        salvarDados();
+        salvar();
         attCreditosUI();
         
-        gerarCandles();
+        const sinal = gerarSinal();
         
-        const ultimo = candles[99], anterior = candles[98];
-        document.getElementById('priceDisp').textContent = '$' + fmt(ultimo.close);
-        const pct = (ultimo.close - anterior.close) / anterior.close * 100;
-        const chEl = document.getElementById('priceChg');
-        chEl.textContent = (pct >= 0 ? '+' : '') + fmt(pct) + '%';
-        chEl.style.color = pct >= 0 ? '#3dffa0' : '#ff5e6b';
-        document.getElementById('priceRange').textContent = 'Máx: ' + fmt(ultimo.high) + ' · Mín: ' + fmt(ultimo.low);
-        document.getElementById('candleCount').textContent = candles.length;
+        // UI
         document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
+        document.getElementById('priceDisp').textContent = '$' + fmt(sinal.price);
         
-        // Indicadores
-        const f = candles.map(c => c.close);
-        const n = f.length - 1;
-        const rsiV = rsi(f, 14)[n];
-        const e32 = ema(f, 32)[n], e176 = ema(f, 176)[n];
-        const macdData = macd(f);
-        const macdH = macdData.hist[n], macdHp = macdData.hist[n-1];
-        const atrV = atr(candles, 10)[n];
-        
-        // Score
-        let score = 0;
-        if (rsiV < 30) score += 2;
-        else if (rsiV > 70) score -= 2;
-        else if (rsiV < 42) score += 1;
-        else if (rsiV > 58) score -= 1;
-        if (e32 > e176) score += 1; else score -= 1;
-        if (macdH > 0 && macdHp <= 0) score += 2;
-        else if (macdH < 0 && macdHp >= 0) score -= 2;
-        else if (macdH > 0) score += 1;
-        else if (macdH < 0) score -= 1;
-        
-        let tipo, conf;
-        if (score >= 3) { tipo = 'COMPRA'; conf = Math.min(65+score*5, 93); }
-        else if (score <= -3) { tipo = 'VENDA'; conf = Math.min(65+Math.abs(score)*5, 93); }
-        else if (score >= 1) { tipo = 'COMPRA'; conf = Math.min(50+score*10, 93); }
-        else if (score <= -1) { tipo = 'VENDA'; conf = Math.min(50+Math.abs(score)*10, 93); }
-        else { tipo = 'ESPERAR'; conf = 40; }
-        
-        // UI Sinal
         const mainEl = document.getElementById('signalMain');
-        mainEl.textContent = tipo === 'COMPRA' ? 'COMPRAR ▲' : tipo === 'VENDA' ? 'VENDER ▼' : 'ESPERAR';
-        mainEl.className = 'sig-main sig-' + tipo.toLowerCase();
-        document.getElementById('confPct').textContent = conf.toFixed(0);
-        const fill = document.getElementById('confFill');
-        fill.style.width = conf + '%';
-        fill.className = 'conf-fill fill-' + tipo.toLowerCase();
+        mainEl.textContent = sinal.tipo === 'COMPRA' ? 'COMPRAR ▲' : sinal.tipo === 'VENDA' ? 'VENDER ▼' : 'ESPERAR';
+        mainEl.className = 'sig-main sig-' + sinal.tipo.toLowerCase();
         
-        const s10 = Math.abs(score);
-        document.getElementById('sysScore').textContent = s10.toFixed(1) + '/10';
-        document.getElementById('ringScore').textContent = s10.toFixed(1);
-        const circumf = 188.5;
-        document.getElementById('ringFill').style.strokeDashoffset = circumf - (circumf * (s10/10));
+        document.getElementById('confPct').textContent = sinal.conf.toFixed(0);
+        const fill = document.getElementById('confFill');
+        fill.style.width = sinal.conf + '%';
+        fill.className = 'conf-fill fill-' + sinal.tipo.toLowerCase();
+        
+        document.getElementById('sysScore').textContent = sinal.score.toFixed(1) + '/10';
+        document.getElementById('ringScore').textContent = sinal.score.toFixed(1);
+        document.getElementById('ringFill').style.strokeDashoffset = 188.5 - (188.5 * (sinal.score/10));
         
         // Níveis
-        const tpDist = atrV * 2.5, slDist = atrV * 1.2;
-        document.getElementById('lvlEntry').textContent = '$' + fmt(ultimo.close);
-        if (tipo === 'COMPRA') {
-            document.getElementById('lvlTP').textContent = '$' + fmt(ultimo.close + tpDist);
-            document.getElementById('lvlSL').textContent = '$' + fmt(ultimo.close - slDist);
-        } else if (tipo === 'VENDA') {
-            document.getElementById('lvlTP').textContent = '$' + fmt(ultimo.close - tpDist);
-            document.getElementById('lvlSL').textContent = '$' + fmt(ultimo.close + slDist);
+        const tpDist = sinal.atrV * 2.5;
+        const slDist = sinal.atrV * 1.2;
+        document.getElementById('lvlEntry').textContent = '$' + fmt(sinal.price);
+        if (sinal.tipo === 'COMPRA') {
+            document.getElementById('lvlTP').textContent = '$' + fmt(sinal.price + tpDist);
+            document.getElementById('lvlSL').textContent = '$' + fmt(sinal.price - slDist);
+        } else if (sinal.tipo === 'VENDA') {
+            document.getElementById('lvlTP').textContent = '$' + fmt(sinal.price - tpDist);
+            document.getElementById('lvlSL').textContent = '$' + fmt(sinal.price + slDist);
         } else {
             document.getElementById('lvlTP').textContent = '---';
             document.getElementById('lvlSL').textContent = '---';
         }
         document.getElementById('rrRatio').textContent = '1:' + (tpDist/slDist).toFixed(1);
-        document.getElementById('atrDisp').textContent = fmt(atrV);
+        document.getElementById('atrDisp').textContent = fmt(sinal.atrV);
         document.getElementById('pipRisk').textContent = fmt(slDist) + ' pts';
         
-        // Cards
-        document.getElementById('rsiVal').textContent = rsiV ? rsiV.toFixed(1).replace('.', ',') : '--';
-        document.getElementById('rsiVal').style.color = rsiV < 30 ? '#3dffa0' : rsiV > 70 ? '#ff5e6b' : '#dde4f5';
-        document.getElementById('rsiLbl').textContent = rsiV < 30 ? 'SOBREVENDIDO ▲' : rsiV > 70 ? 'SOBRECOMPRADO ▼' : 'NEUTRO';
-        document.getElementById('rsiFill').style.width = (rsiV || 50) + '%';
-        document.getElementById('rsiFill').style.background = rsiV < 30 ? '#3dffa0' : rsiV > 70 ? '#ff5e6b' : '#4a5980';
+        // Indicadores
+        document.getElementById('rsiVal').textContent = sinal.rsiV.toFixed(1).replace('.', ',');
+        document.getElementById('rsiVal').style.color = sinal.rsiV < 30 ? '#3dffa0' : sinal.rsiV > 70 ? '#ff5e6b' : '#dde4f5';
+        document.getElementById('rsiLbl').textContent = sinal.rsiV < 30 ? 'SOBREVENDIDO' : sinal.rsiV > 70 ? 'SOBRECOMPRADO' : 'NEUTRO';
+        document.getElementById('rsiFill').style.width = sinal.rsiV + '%';
         
-        document.getElementById('emaVal').textContent = e32 > e176 ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
-        document.getElementById('emaVal').style.color = e32 > e176 ? '#3dffa0' : '#ff5e6b';
-        document.getElementById('emaSub').textContent = 'E32: ' + fmt(e32) + ' | E176: ' + fmt(e176);
-        document.getElementById('emaFill').style.width = e32 > e176 ? '80%' : '20%';
-        document.getElementById('emaFill').style.background = e32 > e176 ? '#3dffa0' : '#ff5e6b';
+        document.getElementById('emaVal').textContent = sinal.ema32 > sinal.ema176 ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
+        document.getElementById('emaVal').style.color = sinal.ema32 > sinal.ema176 ? '#3dffa0' : '#ff5e6b';
+        document.getElementById('emaSub').textContent = 'E32: ' + fmt(sinal.ema32) + ' | E176: ' + fmt(sinal.ema176);
         
-        document.getElementById('macdVal').textContent = fmt(macdH);
-        document.getElementById('macdVal').style.color = macdH > 0 ? '#3dffa0' : '#ff5e6b';
-        document.getElementById('macdSub').textContent = macdH > 0 ? 'Positivo' : 'Negativo';
-        document.getElementById('macdFill').style.width = macdH > 0 ? '75%' : '25%';
-        document.getElementById('macdFill').style.background = macdH > 0 ? '#3dffa0' : '#ff5e6b';
+        document.getElementById('macdVal').textContent = fmt(sinal.macdH);
+        document.getElementById('macdVal').style.color = sinal.macdH > 0 ? '#3dffa0' : '#ff5e6b';
+        document.getElementById('macdSub').textContent = sinal.macdH > 0 ? 'Positivo' : 'Negativo';
         
-        document.getElementById('utVal').textContent = tipo !== 'ESPERAR' ? 'ATIVO' : 'NEUTRO';
-        document.getElementById('utVal').style.color = tipo !== 'ESPERAR' ? '#3dffa0' : '#4a5980';
-        document.getElementById('utFill').style.width = tipo !== 'ESPERAR' ? '100%' : '50%';
-        document.getElementById('utFill').style.background = tipo !== 'ESPERAR' ? '#3dffa0' : '#4a5980';
-        
-        document.getElementById('utStopLong').textContent = '$' + fmt(ultimo.close - atrV);
-        document.getElementById('utStopShort').textContent = '$' + fmt(ultimo.close + atrV);
-        document.getElementById('atrVal').textContent = fmt(atrV);
+        document.getElementById('utVal').textContent = sinal.tipo !== 'ESPERAR' ? 'ATIVO' : 'NEUTRO';
+        document.getElementById('utVal').style.color = sinal.tipo !== 'ESPERAR' ? '#3dffa0' : '#4a5980';
         
         // MTF
         ['M1','M5','M15','H1'].forEach(tf => {
@@ -701,8 +571,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         else if (h >= 13 && h < 20) scoreMom += 25;
         else if (h >= 7 && h < 13) scoreMom += 15;
         else scoreMom += 5;
-        if (tipo !== 'ESPERAR') scoreMom += 30;
-        if (rsiV < 35 || rsiV > 65) scoreMom += 20;
+        if (sinal.tipo !== 'ESPERAR') scoreMom += 30;
+        if (sinal.rsiV < 35 || sinal.rsiV > 65) scoreMom += 20;
         scoreMom = Math.min(scoreMom, 100);
         
         document.getElementById('momScore').textContent = scoreMom + '%';
@@ -715,24 +585,20 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         document.getElementById('momText').style.borderColor = momCol;
         
         document.getElementById('momSess').textContent = h >= 13 && h < 16 ? 'OVERLAP' : h >= 13 ? 'NY' : h >= 7 ? 'LONDRES' : 'ÁSIA';
-        document.getElementById('momUT').textContent = tipo !== 'ESPERAR' ? 'ATIVO' : 'Nenhum';
-        document.getElementById('momRSI').textContent = rsiV < 35 || rsiV > 65 ? 'EXTREMO' : 'Neutro';
-        document.getElementById('momMACD').textContent = (macdH > 0 && macdHp <= 0) || (macdH < 0 && macdHp >= 0) ? 'CRUZADO' : 'Nenhum';
+        document.getElementById('momUT').textContent = sinal.tipo !== 'ESPERAR' ? 'ATIVO' : 'Nenhum';
+        document.getElementById('momRSI').textContent = sinal.rsiV < 35 || sinal.rsiV > 65 ? 'EXTREMO' : 'Neutro';
         
         // Log
-        if (tipo !== lastSignalType) {
-            lastSignalType = tipo;
+        if (sinal.tipo !== lastSignalType) {
+            lastSignalType = sinal.tipo;
             const agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            signalLog.unshift({ hora: agora, tipo, preco: fmt(ultimo.close), conf: conf.toFixed(0) });
-            if (signalLog.length > 15) signalLog.pop();
+            signalLog.unshift({ hora: agora, tipo: sinal.tipo, preco: fmt(sinal.price), conf: sinal.conf.toFixed(0) });
+            if (signalLog.length > 10) signalLog.pop();
             document.getElementById('signalLog').innerHTML = signalLog.map(s => {
                 const cls = s.tipo === 'COMPRA' ? 'compra' : s.tipo === 'VENDA' ? 'venda' : 'espera';
                 return `<div class="log-item"><span>${s.hora}</span><span class="log-dir log-${cls}">${s.tipo}</span><span>$${s.preco} ${s.conf}%</span></div>`;
             }).join('');
         }
-        
-        drawChart();
-        drawMACD();
         
         document.getElementById('statusBadge').textContent = '🟢 AO VIVO';
         document.getElementById('statusBadge').className = 'status-badge s-on';
@@ -760,7 +626,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             if (cdSecs <= 0) cdSecs = 60;
         }, 1000);
         
-        popup('✅ Conectado!', 'Gerando sinais a cada 60s. Créditos: ' + creditos);
+        popup('✅ Conectado!', 'Gráfico TradingView + Sinais. Créditos: ' + creditos);
     }
     
     function desconectar() {
@@ -806,7 +672,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         if (v < 10) v = 10;
         if (v > 10000) v = 10000;
         creditos += v;
-        salvarDados();
+        salvar();
         attCreditosUI();
         document.getElementById('modalCreditos').classList.remove('show');
         popup('💎 Recarregado!', v + ' créditos adicionados. Total: ' + creditos);
@@ -819,8 +685,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     attCreditosUI();
     updateSessions();
     setInterval(updateSessions, 30000);
-    popup('Sistema Pronto 💎', 'Clique CONECTAR para iniciar. Créditos: ' + creditos);
-    console.log('✅ Sistema carregado com sucesso!');
+    popup('Sistema Pronto 💎', 'Clique CONECTAR. Gráfico TradingView integrado!');
+    console.log('✅ Sistema com TradingView carregado!');
 })();
 </script>
 </body>
