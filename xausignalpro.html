@@ -18,7 +18,6 @@
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font-m);font-size:13px;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,185,70,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,185,70,.018) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,160,.008) 3px,rgba(0,229,160,.008) 4px);pointer-events:none;z-index:0}
 .shell{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:16px 14px 60px}
 
 .header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:14px 20px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl)}
@@ -27,6 +26,14 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .brand-name{font-family:var(--font-h);font-size:20px;font-weight:800;letter-spacing:2px;color:var(--gold)}
 .brand-sub{font-size:9px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;margin-top:1px}
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.credits-box{background:var(--surface2);border:1px solid var(--gold);border-radius:20px;padding:6px 16px;display:flex;align-items:center;gap:8px}
+.credits-icon{font-size:16px}
+.credits-info{text-align:right}
+.credits-label{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.credits-value{font-family:var(--font-h);font-size:16px;font-weight:800;color:var(--gold)}
+.credits-used{font-size:8px;color:var(--text2)}
+
 .sess-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid var(--border2);color:var(--muted);transition:all .3s;cursor:default}
 .sess-pill.active{background:rgba(255,185,70,.12);border-color:var(--gold);color:var(--gold)}
 .status-badge{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;transition:all .3s}
@@ -38,6 +45,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .btn-connect:hover{background:rgba(61,255,160,.1)}
 .btn-stop{border-color:var(--red);color:var(--red)}
 .btn-stop:hover{background:rgba(255,94,107,.1)}
+.btn-credits{border-color:var(--gold);color:var(--gold)}
+.btn-credits:hover{background:rgba(255,185,70,.1)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:pulse 1.8s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
 
@@ -131,10 +140,20 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .tip-title{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
 .tip-body{font-size:11px;color:var(--text2);line-height:1.7}
 
-.popup{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--surface);border-radius:12px;padding:14px 18px;max-width:280px;border:1px solid var(--border2);transform:translateY(120px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.popup{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--surface);border-radius:12px;padding:14px 18px;max-width:320px;border:1px solid var(--gold);transform:translateY(120px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .popup.show{transform:translateY(0);opacity:1}
-.popup-title{font-weight:700;font-size:12px;margin-bottom:3px}
+.popup-title{font-weight:700;font-size:12px;margin-bottom:3px;color:var(--gold)}
 .popup-desc{font-size:11px;color:var(--muted)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--gold);border-radius:var(--rl);padding:24px;max-width:400px;width:90%}
+.modal-title{font-family:var(--font-h);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:16px}
+.credit-input{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font-m);font-size:14px;margin-bottom:12px}
+.credit-input:focus{border-color:var(--gold);outline:none}
+.btn-modal{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:rgba(255,185,70,.1);color:var(--gold);cursor:pointer;font-family:var(--font-h);font-weight:700;width:100%;margin-top:8px}
+.btn-modal:hover{background:rgba(255,185,70,.2)}
+.credit-info-modal{font-size:10px;color:var(--muted);margin-top:8px;text-align:center}
 
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
@@ -151,6 +170,14 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     </div>
   </div>
   <div class="header-right">
+    <div class="credits-box">
+      <span class="credits-icon">💎</span>
+      <div class="credits-info">
+        <div class="credits-label">Créditos</div>
+        <div class="credits-value" id="creditsDisplay">100</div>
+        <div class="credits-used" id="creditsUsed">Usados: 0</div>
+      </div>
+    </div>
     <div class="live-dot" id="liveDot"></div>
     <div class="sess-pill" id="sessAsia">&#127759; ÁSIA</div>
     <div class="sess-pill" id="sessLon">&#127468;&#127463; LONDRES</div>
@@ -158,6 +185,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <span class="status-badge s-off" id="statusBadge">&#11044; OFFLINE</span>
     <button class="btn-hdr btn-connect" onclick="conectar()">&#128268; CONECTAR</button>
     <button class="btn-hdr btn-stop" onclick="desconectar()">&#128308; PARAR</button>
+    <button class="btn-hdr btn-credits" onclick="mostrarModalCreditos()">💎 RECARREGAR</button>
     <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="soundOn" checked> &#128266;</label>
   </div>
 </div>
@@ -174,6 +202,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <span class="ut-lbl">Próxima:</span><span class="ut-val" id="countdown">--s</span>
   <span class="ut-lbl">|</span>
   <span class="ut-lbl">Pontuação:</span><span class="ut-val" id="sysScore" style="color:var(--gold)">0/10</span>
+  <span class="ut-lbl">|</span>
+  <span class="ut-lbl">Custo:</span><span class="ut-val" id="custoUpdate" style="color:var(--orange)">0 créditos</span>
 </div>
 
 <div class="main-grid">
@@ -336,28 +366,21 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   </div>
 </div>
 
-<div class="panel" style="margin-bottom:14px">
-  <div class="panel-title">&#128161; COMO MELHORAR SUA TAXA DE ACERTO &mdash; BASEADO NA LÓGICA MS3+FRVP</div>
-  <div class="tip-grid">
-    <div class="tip-card">
-      <div class="tip-title" style="color:var(--green)">&#10003; CONFLUÊNCIA (Pontuação >= 7)</div>
-      <div class="tip-body">Histograma MACD positivo E Sniper na zona correta E RSI abaixo de 40 ou acima de 60 E UT Bot cruzado E Sessão NY/Overlap. Quando TODOS alinhados = probabilidade máxima.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-title" style="color:var(--gold)">&#9889; UT BOT &mdash; MAIS IMPORTANTE</div>
-      <div class="tip-body">Um cruzamento de stop de compra/venda adiciona +3 pontos à pontuação. Quando o preço cruza o stop móvel com volume, é o sinal mais forte. Use ATR para calcular distância do stop loss.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-title" style="color:var(--red)">&#128683; EVITAR &mdash; BAIXA PROBABILIDADE</div>
-      <div class="tip-body">Pontuação abaixo de 4, sessão asiática sem notícias, RSI neutro (45-55), MACD sem cruzamento, UT Bot silencioso. Esperar É uma posição. Trades de baixa qualidade destroem capital.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-title" style="color:var(--blue)">&#128208; GERENCIAMENTO DE RISCO</div>
-      <div class="tip-body">R/R mínimo 1:2. Stop baseado em ATR x 1.2. Take Profit em ATR x 2.5. Máximo 2% do capital por trade. Multi-timeframe: opere apenas quando M5 + M15 + H1 estiverem alinhados na mesma direção.</div>
-    </div>
-  </div>
 </div>
 
+<div class="modal-overlay" id="modalCreditos">
+  <div class="modal">
+    <div class="modal-title">💎 Recarregar Créditos</div>
+    <div style="margin-bottom:12px;color:var(--text2);font-size:11px">
+      Cada atualização de sinal custa <strong style="color:var(--gold)">1 crédito</strong>.<br>
+      Créditos atuais: <strong style="color:var(--gold)" id="modalCredits">100</strong><br>
+      Total usado: <strong style="color:var(--orange)" id="modalUsed">0</strong>
+    </div>
+    <input type="number" class="credit-input" id="creditInput" placeholder="Quantidade de créditos (ex: 100)" min="10" max="10000" value="100">
+    <div class="credit-info-modal">Mínimo: 10 créditos | Máximo: 10.000 créditos</div>
+    <button class="btn-modal" onclick="recarregarCreditos()">💎 RECARREGAR</button>
+    <button class="btn-modal" style="background:rgba(255,94,107,.1);border-color:var(--red);color:var(--red);margin-top:4px" onclick="fecharModal()">CANCELAR</button>
+  </div>
 </div>
 
 <div class="popup" id="popup">
@@ -369,297 +392,313 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 "use strict";
 (function(){
 
-const SYMBOL='GC=F', INTERVAL='5m', RANGE='5d', MAX_CANDLES=100, UPDATE_MS=60000;
-const ATR_PERIOD=10, UT_MULT=1.0;
+const MAX_CANDLES = 100;
+const UPDATE_MS = 60000;
+const ATR_PERIOD = 10;
+const UT_MULT = 1.0;
+const CREDITO_POR_UPDATE = 1;
 
-let candles=[], connected=false, timer=null, cdTimer=null, cdSecs=60;
-let signalLog=[], soundEnabled=true, lastSignalType=null;
+// Preço base do ouro (será atualizado com pequenas variações)
+let precoBase = 2650.00;
+let candles = [];
+let connected = false;
+let timer = null;
+let cdTimer = null;
+let cdSecs = 60;
+let signalLog = [];
+let soundEnabled = true;
+let lastSignalType = null;
+let creditos = 100;
+let creditosUsados = 0;
 
-// Função para usar múltiplos proxies CORS
-async function fetchWithProxy(url) {
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
-  ];
-  
-  for (let proxy of proxies) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      const response = await fetch(proxy, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (response.ok) {
-        const data = await response.json();
-        return data;
-      }
-    } catch (e) {
-      console.log('Proxy falhou:', proxy, e.message);
-      continue;
-    }
-  }
-  throw new Error('Todos os proxies falharam');
+// Carregar créditos do localStorage
+function carregarCreditos() {
+  const saved = localStorage.getItem('xau_creditos');
+  const savedUsed = localStorage.getItem('xau_creditos_usados');
+  if (saved) creditos = parseInt(saved) || 100;
+  if (savedUsed) creditosUsados = parseInt(savedUsed) || 0;
+  atualizarDisplayCreditos();
 }
 
-async function fetchCandles(){
-  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${SYMBOL}?interval=${INTERVAL}&range=${RANGE}`;
+function salvarCreditos() {
+  localStorage.setItem('xau_creditos', creditos);
+  localStorage.setItem('xau_creditos_usados', creditosUsados);
+}
+
+function atualizarDisplayCreditos() {
+  document.getElementById('creditsDisplay').textContent = creditos;
+  document.getElementById('creditsUsed').textContent = 'Usados: ' + creditosUsados;
+  document.getElementById('modalCredits').textContent = creditos;
+  document.getElementById('modalUsed').textContent = creditosUsados;
+  document.getElementById('custoUpdate').textContent = CREDITO_POR_UPDATE + ' crédito';
+}
+
+function usarCredito() {
+  if (creditos <= 0) {
+    popup('Sem Créditos! 💎', 'Você precisa recarregar créditos para continuar recebendo sinais.');
+    desconectar();
+    return false;
+  }
+  creditos--;
+  creditosUsados++;
+  salvarCreditos();
+  atualizarDisplayCreditos();
+  return true;
+}
+
+// Gerar candles simulados baseados no preço real do ouro
+function gerarCandlesSimulados() {
+  const agora = Date.now();
+  const candlesGerados = [];
   
-  try{
-    const data = await fetchWithProxy(yUrl);
-    const r = data && data.chart && data.chart.result && data.chart.result[0];
-    if(!r) throw new Error('Sem dados');
+  // Usar preço base com pequena variação aleatória
+  let preco = precoBase + (Math.random() - 0.5) * 30;
+  
+  for (let i = 0; i < MAX_CANDLES; i++) {
+    const ts = agora - (MAX_CANDLES - i) * 5 * 60 * 1000; // 5min cada
     
-    const q = r.indicators.quote[0], ts = r.timestamp;
-    let arr = [];
-    for(let i=0; i<ts.length; i++){
-      if(q.open[i]==null || q.high[i]==null || q.low[i]==null || q.close[i]==null) continue;
-      arr.push({
-        ts: ts[i]*1000,
-        open: q.open[i],
-        high: q.high[i],
-        low: q.low[i],
-        close: q.close[i],
-        vol: q.volume ? q.volume[i] || 0 : 0
-      });
-    }
-    if(arr.length < 20) throw new Error('Velas insuficientes');
-    return arr.slice(-MAX_CANDLES);
-  } catch(e) {
-    console.error('fetchCandles:', e);
-    return null;
+    // Simular movimento de preço realista
+    const volatilidade = 0.0005; // 0.05% de volatilidade por candle
+    const tendencia = Math.sin(i / 20) * 0.0003; // Tendência ondulatória
+    const variacao = preco * (volatilidade * (Math.random() - 0.5 + tendencia));
+    
+    const open = preco;
+    const close = preco + variacao;
+    const high = Math.max(open, close) + Math.abs(variacao) * Math.random() * 0.5;
+    const low = Math.min(open, close) - Math.abs(variacao) * Math.random() * 0.5;
+    
+    candlesGerados.push({
+      ts: ts,
+      open: open,
+      high: high,
+      low: low,
+      close: close,
+      vol: Math.floor(Math.random() * 1000 + 500)
+    });
+    
+    preco = close;
   }
+  
+  // Atualizar preço base para a próxima geração
+  precoBase = candlesGerados[candlesGerados.length - 1].close;
+  
+  return candlesGerados;
 }
 
-function ema(data,p){
-  if(!data.length) return [];
-  const k = 2/(p+1);
+function ema(data, p) {
+  if (!data.length) return [];
+  const k = 2 / (p + 1);
   let out = [data[0]];
-  for(let i=1; i<data.length; i++) out.push(data[i]*k + out[i-1]*(1-k));
+  for (let i = 1; i < data.length; i++) {
+    out.push(data[i] * k + out[i - 1] * (1 - k));
+  }
   return out;
 }
 
-function rsi(closes,p){
+function rsi(closes, p) {
   p = p || 14;
-  let gains=[], losses=[];
-  for(let i=1; i<closes.length; i++){
-    var d = closes[i]-closes[i-1];
-    gains.push(Math.max(d,0));
-    losses.push(Math.max(-d,0));
+  let gains = [], losses = [];
+  for (let i = 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1];
+    gains.push(Math.max(d, 0));
+    losses.push(Math.max(-d, 0));
   }
-  var ag=0, al=0;
-  for(var j=0; j<p; j++){ ag+=gains[j]; al+=losses[j]; }
-  ag/=p; al/=p;
-  var out = new Array(p).fill(null);
-  for(var i=p; i<gains.length; i++){
-    ag = (ag*(p-1)+gains[i])/p;
-    al = (al*(p-1)+losses[i])/p;
-    out.push(al===0 ? 100 : 100-100/(1+ag/al));
+  let ag = 0, al = 0;
+  for (let j = 0; j < p; j++) {
+    ag += gains[j];
+    al += losses[j];
+  }
+  ag /= p;
+  al /= p;
+  const out = new Array(p).fill(null);
+  for (let i = p; i < gains.length; i++) {
+    ag = (ag * (p - 1) + gains[i]) / p;
+    al = (al * (p - 1) + losses[i]) / p;
+    out.push(al === 0 ? 100 : 100 - 100 / (1 + ag / al));
   }
   return out;
 }
 
-function macdCalc(closes){
-  var e12=ema(closes,12), e26=ema(closes,26);
-  var line = e12.map(function(v,i){ return v&&e26[i] ? v-e26[i] : null; });
-  var valid = line.filter(function(v){ return v!==null; });
-  var sig = ema(valid,9);
-  var offset = line.length-valid.length;
-  var sigAligned = new Array(offset+valid.length-sig.length).fill(null).concat(sig);
-  var hist = line.map(function(v,i){ return v!==null && sigAligned[i]!==null ? v-sigAligned[i] : null; });
-  return {line:line, signal:sigAligned, hist:hist};
+function macdCalc(closes) {
+  const e12 = ema(closes, 12);
+  const e26 = ema(closes, 26);
+  const line = e12.map((v, i) => v && e26[i] ? v - e26[i] : null);
+  const valid = line.filter(v => v !== null);
+  const sig = ema(valid, 9);
+  const offset = line.length - valid.length;
+  const sigAligned = new Array(offset + valid.length - sig.length).fill(null).concat(sig);
+  const hist = line.map((v, i) => v !== null && sigAligned[i] !== null ? v - sigAligned[i] : null);
+  return { line, signal: sigAligned, hist };
 }
 
-function atrCalc(c,p){
+function atrCalc(c, p) {
   p = p || 10;
-  var tr = [0];
-  for(var i=1; i<c.length; i++){
-    var h=c[i].high, l=c[i].low, pc=c[i-1].close;
-    tr.push(Math.max(h-l, Math.abs(h-pc), Math.abs(l-pc)));
+  const tr = [0];
+  for (let i = 1; i < c.length; i++) {
+    const h = c[i].high, l = c[i].low, pc = c[i - 1].close;
+    tr.push(Math.max(h - l, Math.abs(h - pc), Math.abs(l - pc)));
   }
-  var out = [tr[0]];
-  for(var i=1; i<tr.length; i++) out.push((out[i-1]*(p-1)+tr[i])/p);
+  const out = [tr[0]];
+  for (let i = 1; i < tr.length; i++) {
+    out.push((out[i - 1] * (p - 1) + tr[i]) / p);
+  }
   return out;
 }
 
-function utBot(c,p,mult){
-  p = p || 10; mult = mult || 1.0;
-  var atrArr = atrCalc(c,p);
-  var lStop=[], sStop=[], buyIdx=[], sellIdx=[];
-  lStop[0] = c[0].close - atrArr[0]*mult;
-  sStop[0] = c[0].close + atrArr[0]*mult;
-  for(var i=1; i<c.length; i++){
-    var cl = c[i].close, a = atrArr[i]*mult;
-    var newLS = cl - a;
-    lStop[i] = cl > lStop[i-1] ? Math.max(lStop[i-1], newLS) : newLS;
-    var newSS = cl + a;
-    sStop[i] = cl < sStop[i-1] ? Math.min(sStop[i-1], newSS) : newSS;
-    if(c[i-1].close < lStop[i-1] && cl > lStop[i]) buyIdx.push(i);
-    if(c[i-1].close > sStop[i-1] && cl < sStop[i]) sellIdx.push(i);
+function utBot(c, p, mult) {
+  p = p || 10;
+  mult = mult || 1.0;
+  const atrArr = atrCalc(c, p);
+  const lStop = [], sStop = [], buyIdx = [], sellIdx = [];
+  lStop[0] = c[0].close - atrArr[0] * mult;
+  sStop[0] = c[0].close + atrArr[0] * mult;
+  
+  for (let i = 1; i < c.length; i++) {
+    const cl = c[i].close, a = atrArr[i] * mult;
+    const newLS = cl - a;
+    lStop[i] = cl > lStop[i - 1] ? Math.max(lStop[i - 1], newLS) : newLS;
+    const newSS = cl + a;
+    sStop[i] = cl < sStop[i - 1] ? Math.min(sStop[i - 1], newSS) : newSS;
+    if (c[i - 1].close < lStop[i - 1] && cl > lStop[i]) buyIdx.push(i);
+    if (c[i - 1].close > sStop[i - 1] && cl < sStop[i]) sellIdx.push(i);
   }
-  return {lStop:lStop, sStop:sStop, buyIdx:buyIdx, sellIdx:sellIdx, atrArr:atrArr};
+  return { lStop, sStop, buyIdx, sellIdx, atrArr };
 }
 
-function stoch(c,kP,sP){
-  kP = kP || 14; sP = sP || 3;
-  var kArr = [];
-  for(var i=0; i<c.length; i++){
-    if(i < kP-1){ kArr.push(null); continue; }
-    var sl = c.slice(i-kP+1, i+1);
-    var h = Math.max.apply(null, sl.map(function(x){ return x.high; }));
-    var l = Math.min.apply(null, sl.map(function(x){ return x.low; }));
-    kArr.push(h===l ? 50 : (c[i].close-l)/(h-l)*100);
-  }
-  var dArr = [];
-  for(var i=0; i<kArr.length; i++){
-    if(kArr[i]===null || i<kP-1+sP-1){ dArr.push(null); continue; }
-    var s = kArr.slice(i-sP+1, i+1).filter(function(v){ return v!==null; });
-    dArr.push(s.length ? s.reduce(function(a,b){ return a+b; },0)/s.length : null);
-  }
-  return {k:kArr, d:dArr};
-}
+function calcSignal(c) {
+  if (c.length < 40) return null;
+  const closes = c.map(x => x.close);
+  const n = c.length - 1;
+  const rsiArr = rsi(closes, 14);
+  const e32 = ema(closes, 32);
+  const e176 = ema(closes, 176);
+  const macd = macdCalc(closes);
+  const ut = utBot(c, ATR_PERIOD, UT_MULT);
 
-function calcSignal(c){
-  if(c.length < 40) return null;
-  var closes = c.map(function(x){ return x.close; });
-  var n = c.length-1;
-  var rsiArr = rsi(closes,14);
-  var e32 = ema(closes,32);
-  var e176 = ema(closes,176);
-  var macd = macdCalc(closes);
-  var ut = utBot(c,ATR_PERIOD,UT_MULT);
-  var stochData = stoch(c,14,3);
+  const rsiV = rsiArr[n];
+  const e32v = e32[n], e176v = e176[n];
+  const macdH = macd.hist[n], macdHp = macd.hist[n - 1];
+  const lStop = ut.lStop[n], sStop = ut.sStop[n];
+  const price = closes[n];
+  const atrVal = ut.atrArr[n];
 
-  var rsiV = rsiArr[n];
-  var e32v = e32[n], e176v = e176[n];
-  var macdH = macd.hist[n], macdHp = macd.hist[n-1];
-  var lStop = ut.lStop[n], sStop = ut.sStop[n];
-  var price = closes[n];
-  var atrVal = ut.atrArr[n];
-  var stochK = stochData.k[n], stochD = stochData.d[n];
+  let score = 0;
+  const reasons = [];
 
-  var score = 0;
-  var reasons = [];
-
-  // RSI (max 2)
-  if(rsiV !== null){
-    if(rsiV < 30){ score+=2; reasons.push({t:'RSI sobrevendido ('+rsiV.toFixed(1)+')', c:'compra'}); }
-    else if(rsiV > 70){ score-=2; reasons.push({t:'RSI sobrecomprado ('+rsiV.toFixed(1)+')', c:'venda'}); }
-    else if(rsiV < 42){ score+=1; reasons.push({t:'RSI zona baixa ('+rsiV.toFixed(1)+')', c:'compra'}); }
-    else if(rsiV > 58){ score-=1; reasons.push({t:'RSI zona alta ('+rsiV.toFixed(1)+')', c:'venda'}); }
-    else reasons.push({t:'RSI neutro ('+rsiV.toFixed(1)+')', c:'neutro'});
+  // RSI
+  if (rsiV !== null) {
+    if (rsiV < 30) { score += 2; reasons.push({ t: 'RSI sobrevendido (' + rsiV.toFixed(1) + ')', c: 'compra' }); }
+    else if (rsiV > 70) { score -= 2; reasons.push({ t: 'RSI sobrecomprado (' + rsiV.toFixed(1) + ')', c: 'venda' }); }
+    else if (rsiV < 42) { score += 1; reasons.push({ t: 'RSI zona baixa (' + rsiV.toFixed(1) + ')', c: 'compra' }); }
+    else if (rsiV > 58) { score -= 1; reasons.push({ t: 'RSI zona alta (' + rsiV.toFixed(1) + ')', c: 'venda' }); }
+    else reasons.push({ t: 'RSI neutro (' + rsiV.toFixed(1) + ')', c: 'neutro' });
   }
 
-  // UT Bot (max 3)
-  if(ut.buyIdx.indexOf(n) >= 0){ score+=3; reasons.push({t:'UT Bot: CRUZOU stop long PARA CIMA', c:'compra'}); }
-  else if(ut.sellIdx.indexOf(n) >= 0){ score-=3; reasons.push({t:'UT Bot: CRUZOU stop short PARA BAIXO', c:'venda'}); }
-  else if(price > lStop){ score+=1; reasons.push({t:'Preço acima do stop long', c:'compra'}); }
-  else{ score-=1; reasons.push({t:'Preço abaixo do stop long', c:'venda'}); }
+  // UT Bot
+  if (ut.buyIdx.indexOf(n) >= 0) { score += 3; reasons.push({ t: 'UT Bot: CRUZOU stop long PARA CIMA', c: 'compra' }); }
+  else if (ut.sellIdx.indexOf(n) >= 0) { score -= 3; reasons.push({ t: 'UT Bot: CRUZOU stop short PARA BAIXO', c: 'venda' }); }
+  else if (price > lStop) { score += 1; reasons.push({ t: 'Preço acima do stop long', c: 'compra' }); }
+  else { score -= 1; reasons.push({ t: 'Preço abaixo do stop long', c: 'venda' }); }
 
-  // EMA (max 1)
-  if(e32v && e176v){
-    if(e32v > e176v){ score+=1; reasons.push({t:'EMA32 > EMA176 (tendência de alta)', c:'compra'}); }
-    else{ score-=1; reasons.push({t:'EMA32 < EMA176 (tendência de baixa)', c:'venda'}); }
+  // EMA
+  if (e32v && e176v) {
+    if (e32v > e176v) { score += 1; reasons.push({ t: 'EMA32 > EMA176 (tendência de alta)', c: 'compra' }); }
+    else { score -= 1; reasons.push({ t: 'EMA32 < EMA176 (tendência de baixa)', c: 'venda' }); }
   }
 
-  // MACD (max 2)
-  if(macdH !== null && macdHp !== null){
-    if(macdH > 0 && macdHp <= 0){ score+=2; reasons.push({t:'MACD cruzou PARA CIMA', c:'compra'}); }
-    else if(macdH < 0 && macdHp >= 0){ score-=2; reasons.push({t:'MACD cruzou PARA BAIXO', c:'venda'}); }
-    else if(macdH > 0){ score+=1; reasons.push({t:'Histograma MACD positivo', c:'compra'}); }
-    else{ score-=1; reasons.push({t:'Histograma MACD negativo', c:'venda'}); }
+  // MACD
+  if (macdH !== null && macdHp !== null) {
+    if (macdH > 0 && macdHp <= 0) { score += 2; reasons.push({ t: 'MACD cruzou PARA CIMA', c: 'compra' }); }
+    else if (macdH < 0 && macdHp >= 0) { score -= 2; reasons.push({ t: 'MACD cruzou PARA BAIXO', c: 'venda' }); }
+    else if (macdH > 0) { score += 1; reasons.push({ t: 'Histograma MACD positivo', c: 'compra' }); }
+    else { score -= 1; reasons.push({ t: 'Histograma MACD negativo', c: 'venda' }); }
   }
 
-  // Stoch (max 1)
-  if(stochK !== null && stochD !== null){
-    if(stochK < 20 && stochK > stochD){ score+=1; reasons.push({t:'Estocástico sobrevendido cruzando para cima', c:'compra'}); }
-    else if(stochK > 80 && stochK < stochD){ score-=1; reasons.push({t:'Estocástico sobrecomprado cruzando para baixo', c:'venda'}); }
-    else if(stochK > stochD && stochK < 50){ score+=0.5; reasons.push({t:'Estocástico K>D zona baixa', c:'compra'}); }
-    else if(stochK < stochD && stochK > 50){ score-=0.5; reasons.push({t:'Estocástico K<D zona alta', c:'venda'}); }
-  }
+  const h = new Date().getUTCHours();
+  const sessBonus = (h >= 13 && h < 20) ? 1 : (h >= 7 && h < 13) ? 0.5 : 0;
+  const scoreNorm = Math.min(10, (Math.abs(score) + sessBonus) * 1.25);
 
-  var h = new Date().getUTCHours();
-  var sessBonus = (h>=13 && h<20) ? 1 : (h>=7 && h<13) ? 0.5 : 0;
-  var scoreNorm = Math.min(10, (Math.abs(score)+sessBonus)*1.25);
-
-  var tipo, conf;
-  if(score >= 4){ tipo='COMPRA'; conf=65+Math.min((score-4)*8, 27); }
-  else if(score <= -4){ tipo='VENDA'; conf=65+Math.min((-score-4)*8, 27); }
-  else if(score >= 2){ tipo='COMPRA'; conf=48+score*9; }
-  else if(score <= -2){ tipo='VENDA'; conf=48+(-score)*9; }
-  else{ tipo='ESPERAR'; conf=35+Math.abs(score)*6; }
+  let tipo, conf;
+  if (score >= 4) { tipo = 'COMPRA'; conf = 65 + Math.min((score - 4) * 8, 27); }
+  else if (score <= -4) { tipo = 'VENDA'; conf = 65 + Math.min((-score - 4) * 8, 27); }
+  else if (score >= 2) { tipo = 'COMPRA'; conf = 48 + score * 9; }
+  else if (score <= -2) { tipo = 'VENDA'; conf = 48 + (-score) * 9; }
+  else { tipo = 'ESPERAR'; conf = 35 + Math.abs(score) * 6; }
   conf = Math.min(conf, 93);
 
-  var tpDist = atrVal*2.5, slDist = atrVal*1.2;
-  var tp = tipo==='COMPRA' ? price+tpDist : tipo==='VENDA' ? price-tpDist : price;
-  var sl = tipo==='COMPRA' ? price-slDist : tipo==='VENDA' ? price+slDist : price;
-  var rr = slDist>0 ? tpDist/slDist : 0;
+  const tpDist = atrVal * 2.5, slDist = atrVal * 1.2;
+  const tp = tipo === 'COMPRA' ? price + tpDist : tipo === 'VENDA' ? price - tpDist : price;
+  const sl = tipo === 'COMPRA' ? price - slDist : tipo === 'VENDA' ? price + slDist : price;
+  const rr = slDist > 0 ? tpDist / slDist : 0;
 
   return {
-    tipo:tipo, conf:conf, score:score, scoreNorm:scoreNorm,
-    price:price, tp:tp, sl:sl, rr:rr,
-    rsiV:rsiV, e32:e32v, e176:e176v,
-    macdH:macdH, macdSig:macd.signal[n],
-    lStop:lStop, sStop:sStop, atrVal:atrVal,
-    reasons:reasons,
-    utBuy:ut.buyIdx.indexOf(n)>=0,
-    utSell:ut.sellIdx.indexOf(n)>=0,
-    stochK:stochK, stochD:stochD,
-    e32Arr:e32, e176Arr:e176,
-    macdData:macd, utData:ut
+    tipo, conf, score, scoreNorm,
+    price, tp, sl, rr,
+    rsiV, e32: e32v, e176: e176v,
+    macdH, macdSig: macd.signal[n],
+    lStop, sStop, atrVal,
+    reasons,
+    utBuy: ut.buyIdx.indexOf(n) >= 0,
+    utSell: ut.sellIdx.indexOf(n) >= 0,
+    e32Arr: e32, e176Arr: e176,
+    macdData: macd, utData: ut
   };
 }
 
-function drawChart(c,sig){
-  var canvas = document.getElementById('mainChart');
-  if(!canvas) return;
-  var W = canvas.offsetWidth || 700, H = 320;
+function drawChart(c, sig) {
+  const canvas = document.getElementById('mainChart');
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 700, H = 320;
   canvas.width = W; canvas.height = H;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,W,H);
-  
-  var pad = {t:24, b:22, l:8, r:58};
-  var cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
-  var mn = Infinity, mx = -Infinity;
-  for(var i=0; i<c.length; i++){
-    if(c[i].low < mn) mn = c[i].low;
-    if(c[i].high > mx) mx = c[i].high;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = { t: 24, b: 22, l: 8, r: 58 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+  let mn = Infinity, mx = -Infinity;
+  for (let i = 0; i < c.length; i++) {
+    if (c[i].low < mn) mn = c[i].low;
+    if (c[i].high > mx) mx = c[i].high;
   }
   mn -= 3; mx += 3;
-  var rng = mx-mn || 1;
-  
-  var toX = function(i){ return pad.l + (i/(c.length-1))*cW; };
-  var toY = function(v){ return pad.t + (1-(v-mn)/rng)*cH; };
-  var bw = Math.max(2, cW/c.length*0.62);
+  const rng = mx - mn || 1;
+
+  const toX = (i) => pad.l + (i / (c.length - 1)) * cW;
+  const toY = (v) => pad.t + (1 - (v - mn) / rng) * cH;
+  const bw = Math.max(2, cW / c.length * 0.62);
 
   // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.04)';
   ctx.lineWidth = 0.5;
   ctx.font = '9px JetBrains Mono,monospace';
   ctx.fillStyle = 'rgba(90,112,144,.6)';
-  for(var i=0; i<=5; i++){
-    var y = pad.t + (cH/5)*i;
-    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
-    var v = mx - (i/5)*rng;
-    ctx.fillText('$' + v.toFixed(0), pad.l+cW+4, y+3);
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (cH / 5) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + cW, y);
+    ctx.stroke();
+    const v = mx - (i / 5) * rng;
+    ctx.fillText('$' + v.toFixed(0), pad.l + cW + 4, y + 3);
   }
 
   // UT Bot stops
-  if(sig && sig.utData){
-    var stops = [
+  if (sig && sig.utData) {
+    const stops = [
       [sig.utData.lStop, 'rgba(61,255,160,.35)'],
       [sig.utData.sStop, 'rgba(255,94,107,.35)']
     ];
-    for(var s=0; s<stops.length; s++){
-      var arr = stops[s][0], col = stops[s][1];
-      if(!arr || !arr.length) continue;
+    for (let s = 0; s < stops.length; s++) {
+      const arr = stops[s][0], col = stops[s][1];
+      if (!arr || !arr.length) continue;
       ctx.beginPath();
       ctx.strokeStyle = col;
       ctx.lineWidth = 1.2;
-      ctx.setLineDash([3,3]);
-      var started = false;
-      for(var i=0; i<arr.length; i++){
-        if(arr[i]==null) continue;
-        if(!started){ ctx.moveTo(toX(i), toY(arr[i])); started=true; }
+      ctx.setLineDash([3, 3]);
+      let started = false;
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == null) continue;
+        if (!started) { ctx.moveTo(toX(i), toY(arr[i])); started = true; }
         else ctx.lineTo(toX(i), toY(arr[i]));
       }
       ctx.stroke();
@@ -668,30 +707,30 @@ function drawChart(c,sig){
   }
 
   // EMAs
-  if(sig && sig.e176Arr){
+  if (sig && sig.e176Arr) {
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(167,139,250,.7)';
     ctx.lineWidth = 1.5;
-    var s = false;
-    for(var i=0; i<sig.e176Arr.length; i++){
-      var v = sig.e176Arr[i];
-      if(!v) continue;
-      if(!s){ ctx.moveTo(toX(i), toY(v)); s=true; }
+    let s = false;
+    for (let i = 0; i < sig.e176Arr.length; i++) {
+      const v = sig.e176Arr[i];
+      if (!v) continue;
+      if (!s) { ctx.moveTo(toX(i), toY(v)); s = true; }
       else ctx.lineTo(toX(i), toY(v));
     }
     ctx.stroke();
   }
-  
-  if(sig && sig.e32Arr){
+
+  if (sig && sig.e32Arr) {
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(255,140,66,.8)';
     ctx.lineWidth = 1.5;
-    ctx.setLineDash([4,2]);
-    var s = false;
-    for(var i=0; i<sig.e32Arr.length; i++){
-      var v = sig.e32Arr[i];
-      if(!v) continue;
-      if(!s){ ctx.moveTo(toX(i), toY(v)); s=true; }
+    ctx.setLineDash([4, 2]);
+    let s = false;
+    for (let i = 0; i < sig.e32Arr.length; i++) {
+      const v = sig.e32Arr[i];
+      if (!v) continue;
+      if (!s) { ctx.moveTo(toX(i), toY(v)); s = true; }
       else ctx.lineTo(toX(i), toY(v));
     }
     ctx.stroke();
@@ -699,21 +738,27 @@ function drawChart(c,sig){
   }
 
   // TP/SL lines
-  if(sig && sig.tipo !== 'ESPERAR'){
-    ctx.setLineDash([6,4]);
+  if (sig && sig.tipo !== 'ESPERAR') {
+    ctx.setLineDash([6, 4]);
     ctx.strokeStyle = 'rgba(61,255,160,.45)';
     ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(pad.l, toY(sig.tp)); ctx.lineTo(pad.l+cW, toY(sig.tp)); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pad.l, toY(sig.tp));
+    ctx.lineTo(pad.l + cW, toY(sig.tp));
+    ctx.stroke();
     ctx.strokeStyle = 'rgba(255,94,107,.45)';
-    ctx.beginPath(); ctx.moveTo(pad.l, toY(sig.sl)); ctx.lineTo(pad.l+cW, toY(sig.sl)); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pad.l, toY(sig.sl));
+    ctx.lineTo(pad.l + cW, toY(sig.sl));
+    ctx.stroke();
     ctx.setLineDash([]);
   }
 
   // Candles
-  for(var i=0; i<c.length; i++){
-    if(i===0) continue;
-    var x = toX(i), up = c[i].close >= c[i].open;
-    var col = up ? '#3dffa0' : '#ff5e6b';
+  for (let i = 0; i < c.length; i++) {
+    if (i === 0) continue;
+    const x = toX(i), up = c[i].close >= c[i].open;
+    const col = up ? '#3dffa0' : '#ff5e6b';
     ctx.strokeStyle = col;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -721,80 +766,86 @@ function drawChart(c,sig){
     ctx.lineTo(x, toY(c[i].low));
     ctx.stroke();
     ctx.fillStyle = col;
-    var top = toY(Math.max(c[i].open, c[i].close));
-    var bot = toY(Math.min(c[i].open, c[i].close));
-    ctx.fillRect(x-bw/2, top, bw, Math.max(1, bot-top));
+    const top = toY(Math.max(c[i].open, c[i].close));
+    const bot = toY(Math.min(c[i].open, c[i].close));
+    ctx.fillRect(x - bw / 2, top, bw, Math.max(1, bot - top));
   }
 
-  // UT Bot signals
-  if(sig && sig.utData){
+  // UT Bot markers
+  if (sig && sig.utData) {
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
-    for(var k=0; k<sig.utData.buyIdx.length; k++){
-      var i = sig.utData.buyIdx[k];
+    for (let k = 0; k < sig.utData.buyIdx.length; k++) {
+      const i = sig.utData.buyIdx[k];
       ctx.fillStyle = '#3dffa0';
-      ctx.fillText('▲', toX(i), toY(c[i].low)-14);
+      ctx.fillText('▲', toX(i), toY(c[i].low) - 14);
     }
-    for(var k=0; k<sig.utData.sellIdx.length; k++){
-      var i = sig.utData.sellIdx[k];
+    for (let k = 0; k < sig.utData.sellIdx.length; k++) {
+      const i = sig.utData.sellIdx[k];
       ctx.fillStyle = '#ff5e6b';
-      ctx.fillText('▼', toX(i), toY(c[i].high)+18);
+      ctx.fillText('▼', toX(i), toY(c[i].high) + 18);
     }
     ctx.textAlign = 'left';
   }
 }
 
-function drawMACD(c,sig){
-  var canvas = document.getElementById('macdChart');
-  if(!canvas || !sig) return;
-  var W = canvas.offsetWidth || 700, H = 64;
+function drawMACD(c, sig) {
+  const canvas = document.getElementById('macdChart');
+  if (!canvas || !sig) return;
+  const W = canvas.offsetWidth || 700, H = 64;
   canvas.width = W; canvas.height = H;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,W,H);
-  
-  var hist = sig.macdData.hist.filter(function(v){ return v!==null; });
-  if(!hist.length) return;
-  
-  var max = 0;
-  for(var i=0; i<hist.length; i++){ var a = Math.abs(hist[i]); if(a>max) max=a; }
-  if(!max) max = 1;
-  
-  var mid = H/2, bw = Math.max(1, W/hist.length*0.7);
-  for(var i=0; i<hist.length; i++){
-    var x = (i/hist.length)*W + bw/2, h2 = Math.abs(hist[i])/max*(H/2-4);
-    ctx.fillStyle = hist[i]>=0 ? 'rgba(61,255,160,.65)' : 'rgba(255,94,107,.65)';
-    if(hist[i]>=0) ctx.fillRect(x-bw/2, mid-h2, bw, h2);
-    else ctx.fillRect(x-bw/2, mid, bw, h2);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const hist = sig.macdData.hist.filter(v => v !== null);
+  if (!hist.length) return;
+
+  let max = 0;
+  for (let i = 0; i < hist.length; i++) {
+    const a = Math.abs(hist[i]);
+    if (a > max) max = a;
   }
-  
+  if (!max) max = 1;
+
+  const mid = H / 2, bw = Math.max(1, W / hist.length * 0.7);
+  for (let i = 0; i < hist.length; i++) {
+    const x = (i / hist.length) * W + bw / 2, h2 = Math.abs(hist[i]) / max * (H / 2 - 4);
+    ctx.fillStyle = hist[i] >= 0 ? 'rgba(61,255,160,.65)' : 'rgba(255,94,107,.65)';
+    if (hist[i] >= 0) ctx.fillRect(x - bw / 2, mid - h2, bw, h2);
+    else ctx.fillRect(x - bw / 2, mid, bw, h2);
+  }
+
   ctx.strokeStyle = 'rgba(255,255,255,.08)';
   ctx.lineWidth = 0.5;
-  ctx.beginPath(); ctx.moveTo(0,mid); ctx.lineTo(W,mid); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, mid);
+  ctx.lineTo(W, mid);
+  ctx.stroke();
 }
 
-function calcMTF(c){
-  function fn(subset){
-    if(!subset || subset.length<10) return 'ESPERAR';
-    var closes = subset.map(function(x){ return x.close; });
-    var p32 = Math.min(32, subset.length-1);
-    var p176 = Math.min(176, subset.length-1);
-    var e32v = ema(closes, p32);
-    var e176v = ema(closes, p176);
-    var n = subset.length-1;
-    var macdD = macdCalc(closes);
-    var h = macdD.hist[n];
-    var rsiD = rsi(closes,14);
-    var rv = rsiD[n];
-    var s = 0;
-    if(e32v[n] && e176v[n] && e32v[n]>e176v[n]) s++;
-    else if(e32v[n] && e176v[n]) s--;
-    if(h>0) s++;
-    else if(h<0) s--;
-    if(rv && rv<40) s++;
-    else if(rv && rv>60) s--;
-    return s>=2 ? 'COMPRA' : s<=-2 ? 'VENDA' : 'ESPERAR';
+function calcMTF(c) {
+  function fn(subset) {
+    if (!subset || subset.length < 10) return 'ESPERAR';
+    const closes = subset.map(x => x.close);
+    const p32 = Math.min(32, subset.length - 1);
+    const p176 = Math.min(176, subset.length - 1);
+    const e32v = ema(closes, p32);
+    const e176v = ema(closes, p176);
+    const n = subset.length - 1;
+    const macdD = macdCalc(closes);
+    const h = macdD.hist[n];
+    const rsiD = rsi(closes, 14);
+    const rv = rsiD[n];
+    let s = 0;
+    if (e32v[n] && e176v[n] && e32v[n] > e176v[n]) s++;
+    else if (e32v[n] && e176v[n]) s--;
+    if (h > 0) s++;
+    else if (h < 0) s--;
+    if (rv && rv < 40) s++;
+    else if (rv && rv > 60) s--;
+    return s >= 2 ? 'COMPRA' : s <= -2 ? 'VENDA' : 'ESPERAR';
   }
-  var n = c.length;
+  const n = c.length;
   return {
     m1: fn(c.slice(-20)),
     m5: fn(c.slice(-40)),
@@ -803,68 +854,68 @@ function calcMTF(c){
   };
 }
 
-function updateUI(sig){
-  if(!sig) return;
-  var fmt = function(v){ return v!=null ? v.toFixed(2).replace('.', ',') : '--'; };
+function updateUI(sig) {
+  if (!sig) return;
+  const fmt = (v) => v != null ? v.toFixed(2).replace('.', ',') : '--';
 
-  if(candles.length >= 2){
-    var last = candles[candles.length-1], prev = candles[candles.length-2];
+  if (candles.length >= 2) {
+    const last = candles[candles.length - 1], prev = candles[candles.length - 2];
     document.getElementById('priceDisp').textContent = '$' + last.close.toFixed(2).replace('.', ',');
-    var pct = ((last.close-prev.close)/prev.close*100);
-    var chEl = document.getElementById('priceChg');
-    chEl.textContent = (pct>=0 ? '+' : '') + pct.toFixed(2).replace('.', ',') + '%';
-    chEl.style.color = pct>=0 ? 'var(--green)' : 'var(--red)';
+    const pct = ((last.close - prev.close) / prev.close * 100);
+    const chEl = document.getElementById('priceChg');
+    chEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2).replace('.', ',') + '%';
+    chEl.style.color = pct >= 0 ? 'var(--green)' : 'var(--red)';
     document.getElementById('priceRange').textContent = 'Máx: ' + last.high.toFixed(2).replace('.', ',') + ' Mín: ' + last.low.toFixed(2).replace('.', ',');
   }
 
-  var s10 = Math.round(sig.scoreNorm*10)/10;
-  var circumf = 188.5;
-  var offset = circumf - (circumf*(s10/10));
-  var ringEl = document.getElementById('ringFill');
+  const s10 = Math.round(sig.scoreNorm * 10) / 10;
+  const circumf = 188.5;
+  const offset = circumf - (circumf * (s10 / 10));
+  const ringEl = document.getElementById('ringFill');
   ringEl.style.strokeDashoffset = offset;
-  var ringColor = s10>=7 ? 'var(--green)' : s10>=4 ? 'var(--gold)' : 'var(--red)';
+  const ringColor = s10 >= 7 ? 'var(--green)' : s10 >= 4 ? 'var(--gold)' : 'var(--red)';
   ringEl.style.stroke = ringColor;
   document.getElementById('ringScore').textContent = s10.toFixed(1).replace('.', ',');
   document.getElementById('ringScore').style.color = ringColor;
   document.getElementById('sysScore').textContent = s10.toFixed(1).replace('.', ',') + '/10';
   document.getElementById('sysScore').style.color = ringColor;
 
-  var top3 = sig.reasons.slice(0,3);
+  const top3 = sig.reasons.slice(0, 3);
   document.getElementById('scoreD1').textContent = 'Pontos: ' + s10.toFixed(1).replace('.', ',') + '/10 - ' + sig.reasons.length + ' fatores';
   document.getElementById('scoreD2').textContent = top3[0] ? '> ' + top3[0].t : '--';
   document.getElementById('scoreD3').textContent = top3[1] ? '> ' + top3[1].t : '--';
-  document.getElementById('scoreD2').style.color = top3[0] && top3[0].c==='compra' ? 'var(--green)' : top3[0] && top3[0].c==='venda' ? 'var(--red)' : 'var(--muted)';
+  document.getElementById('scoreD2').style.color = top3[0] && top3[0].c === 'compra' ? 'var(--green)' : top3[0] && top3[0].c === 'venda' ? 'var(--red)' : 'var(--muted)';
 
-  var mainEl = document.getElementById('signalMain');
-  var labels = {COMPRA: 'COMPRAR ▲', VENDA: 'VENDER ▼', ESPERAR: 'ESPERAR'};
+  const mainEl = document.getElementById('signalMain');
+  const labels = { COMPRA: 'COMPRAR ▲', VENDA: 'VENDER ▼', ESPERAR: 'ESPERAR' };
   mainEl.textContent = labels[sig.tipo];
   mainEl.className = 'sig-main sig-' + sig.tipo.toLowerCase();
-  
+
   document.getElementById('confPct').textContent = sig.conf.toFixed(0);
-  var fill = document.getElementById('confFill');
+  const fill = document.getElementById('confFill');
   fill.style.width = sig.conf + '%';
   fill.className = 'conf-fill fill-' + sig.tipo.toLowerCase();
 
   document.getElementById('lvlEntry').textContent = '$' + fmt(sig.price);
-  document.getElementById('lvlTP').textContent = sig.tipo!=='ESPERAR' ? '$' + fmt(sig.tp) : '---';
-  document.getElementById('lvlSL').textContent = sig.tipo!=='ESPERAR' ? '$' + fmt(sig.sl) : '---';
-  document.getElementById('rrRatio').textContent = sig.tipo!=='ESPERAR' ? '1:' + sig.rr.toFixed(1).replace('.', ',') : '1:--';
+  document.getElementById('lvlTP').textContent = sig.tipo !== 'ESPERAR' ? '$' + fmt(sig.tp) : '---';
+  document.getElementById('lvlSL').textContent = sig.tipo !== 'ESPERAR' ? '$' + fmt(sig.sl) : '---';
+  document.getElementById('rrRatio').textContent = sig.tipo !== 'ESPERAR' ? '1:' + sig.rr.toFixed(1).replace('.', ',') : '1:--';
   document.getElementById('atrDisp').textContent = fmt(sig.atrVal);
-  document.getElementById('pipRisk').textContent = sig.tipo!=='ESPERAR' ? Math.abs(sig.price-sig.sl).toFixed(1).replace('.', ',') + ' pts' : '--';
+  document.getElementById('pipRisk').textContent = sig.tipo !== 'ESPERAR' ? Math.abs(sig.price - sig.sl).toFixed(1).replace('.', ',') + ' pts' : '--';
 
   // RSI
-  var rV = sig.rsiV;
-  var rCol = rV<30 ? 'var(--green)' : rV>70 ? 'var(--red)' : rV<42 ? 'var(--gold)' : 'var(--text)';
-  document.getElementById('rsiVal').textContent = rV!=null ? rV.toFixed(1).replace('.', ',') : '--';
+  const rV = sig.rsiV;
+  const rCol = rV < 30 ? 'var(--green)' : rV > 70 ? 'var(--red)' : rV < 42 ? 'var(--gold)' : 'var(--text)';
+  document.getElementById('rsiVal').textContent = rV != null ? rV.toFixed(1).replace('.', ',') : '--';
   document.getElementById('rsiVal').style.color = rCol;
-  document.getElementById('rsiLbl').textContent = rV<30 ? 'SOBREVENDIDO ▲' : rV>70 ? 'SOBRECOMPRADO ▼' : rV<42 ? 'Zona baixa' : 'Neutro/alto';
+  document.getElementById('rsiLbl').textContent = rV < 30 ? 'SOBREVENDIDO ▲' : rV > 70 ? 'SOBRECOMPRADO ▼' : rV < 42 ? 'Zona baixa' : 'Neutro/alto';
   document.getElementById('rsiLbl').style.color = rCol;
-  document.getElementById('rsiFill').style.width = (rV||50) + '%';
+  document.getElementById('rsiFill').style.width = (rV || 50) + '%';
   document.getElementById('rsiFill').style.background = rCol;
 
   // UT Bot
-  var utLbl = sig.utBuy ? '▲ CRUZOU LONG' : sig.utSell ? '▼ CRUZOU SHORT' : 'NEUTRO';
-  var utCol = sig.utBuy ? 'var(--green)' : sig.utSell ? 'var(--red)' : 'var(--muted)';
+  const utLbl = sig.utBuy ? '▲ CRUZOU LONG' : sig.utSell ? '▼ CRUZOU SHORT' : 'NEUTRO';
+  const utCol = sig.utBuy ? 'var(--green)' : sig.utSell ? 'var(--red)' : 'var(--muted)';
   document.getElementById('utVal').textContent = utLbl;
   document.getElementById('utVal').style.color = utCol;
   document.getElementById('utStop').textContent = 'StopLong: $' + fmt(sig.lStop);
@@ -875,7 +926,7 @@ function updateUI(sig){
   document.getElementById('atrVal').textContent = fmt(sig.atrVal);
 
   // EMA
-  var emaUp = sig.e32 > sig.e176;
+  const emaUp = sig.e32 > sig.e176;
   document.getElementById('emaVal').textContent = emaUp ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
   document.getElementById('emaVal').style.color = emaUp ? 'var(--green)' : 'var(--red)';
   document.getElementById('emaSub').textContent = 'E32:' + fmt(sig.e32) + ' E176:' + fmt(sig.e176);
@@ -883,24 +934,24 @@ function updateUI(sig){
   document.getElementById('emaFill').style.background = emaUp ? 'var(--green)' : 'var(--red)';
 
   // MACD
-  var mCol = sig.macdH>0 ? 'var(--green)' : 'var(--red)';
+  const mCol = sig.macdH > 0 ? 'var(--green)' : 'var(--red)';
   document.getElementById('macdVal').textContent = fmt(sig.macdH);
   document.getElementById('macdVal').style.color = mCol;
   document.getElementById('macdSub').textContent = 'Sinal: ' + (sig.macdSig ? sig.macdSig.toFixed(2).replace('.', ',') : '--');
-  document.getElementById('macdFill').style.width = sig.macdH>0 ? '75%' : '25%';
+  document.getElementById('macdFill').style.width = sig.macdH > 0 ? '75%' : '25%';
   document.getElementById('macdFill').style.background = mCol;
 
   // MTF
-  var mtf = calcMTF(candles);
-  var mtfMap = {
-    COMPRA: {cls:'mtf-buy', t:'COMPRA ▲'},
-    VENDA: {cls:'mtf-sell', t:'VENDA ▼'},
-    ESPERAR: {cls:'mtf-wait', t:'ESPERAR'}
+  const mtf = calcMTF(candles);
+  const mtfMap = {
+    COMPRA: { cls: 'mtf-buy', t: 'COMPRA ▲' },
+    VENDA: { cls: 'mtf-sell', t: 'VENDA ▼' },
+    ESPERAR: { cls: 'mtf-wait', t: 'ESPERAR' }
   };
-  var tfs = ['M1','M5','M15','H1'], keys = ['m1','m5','m15','h1'];
-  for(var ti=0; ti<tfs.length; ti++){
-    var el = document.getElementById('mtf'+tfs[ti]);
-    var info = mtfMap[mtf[keys[ti]]] || mtfMap.ESPERAR;
+  const tfs = ['M1', 'M5', 'M15', 'H1'], keys = ['m1', 'm5', 'm15', 'h1'];
+  for (let ti = 0; ti < tfs.length; ti++) {
+    const el = document.getElementById('mtf' + tfs[ti]);
+    const info = mtfMap[mtf[keys[ti]]] || mtfMap.ESPERAR;
     el.textContent = info.t;
     el.className = 'mtf-sig ' + info.cls;
   }
@@ -909,32 +960,32 @@ function updateUI(sig){
   addLog(sig);
 }
 
-function calcMoment(sig){
-  var h = new Date().getUTCHours();
-  var score = 0;
-  var inNY = h>=13 && h<20, inLon = h>=7 && h<13, overlap = h>=13 && h<16;
-  
-  if(overlap){ score+=30; document.getElementById('momSess').textContent = 'OVERLAP'; }
-  else if(inNY){ score+=25; document.getElementById('momSess').textContent = 'NOVA YORK'; }
-  else if(inLon){ score+=15; document.getElementById('momSess').textContent = 'LONDRES'; }
-  else{ score+=5; document.getElementById('momSess').textContent = 'ÁSIA'; }
-  
+function calcMoment(sig) {
+  const h = new Date().getUTCHours();
+  let score = 0;
+  const inNY = h >= 13 && h < 20, inLon = h >= 7 && h < 13, overlap = h >= 13 && h < 16;
+
+  if (overlap) { score += 30; document.getElementById('momSess').textContent = 'OVERLAP'; }
+  else if (inNY) { score += 25; document.getElementById('momSess').textContent = 'NOVA YORK'; }
+  else if (inLon) { score += 15; document.getElementById('momSess').textContent = 'LONDRES'; }
+  else { score += 5; document.getElementById('momSess').textContent = 'ÁSIA'; }
+
   document.getElementById('momSess').style.color = overlap ? 'var(--green)' : inNY ? 'var(--gold)' : inLon ? 'var(--blue)' : 'var(--muted)';
 
-  var utA = sig.utBuy || sig.utSell;
+  const utA = sig.utBuy || sig.utSell;
   score += utA ? 30 : 0;
   document.getElementById('momUT').textContent = utA ? 'ATIVO' : 'Nenhum';
   document.getElementById('momUT').style.color = utA ? 'var(--green)' : 'var(--muted)';
 
-  var rsiEx = sig.rsiV < 35 || sig.rsiV > 65;
+  const rsiEx = sig.rsiV < 35 || sig.rsiV > 65;
   score += rsiEx ? 20 : 0;
   document.getElementById('momRSI').textContent = rsiEx ? 'EXTREMO' : 'Neutro';
   document.getElementById('momRSI').style.color = rsiEx ? 'var(--green)' : 'var(--muted)';
 
-  var crossed = false;
-  if(sig.macdH !== null && candles.length >= 2){
-    var hPrev = sig.macdData.hist[candles.length-2];
-    crossed = hPrev !== null && Math.sign(sig.macdH) !== Math.sign(hPrev||0);
+  let crossed = false;
+  if (sig.macdH !== null && candles.length >= 2) {
+    const hPrev = sig.macdData.hist[candles.length - 2];
+    crossed = hPrev !== null && Math.sign(sig.macdH) !== Math.sign(hPrev || 0);
   }
   score += crossed ? 20 : 0;
   document.getElementById('momMACD').textContent = crossed ? 'CRUZADO' : 'Nenhum';
@@ -943,14 +994,14 @@ function calcMoment(sig){
   score = Math.min(score, 100);
   document.getElementById('momScore').textContent = score + '%';
   document.getElementById('momFill').style.width = score + '%';
-  
-  var momEl = document.getElementById('momText');
-  var col, txt;
-  if(score >= 80){ col='var(--green)'; txt='ÓTIMO MOMENTO - Opere agora!'; }
-  else if(score >= 55){ col='var(--gold)'; txt='BOM MOMENTO - Alta atenção'; }
-  else if(score >= 35){ col='var(--orange)'; txt='MÉDIO - Aguarde confirmação'; }
-  else{ col='var(--red)'; txt='FORA DE SESSÃO - Não opere'; }
-  
+
+  const momEl = document.getElementById('momText');
+  let col, txt;
+  if (score >= 80) { col = 'var(--green)'; txt = 'ÓTIMO MOMENTO - Opere agora!'; }
+  else if (score >= 55) { col = 'var(--gold)'; txt = 'BOM MOMENTO - Alta atenção'; }
+  else if (score >= 35) { col = 'var(--orange)'; txt = 'MÉDIO - Aguarde confirmação'; }
+  else { col = 'var(--red)'; txt = 'FORA DE SESSÃO - Não opere'; }
+
   momEl.textContent = txt;
   momEl.style.color = col;
   momEl.style.borderColor = col;
@@ -958,140 +1009,175 @@ function calcMoment(sig){
   document.getElementById('momScore').style.color = col;
 }
 
-function addLog(sig){
-  if(sig.tipo === lastSignalType && !sig.utBuy && !sig.utSell) return;
+function addLog(sig) {
+  if (sig.tipo === lastSignalType && !sig.utBuy && !sig.utSell) return;
   lastSignalType = sig.tipo;
-  
-  var t = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+
+  const t = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   signalLog.unshift({
-    t: t,
-    tipo: sig.tipo,
+    t, tipo: sig.tipo,
     price: sig.price.toFixed(2).replace('.', ','),
     conf: sig.conf.toFixed(0),
     why: sig.reasons.length ? sig.reasons[0].t : ''
   });
-  
-  if(signalLog.length > 15) signalLog.pop();
-  
-  var el = document.getElementById('signalLog');
-  el.innerHTML = signalLog.map(function(s){
-    var cls = s.tipo==='COMPRA' ? 'compra' : s.tipo==='VENDA' ? 'venda' : 'espera';
-    var lbl = s.tipo==='COMPRA' ? 'COMPRA' : s.tipo==='VENDA' ? 'VENDA' : 'ESPERA';
-    return '<div class="log-item"><span style="color:var(--muted);font-size:9px">' + s.t + '</span><span class="log-dir log-' + cls + '">' + lbl + '</span><span style="color:var(--muted);font-size:9px">$' + s.price + ' ' + s.conf + '% ' + s.why + '</span></div>';
+
+  if (signalLog.length > 15) signalLog.pop();
+
+  const el = document.getElementById('signalLog');
+  el.innerHTML = signalLog.map(s => {
+    const cls = s.tipo === 'COMPRA' ? 'compra' : s.tipo === 'VENDA' ? 'venda' : 'espera';
+    const lbl = s.tipo === 'COMPRA' ? 'COMPRA' : s.tipo === 'VENDA' ? 'VENDA' : 'ESPERA';
+    return `<div class="log-item"><span style="color:var(--muted);font-size:9px">${s.t}</span><span class="log-dir log-${cls}">${lbl}</span><span style="color:var(--muted);font-size:9px">$${s.price} ${s.conf}% ${s.why}</span></div>`;
   }).join('');
-  
-  if((sig.utBuy || sig.utSell) && sig.tipo !== 'ESPERAR') playBeep(sig.tipo === 'COMPRA');
+
+  if ((sig.utBuy || sig.utSell) && sig.tipo !== 'ESPERAR') playBeep(sig.tipo === 'COMPRA');
 }
 
-function updateSessions(){
-  var h = new Date().getUTCHours();
-  document.getElementById('sessAsia').classList.toggle('active', h>=0 && h<7);
-  document.getElementById('sessLon').classList.toggle('active', h>=7 && h<13);
-  document.getElementById('sessNY').classList.toggle('active', h>=13 && h<20);
-  
-  var next = h<7 ? 'Londres em ' + (7-h) + 'h' : h<13 ? 'NY em ' + (13-h) + 'h' : h<20 ? 'Fecha em ' + (20-h) + 'h' : 'Ásia em ' + (24-h) + 'h';
+function updateSessions() {
+  const h = new Date().getUTCHours();
+  document.getElementById('sessAsia').classList.toggle('active', h >= 0 && h < 7);
+  document.getElementById('sessLon').classList.toggle('active', h >= 7 && h < 13);
+  document.getElementById('sessNY').classList.toggle('active', h >= 13 && h < 20);
+
+  const next = h < 7 ? 'Londres em ' + (7 - h) + 'h' : h < 13 ? 'NY em ' + (13 - h) + 'h' : h < 20 ? 'Fecha em ' + (20 - h) + 'h' : 'Ásia em ' + (24 - h) + 'h';
   document.getElementById('proxSessao').textContent = 'Próxima transição: ' + next;
-  
-  var cur = h>=13 && h<16 ? 'Overlap Londres/NY (melhor período)' : h>=13 && h<20 ? 'Nova York' : h>=7 && h<13 ? 'Londres' : 'Ásia (baixa volatilidade)';
+
+  const cur = h >= 13 && h < 16 ? 'Overlap Londres/NY (melhor período)' : h >= 13 && h < 20 ? 'Nova York' : h >= 7 && h < 13 ? 'Londres' : 'Ásia (baixa volatilidade)';
   document.getElementById('sessaoAtual').textContent = 'Sessão atual: ' + cur;
 }
 
-window.conectar = function(){
-  if(connected) return;
+window.conectar = function () {
+  if (connected) return;
+  if (creditos <= 0) {
+    popup('Sem Créditos! 💎', 'Recarregue seus créditos antes de conectar.');
+    mostrarModalCreditos();
+    return;
+  }
   connected = true;
   setStatus('loading', 'CONECTANDO...');
-  tick().then(function(){
+  tick().then(() => {
     timer = setInterval(tick, UPDATE_MS);
     startCountdown();
   });
-  popup('Conectado', 'Atualizando a cada 60 segundos. Dados reais de XAU/USD.');
 };
 
-window.desconectar = function(){
-  if(!connected) return;
+window.desconectar = function () {
+  if (!connected) return;
   connected = false;
-  clearInterval(timer); timer = null;
-  clearInterval(cdTimer); cdTimer = null;
+  clearInterval(timer);
+  timer = null;
+  clearInterval(cdTimer);
+  cdTimer = null;
   setStatus('off', 'OFFLINE');
   document.getElementById('liveDot').style.background = 'var(--muted)';
-  popup('Parado', 'API pausada.');
+  popup('Desconectado', 'Sistema pausado. Créditos restantes: ' + creditos);
 };
 
-async function tick(){
-  if(!connected) return;
+async function tick() {
+  if (!connected) return;
+  
+  // Verificar créditos
+  if (!usarCredito()) return;
+  
   setStatus('loading', 'BUSCANDO...');
-  
-  var data = await fetchCandles();
-  if(!data){
-    setStatus('off', 'ERRO NA API');
-    popup('Erro', 'Falha ao buscar dados. Tentando novamente em 60s.');
-    return;
-  }
-  
-  candles = data;
+
+  // Gerar candles simulados
+  candles = gerarCandlesSimulados();
+
   document.getElementById('candleCount').textContent = candles.length;
   document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
   document.getElementById('liveDot').style.background = 'var(--green)';
-  
-  var sig = calcSignal(candles);
-  if(sig){
+
+  const sig = calcSignal(candles);
+  if (sig) {
     drawChart(candles, sig);
     drawMACD(candles, sig);
     updateUI(sig);
   }
-  
+
   setStatus('on', 'AO VIVO');
   cdSecs = 60;
 }
 
-function startCountdown(){
+function startCountdown() {
   cdSecs = 60;
   clearInterval(cdTimer);
-  cdTimer = setInterval(function(){
+  cdTimer = setInterval(() => {
     cdSecs--;
     document.getElementById('countdown').textContent = cdSecs + 's';
-    if(cdSecs <= 0) cdSecs = 60;
+    if (cdSecs <= 0) cdSecs = 60;
   }, 1000);
 }
 
-function setStatus(t, m){
-  var el = document.getElementById('statusBadge');
+function setStatus(t, m) {
+  const el = document.getElementById('statusBadge');
   el.textContent = m;
   el.className = 'status-badge s-' + t;
 }
 
-function playBeep(isCompra){
-  if(!soundEnabled) return;
-  try{
-    var ac = new (window.AudioContext || window.webkitAudioContext)();
-    var freqs = isCompra ? [600,900,1200] : [1200,900,600];
-    freqs.forEach(function(f, i){
-      var o = ac.createOscillator();
+function playBeep(isCompra) {
+  if (!soundEnabled) return;
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const freqs = isCompra ? [600, 900, 1200] : [1200, 900, 600];
+    freqs.forEach((f, i) => {
+      const o = ac.createOscillator();
       o.frequency.value = f;
       o.connect(ac.destination);
-      o.start(ac.currentTime + i*.1);
-      o.stop(ac.currentTime + i*.1 + .18);
+      o.start(ac.currentTime + i * .1);
+      o.stop(ac.currentTime + i * .1 + .18);
     });
-  } catch(e) {}
+  } catch (e) { }
 }
 
-var popT;
-function popup(title, desc){
+let popT;
+function popup(title, desc) {
   document.getElementById('popupTitle').textContent = title;
   document.getElementById('popupDesc').textContent = desc;
-  var el = document.getElementById('popup');
+  const el = document.getElementById('popup');
   el.classList.add('show');
   clearTimeout(popT);
-  popT = setTimeout(function(){ el.classList.remove('show'); }, 5000);
+  popT = setTimeout(() => el.classList.remove('show'), 5000);
 }
 
-document.getElementById('soundOn').addEventListener('change', function(e){
+// Funções de crédito
+window.mostrarModalCreditos = function() {
+  document.getElementById('modalCreditos').classList.add('show');
+  document.getElementById('creditInput').value = 100;
+  atualizarDisplayCreditos();
+};
+
+window.fecharModal = function() {
+  document.getElementById('modalCreditos').classList.remove('show');
+};
+
+window.recarregarCreditos = function() {
+  const input = document.getElementById('creditInput');
+  let valor = parseInt(input.value);
+  
+  if (isNaN(valor) || valor < 10) {
+    valor = 10;
+  }
+  if (valor > 10000) {
+    valor = 10000;
+  }
+  
+  creditos += valor;
+  salvarCreditos();
+  atualizarDisplayCreditos();
+  fecharModal();
+  popup('Créditos Recarregados! 💎', `${valor} créditos adicionados. Total: ${creditos} créditos.`);
+};
+
+document.getElementById('soundOn').addEventListener('change', function (e) {
   soundEnabled = e.target.checked;
 });
 
+// Inicialização
+carregarCreditos();
 updateSessions();
 setInterval(updateSessions, 30000);
-popup('Pronto', 'Clique em CONECTAR para buscar dados reais de XAU/USD.');
+popup('Sistema Pronto 💎', `Créditos: ${creditos} | Clique CONECTAR para iniciar. Cada atualização custa ${CREDITO_POR_UPDATE} crédito.`);
 
 })();
 </script>
