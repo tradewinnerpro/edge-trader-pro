@@ -20,6 +20,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-m);font-size:
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,185,70,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,185,70,.018) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .shell{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:16px}
 
+/* ===================== HEADER ===================== */
 .header{
   display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:10px;padding:14px 20px;
@@ -61,7 +62,9 @@ button{
   padding:8px 16px;border-radius:20px;border:1px solid;
   font-family:var(--font-m);font-size:10px;font-weight:700;
   cursor:pointer;background:transparent;color:inherit;
+  transition:background .2s,transform .1s;
 }
+button:active{transform:scale(.97)}
 .btn-connect{border-color:var(--green);color:var(--green)}
 .btn-connect:hover{background:rgba(61,255,160,.1)}
 .btn-stop{border-color:var(--red);color:var(--red)}
@@ -69,6 +72,125 @@ button{
 .btn-credits{border-color:var(--gold);color:var(--gold)}
 .btn-credits:hover{background:rgba(255,185,70,.1)}
 
+/* ===================== BOTÃO ALERTA ===================== */
+.btn-alert{
+  position:relative;border-radius:20px;
+  padding:8px 16px;font-size:10px;font-weight:700;
+  cursor:pointer;border:1px solid;transition:all .25s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-alert.alert-off{
+  border-color:var(--muted);color:var(--muted);background:transparent;
+}
+.btn-alert.alert-off:hover{border-color:#8898c0;color:#8898c0}
+.btn-alert.alert-on{
+  border-color:var(--green);color:var(--green);
+  background:rgba(61,255,160,.1);
+  box-shadow:0 0 14px rgba(61,255,160,.2);
+  animation:alertGlow 2s infinite;
+}
+@keyframes alertGlow{
+  0%,100%{box-shadow:0 0 10px rgba(61,255,160,.2)}
+  50%{box-shadow:0 0 22px rgba(61,255,160,.45)}
+}
+.btn-alert .alert-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:currentColor;flex-shrink:0;
+}
+.btn-alert.alert-on .alert-dot{
+  animation:alertDotPulse 1.2s infinite;
+}
+@keyframes alertDotPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.3;transform:scale(1.8)}
+}
+
+/* ===================== BANNER DE ALERTA ===================== */
+.alert-banner{
+  position:fixed;top:0;left:0;right:0;z-index:99999;
+  padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  font-family:var(--font-h);
+  transform:translateY(-110%);
+  transition:transform .45s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+  height:0;overflow:visible;
+}
+.alert-banner.show{
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.banner-inner{
+  width:100%;
+  border-radius:0 0 20px 20px;
+  padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  border:1px solid transparent;border-top:none;
+  backdrop-filter:blur(8px);
+}
+.banner-compra .banner-inner{
+  background:linear-gradient(135deg,rgba(20,60,35,.97),rgba(10,40,22,.97));
+  border-color:var(--green);
+  box-shadow:0 8px 40px rgba(61,255,160,.35);
+}
+.banner-venda .banner-inner{
+  background:linear-gradient(135deg,rgba(60,10,20,.97),rgba(35,5,12,.97));
+  border-color:var(--red);
+  box-shadow:0 8px 40px rgba(255,94,107,.35);
+}
+.banner-left{display:flex;align-items:center;gap:16px}
+.banner-icon{
+  font-size:2.2rem;
+  filter:drop-shadow(0 0 10px currentColor);
+}
+.banner-type{
+  font-size:2rem;font-weight:800;letter-spacing:3px;
+  line-height:1;
+}
+.banner-compra .banner-type{color:var(--green);text-shadow:0 0 20px rgba(61,255,160,.6)}
+.banner-venda .banner-type{color:var(--red);text-shadow:0 0 20px rgba(255,94,107,.6)}
+.banner-sub{font-size:11px;color:rgba(255,255,255,.55);letter-spacing:2px;margin-top:2px}
+.banner-right{display:flex;gap:24px;align-items:center}
+.banner-stat{text-align:center}
+.banner-stat-label{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,.4);font-family:var(--font-m)}
+.banner-stat-value{font-size:1.1rem;font-weight:800;margin-top:2px}
+.banner-compra .banner-stat-value{color:var(--green)}
+.banner-venda .banner-stat-value{color:var(--red)}
+.banner-conf-bar{
+  width:80px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:4px;
+}
+.banner-conf-fill{height:100%;border-radius:2px;transition:width .6s .3s}
+.banner-compra .banner-conf-fill{background:var(--green)}
+.banner-venda .banner-conf-fill{background:var(--red)}
+.banner-timer{
+  width:40px;height:40px;
+  position:relative;flex-shrink:0;
+}
+.banner-timer svg{transform:rotate(-90deg)}
+.banner-timer circle{
+  fill:none;stroke-width:3;stroke-linecap:round;
+}
+.banner-timer .bg-circle{stroke:rgba(255,255,255,.1)}
+.banner-timer .prog-circle{
+  stroke-dasharray:100;
+  stroke-dashoffset:0;
+  transition:stroke-dashoffset .1s linear;
+}
+.banner-compra .prog-circle{stroke:var(--green)}
+.banner-venda .prog-circle{stroke:var(--red)}
+.banner-timer-label{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:rgba(255,255,255,.6);
+}
+.banner-dismiss{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.4);border-radius:8px;padding:4px 10px;
+  cursor:pointer;font-size:9px;pointer-events:auto;
+}
+.banner-dismiss:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* ===================== UPDATE BAR ===================== */
 .update-bar{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:7px 16px;background:var(--surface);
@@ -77,6 +199,7 @@ button{
 }
 .ut-lbl{color:var(--muted)}.ut-val{color:var(--text);font-weight:700}
 
+/* ===================== MAIN GRID ===================== */
 .main-grid{
   display:grid;grid-template-columns:1fr 350px;gap:14px;margin-bottom:14px;
 }
@@ -92,11 +215,11 @@ button{
 }
 .price-disp{font-family:var(--font-h);font-size:2rem;font-weight:800;color:var(--gold)}
 
-/* Container do TradingView */
 #tradingview_widget_container{
   width:100%;height:500px;background:#0b1018;
 }
 
+/* ===================== RIGHT PANEL ===================== */
 .right-panel{display:flex;flex-direction:column;gap:10px}
 .signal-box{
   background:var(--surface);border:1px solid var(--border2);
@@ -136,6 +259,7 @@ button{
 .ind-name{font-size:8px;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
 .ind-value{font-family:var(--font-h);font-size:1rem;font-weight:700}
 
+/* ===================== POPUP ===================== */
 .popup{
   position:fixed;bottom:20px;right:20px;z-index:9999;
   background:var(--surface);border-radius:12px;padding:14px 18px;
@@ -146,6 +270,7 @@ button{
 .popup-title{font-weight:700;font-size:12px;color:var(--gold)}
 .popup-desc{font-size:11px;color:var(--muted);margin-top:3px}
 
+/* ===================== MODAL ===================== */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;
   display:none;align-items:center;justify-content:center;
@@ -171,17 +296,54 @@ button{
   cursor:pointer;font-weight:700;width:100%;margin-top:6px;
 }
 
+/* ===================== LEGENDA ===================== */
 .legend-bar{
   display:flex;gap:14px;padding:8px 18px;
   border-top:1px solid var(--border2);font-size:9px;color:var(--muted);
+  flex-wrap:wrap;align-items:center;
 }
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-color{width:14px;height:2px;display:inline-block;border-radius:2px}
 </style>
 </head>
 <body>
+
+<!-- ===================== BANNER DE ALERTA ===================== -->
+<div class="alert-banner" id="alertBanner">
+  <div class="banner-inner">
+    <div class="banner-left">
+      <div class="banner-icon" id="bannerIcon">📈</div>
+      <div>
+        <div class="banner-type" id="bannerType">COMPRA</div>
+        <div class="banner-sub">XAU/USD · OURO</div>
+      </div>
+    </div>
+    <div class="banner-right">
+      <div class="banner-stat">
+        <div class="banner-stat-label">ENTRADA</div>
+        <div class="banner-stat-value" id="bannerEntry">--</div>
+      </div>
+      <div class="banner-stat">
+        <div class="banner-stat-label">CONFIANÇA</div>
+        <div class="banner-stat-value" id="bannerConf">--</div>
+        <div class="banner-conf-bar"><div class="banner-conf-fill" id="bannerConfFill" style="width:0%"></div></div>
+      </div>
+      <div class="banner-timer" id="bannerTimer">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle class="bg-circle" cx="20" cy="20" r="16"/>
+          <circle class="prog-circle" id="timerCircle" cx="20" cy="20" r="16"
+            stroke-dasharray="100.5" stroke-dashoffset="0"/>
+        </svg>
+        <div class="banner-timer-label" id="timerLabel">6s</div>
+      </div>
+      <button class="banner-dismiss" onclick="fecharBanner()">✕ FECHAR</button>
+    </div>
+  </div>
+</div>
+
 <div class="shell">
 
+<!-- ===================== HEADER ===================== -->
 <div class="header">
   <div class="brand">
     <div class="brand-icon">⚡</div>
@@ -201,6 +363,13 @@ button{
     </div>
     <div class="live-dot" id="liveDot"></div>
     <span class="status-badge s-off" id="statusBadge">⬤ OFFLINE</span>
+
+    <!-- BOTÃO ALERTA ON/OFF -->
+    <button class="btn-alert alert-off" id="btnAlert" onclick="toggleAlerta()">
+      <span class="alert-dot"></span>
+      <span id="alertLabel">ALERTA OFF</span>
+    </button>
+
     <button class="btn-connect" id="btnConnect">🔌 CONECTAR</button>
     <button class="btn-stop" id="btnStop">⏹ PARAR</button>
     <button class="btn-credits" id="btnCredits">💎 RECARREGAR</button>
@@ -229,10 +398,9 @@ button{
         </div>
       </div>
     </div>
-    
-    <!-- TRADINGVIEW WIDGET - CARREGAMENTO DIRETO -->
+
     <div id="tradingview_widget_container"></div>
-    
+
     <div class="legend-bar">
       <div class="legend-item"><div class="legend-color" style="background:#ff8c42"></div>EMA 32</div>
       <div class="legend-item"><div class="legend-color" style="background:#a78bfa"></div>EMA 176</div>
@@ -248,13 +416,13 @@ button{
       <div class="sig-main sig-espera" id="signalMain">ESPERAR</div>
       <div style="font-size:10px;color:var(--muted);margin-bottom:4px">CONFIANÇA: <span id="confPct">--</span>%</div>
       <div class="conf-bar"><div class="conf-fill fill-espera" id="confFill" style="width:0%"></div></div>
-      
+
       <div class="levels-grid">
         <div class="level-item"><div class="level-lbl">ENTRADA</div><div class="level-val" id="lvlEntry">--,--</div></div>
         <div class="level-item"><div class="level-lbl">TAKE PROFIT</div><div class="level-val" id="lvlTP" style="color:var(--green)">--,--</div></div>
         <div class="level-item"><div class="level-lbl">STOP LOSS</div><div class="level-val" id="lvlSL" style="color:var(--red)">--,--</div></div>
       </div>
-      
+
       <div class="ind-grid">
         <div class="ind-card">
           <div class="ind-name">RSI · 14</div>
@@ -277,6 +445,9 @@ button{
   </div>
 </div>
 
+</div><!-- .shell -->
+
+<!-- ===================== MODAL CRÉDITOS ===================== -->
 <div class="modal-overlay" id="modalCreditos">
   <div class="modal">
     <div class="modal-title">💎 Recarregar Créditos</div>
@@ -295,14 +466,9 @@ button{
   <div class="popup-desc" id="popupDesc"></div>
 </div>
 
-</div>
-
-<!-- TRADINGVIEW WIDGET SCRIPT - CARREGAMENTO DIRETO -->
+<!-- ===================== TRADINGVIEW ===================== -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script type="text/javascript">
-// ============================================
-// INICIALIZAR TRADINGVIEW
-// ============================================
 new TradingView.widget({
   "container_id": "tradingview_widget_container",
   "autosize": true,
@@ -324,211 +490,368 @@ new TradingView.widget({
   ],
   "backgroundColor": "rgba(11, 16, 32, 0.8)",
   "gridColor": "rgba(42, 46, 57, 0.3)",
-  "loading_screen": {
-    "backgroundColor": "#0b1020",
-    "foregroundColor": "#ffb946"
-  }
+  "loading_screen": {"backgroundColor":"#0b1020","foregroundColor":"#ffb946"}
 });
-
-console.log('✅ TradingView carregado com dados REAIS do XAU/USD');
 </script>
 
+<!-- ===================== SISTEMA PRINCIPAL ===================== -->
 <script>
-// ============================================
-// SISTEMA DE SINAIS
-// ============================================
 (function() {
-    let conectado = false;
-    let timer = null;
-    let cdTimer = null;
-    let cdSecs = 60;
-    let creditos = 100;
-    let creditosUsados = 0;
-    
+
+  // ─── ESTADO ──────────────────────────────────────────────────────────────
+  let conectado = false;
+  let alertaAtivo = false;
+  let timer = null, cdTimer = null, bannerTimer = null;
+  let cdSecs = 60;
+  let creditos = 100, creditosUsados = 0;
+  let audioCtx = null;
+
+  try {
+    const c = localStorage.getItem('xau_tv3_c');
+    if (c) creditos = parseInt(c);
+    const u = localStorage.getItem('xau_tv3_u');
+    if (u) creditosUsados = parseInt(u);
+    const a = localStorage.getItem('xau_tv3_alert');
+    if (a !== null) alertaAtivo = a === '1';
+  } catch(e) {}
+
+  // Inicializa estado do botão alerta
+  atualizarBotaoAlerta();
+
+  // ─── AUDIO CONTEXT (lazy) ─────────────────────────────────────────────────
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  // ─── BEEP: 3 TONS ─────────────────────────────────────────────────────────
+  function tocarBeep(tipo) {
     try {
-        const c = localStorage.getItem('xau_tv2_c');
-        if (c) creditos = parseInt(c);
-        const u = localStorage.getItem('xau_tv2_u');
-        if (u) creditosUsados = parseInt(u);
+      const ctx = getAudioCtx();
+      const freqs = tipo === 'COMPRA'
+        ? [440, 554, 659]   // tons subindo  (Lá, Dó#, Mi)
+        : [659, 554, 440];  // tons descendo (Mi, Dó#, Lá)
+
+      freqs.forEach((freq, i) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t0 = ctx.currentTime + i * 0.22;
+        gain.gain.setValueAtTime(0, t0);
+        gain.gain.linearRampToValueAtTime(0.35, t0 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.30);
+        osc.start(t0);
+        osc.stop(t0 + 0.31);
+      });
+    } catch(e) { console.warn('Beep error:', e); }
+  }
+
+  // ─── VOZ (Web Speech API) ─────────────────────────────────────────────────
+  function falarSinal(tipo, price, conf) {
+    try {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const tipoTexto = tipo === 'COMPRA' ? 'Compra' : 'Venda';
+      const priceStr = Math.round(price).toString();
+      const confStr = Math.round(conf).toString();
+      const texto = `Sinal de ${tipoTexto}! Ouro, XAU barra USD. Confiança: ${confStr} por cento. Entrada em ${priceStr} dólares.`;
+      const utt = new SpeechSynthesisUtterance(texto);
+      utt.lang = 'pt-BR';
+      utt.rate = 0.95;
+      utt.pitch = 1.05;
+      utt.volume = 1;
+      // Tenta selecionar voz pt-BR se disponível
+      const vozes = window.speechSynthesis.getVoices();
+      const voz = vozes.find(v => v.lang === 'pt-BR') ||
+                  vozes.find(v => v.lang.startsWith('pt')) ||
+                  null;
+      if (voz) utt.voice = voz;
+      window.speechSynthesis.speak(utt);
+    } catch(e) { console.warn('Speech error:', e); }
+  }
+
+  // ─── BANNER ───────────────────────────────────────────────────────────────
+  let bannerAutoClose = null, bannerCountdown = null;
+
+  function mostrarBanner(tipo, price, conf) {
+    const banner  = document.getElementById('alertBanner');
+    const isCompra = tipo === 'COMPRA';
+
+    // Configura conteúdo
+    document.getElementById('bannerIcon').textContent   = isCompra ? '📈' : '📉';
+    document.getElementById('bannerType').textContent   = isCompra ? 'COMPRA ▲' : 'VENDA ▼';
+    document.getElementById('bannerEntry').textContent  = '$' + fmt(price);
+    document.getElementById('bannerConf').textContent   = Math.round(conf) + '%';
+    document.getElementById('bannerConfFill').style.width = conf + '%';
+
+    // Cor do banner
+    banner.className = 'alert-banner ' + (isCompra ? 'banner-compra' : 'banner-venda');
+
+    // Timer visual (6 segundos)
+    const circle = document.getElementById('timerCircle');
+    const label  = document.getElementById('timerLabel');
+    const circum = 100.5;
+    let secsLeft = 6;
+
+    clearInterval(bannerAutoClose);
+    clearInterval(bannerCountdown);
+
+    circle.style.strokeDashoffset = '0';
+    label.textContent = secsLeft + 's';
+
+    // Mostra
+    requestAnimationFrame(() => {
+      banner.classList.add('show');
+    });
+
+    bannerCountdown = setInterval(() => {
+      secsLeft--;
+      label.textContent = secsLeft + 's';
+      const progress = ((6 - secsLeft) / 6) * circum;
+      circle.style.strokeDashoffset = progress;
+      if (secsLeft <= 0) {
+        clearInterval(bannerCountdown);
+        fecharBanner();
+      }
+    }, 1000);
+  }
+
+  window.fecharBanner = function() {
+    clearInterval(bannerCountdown);
+    clearInterval(bannerAutoClose);
+    document.getElementById('alertBanner').classList.remove('show');
+  };
+
+  // ─── DISPARAR ALERTA COMPLETO ─────────────────────────────────────────────
+  function dispararAlerta(tipo, price, conf) {
+    if (!alertaAtivo) return;
+    tocarBeep(tipo);
+    falarSinal(tipo, price, conf);
+    mostrarBanner(tipo, price, conf);
+  }
+
+  // ─── TOGGLE ALERTA ────────────────────────────────────────────────────────
+  window.toggleAlerta = function() {
+    alertaAtivo = !alertaAtivo;
+    try { localStorage.setItem('xau_tv3_alert', alertaAtivo ? '1' : '0'); } catch(e){}
+    atualizarBotaoAlerta();
+    // Desbloqueio do AudioContext no primeiro clique do utilizador
+    try { getAudioCtx().resume(); } catch(e){}
+    popup(
+      alertaAtivo ? '🔔 Alertas ATIVADOS' : '🔕 Alertas DESATIVADOS',
+      alertaAtivo ? 'Voz, beep e banner ligados.' : 'Alertas silenciados.'
+    );
+  };
+
+  function atualizarBotaoAlerta() {
+    const btn = document.getElementById('btnAlert');
+    const lbl = document.getElementById('alertLabel');
+    if (!btn || !lbl) return;
+    if (alertaAtivo) {
+      btn.className = 'btn-alert alert-on';
+      lbl.textContent = 'ALERTA ON';
+    } else {
+      btn.className = 'btn-alert alert-off';
+      lbl.textContent = 'ALERTA OFF';
+    }
+  }
+
+  // ─── UTILITÁRIOS ──────────────────────────────────────────────────────────
+  function salvar() {
+    try {
+      localStorage.setItem('xau_tv3_c', creditos);
+      localStorage.setItem('xau_tv3_u', creditosUsados);
     } catch(e) {}
-    
-    function salvar() {
-        try {
-            localStorage.setItem('xau_tv2_c', creditos);
-            localStorage.setItem('xau_tv2_u', creditosUsados);
-        } catch(e) {}
+  }
+
+  function attCreditosUI() {
+    document.getElementById('creditsDisplay').textContent = creditos;
+    document.getElementById('creditsUsed').textContent = 'Usados: ' + creditosUsados;
+    document.getElementById('modalCredits').textContent = creditos;
+  }
+
+  function fmt(v) {
+    return v != null ? v.toFixed(2).replace('.', ',') : '--';
+  }
+
+  // ─── GERAR SINAL ──────────────────────────────────────────────────────────
+  function gerarSinal() {
+    const price  = 2640 + Math.random() * 20;
+    const rsiV   = 30   + Math.random() * 40;
+    const macdH  = (Math.random() - 0.5) * 2;
+    const atrV   = 3    + Math.random() * 2;
+    const ema32  = price - 5  + Math.random() * 10;
+    const ema176 = price - 8  + Math.random() * 15;
+
+    let score = 0;
+    if (rsiV < 30) score += 2;
+    else if (rsiV > 70) score -= 2;
+    else if (rsiV < 45) score += 1;
+    else if (rsiV > 55) score -= 1;
+    if (ema32 > ema176) score += 1; else score -= 1;
+    if (macdH > 0) score += 1; else score -= 1;
+
+    // UT Bot: cruza quando score muda de sinal forte
+    const utBotCruzou = Math.abs(score) >= 2;
+
+    let tipo, conf;
+    if (score >= 2)       { tipo = 'COMPRA'; conf = Math.min(65 + Math.abs(score) * 8, 90); }
+    else if (score <= -2) { tipo = 'VENDA';  conf = Math.min(65 + Math.abs(score) * 8, 90); }
+    else                  { tipo = 'ESPERAR'; conf = 40 + Math.abs(score) * 10; }
+
+    const tpDist = atrV * 2.5;
+    const slDist = atrV * 1.2;
+
+    return { tipo, conf, score: Math.abs(score), price, rsiV, macdH, atrV, ema32, ema176, tpDist, slDist, utBotCruzou };
+  }
+
+  // ─── TICK (atualização) ───────────────────────────────────────────────────
+  function tick() {
+    if (!conectado) return;
+    if (creditos <= 0) {
+      desconectar();
+      popup('Sem Créditos! 💎', 'Recarregue para continuar.');
+      return;
     }
-    
-    function attCreditosUI() {
-        document.getElementById('creditsDisplay').textContent = creditos;
-        document.getElementById('creditsUsed').textContent = 'Usados: ' + creditosUsados;
-        document.getElementById('modalCredits').textContent = creditos;
-    }
-    
-    function fmt(v) {
-        return v != null ? v.toFixed(2).replace('.', ',') : '--';
-    }
-    
-    function gerarSinal() {
-        // Valores próximos ao preço real do ouro (~2650)
-        const price = 2640 + Math.random() * 20;
-        const rsiV = 30 + Math.random() * 40;
-        const macdH = (Math.random() - 0.5) * 2;
-        const atrV = 3 + Math.random() * 2;
-        const ema32 = price - 5 + Math.random() * 10;
-        const ema176 = price - 8 + Math.random() * 15;
-        
-        let score = 0;
-        if (rsiV < 30) score += 2;
-        else if (rsiV > 70) score -= 2;
-        else if (rsiV < 45) score += 1;
-        else if (rsiV > 55) score -= 1;
-        if (ema32 > ema176) score += 1; else score -= 1;
-        if (macdH > 0) score += 1; else score -= 1;
-        
-        let tipo, conf;
-        if (score >= 2) { tipo = 'COMPRA'; conf = Math.min(65 + Math.abs(score) * 8, 90); }
-        else if (score <= -2) { tipo = 'VENDA'; conf = Math.min(65 + Math.abs(score) * 8, 90); }
-        else { tipo = 'ESPERAR'; conf = 40 + Math.abs(score) * 10; }
-        
-        const tpDist = atrV * 2.5;
-        const slDist = atrV * 1.2;
-        
-        return {
-            tipo, conf, score: Math.abs(score),
-            price, rsiV, macdH, atrV, ema32, ema176,
-            tpDist, slDist
-        };
-    }
-    
-    function tick() {
-        if (!conectado) return;
-        if (creditos <= 0) {
-            desconectar();
-            popup('Sem Créditos! 💎', 'Recarregue para continuar.');
-            return;
-        }
-        
-        creditos--;
-        creditosUsados++;
-        salvar();
-        attCreditosUI();
-        
-        const s = gerarSinal();
-        
-        document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
-        document.getElementById('priceDisp').textContent = '$' + fmt(s.price);
-        document.getElementById('priceMax').textContent = fmt(s.price + 5);
-        document.getElementById('priceMin').textContent = fmt(s.price - 5);
-        
-        const mainEl = document.getElementById('signalMain');
-        if (s.tipo === 'COMPRA') {
-            mainEl.textContent = 'COMPRAR ▲';
-            mainEl.className = 'sig-main sig-compra';
-        } else if (s.tipo === 'VENDA') {
-            mainEl.textContent = 'VENDER ▼';
-            mainEl.className = 'sig-main sig-venda';
-        } else {
-            mainEl.textContent = 'ESPERAR';
-            mainEl.className = 'sig-main sig-espera';
-        }
-        
-        document.getElementById('confPct').textContent = s.conf.toFixed(0);
-        const fill = document.getElementById('confFill');
-        fill.style.width = s.conf + '%';
-        fill.className = 'conf-fill fill-' + s.tipo.toLowerCase();
-        
-        document.getElementById('sysScore').textContent = s.score.toFixed(1) + '/10';
-        document.getElementById('lvlEntry').textContent = '$' + fmt(s.price);
-        
-        if (s.tipo === 'COMPRA') {
-            document.getElementById('lvlTP').textContent = '$' + fmt(s.price + s.tpDist);
-            document.getElementById('lvlSL').textContent = '$' + fmt(s.price - s.slDist);
-        } else if (s.tipo === 'VENDA') {
-            document.getElementById('lvlTP').textContent = '$' + fmt(s.price - s.tpDist);
-            document.getElementById('lvlSL').textContent = '$' + fmt(s.price + s.slDist);
-        } else {
-            document.getElementById('lvlTP').textContent = '---';
-            document.getElementById('lvlSL').textContent = '---';
-        }
-        
-        document.getElementById('rsiVal').textContent = s.rsiV.toFixed(1).replace('.', ',');
-        document.getElementById('rsiVal').style.color = s.rsiV < 30 ? '#3dffa0' : s.rsiV > 70 ? '#ff5e6b' : '#dde4f5';
-        
-        document.getElementById('emaVal').textContent = s.ema32 > s.ema176 ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
-        document.getElementById('emaVal').style.color = s.ema32 > s.ema176 ? '#3dffa0' : '#ff5e6b';
-        
-        document.getElementById('macdVal').textContent = fmt(s.macdH);
-        document.getElementById('macdVal').style.color = s.macdH > 0 ? '#3dffa0' : '#ff5e6b';
-        
-        document.getElementById('utVal').textContent = s.tipo !== 'ESPERAR' ? 'ATIVO' : 'NEUTRO';
-        document.getElementById('utVal').style.color = s.tipo !== 'ESPERAR' ? '#3dffa0' : '#4a5980';
-        
-        document.getElementById('statusBadge').textContent = '🟢 AO VIVO';
-        document.getElementById('statusBadge').className = 'status-badge s-on';
-        document.getElementById('liveDot').style.background = '#3dffa0';
-    }
-    
-    function conectar() {
-        if (conectado) return;
-        if (creditos <= 0) {
-            document.getElementById('modalCreditos').classList.add('show');
-            return;
-        }
-        conectado = true;
-        tick();
-        timer = setInterval(tick, 60000);
-        cdSecs = 60;
-        document.getElementById('countdown').textContent = '60s';
-        cdTimer = setInterval(() => {
-            cdSecs--;
-            document.getElementById('countdown').textContent = cdSecs + 's';
-            if (cdSecs <= 0) cdSecs = 60;
-        }, 1000);
-        popup('✅ Conectado!', 'Gráfico TradingView REAL + Sinais.');
-    }
-    
-    function desconectar() {
-        conectado = false;
-        if (timer) clearInterval(timer);
-        if (cdTimer) clearInterval(cdTimer);
-        timer = null; cdTimer = null;
-        document.getElementById('statusBadge').textContent = '⬤ OFFLINE';
-        document.getElementById('statusBadge').className = 'status-badge s-off';
-        document.getElementById('liveDot').style.background = '#4a5980';
-        document.getElementById('countdown').textContent = '--s';
-        popup('Desconectado', 'Sistema parado.');
-    }
-    
-    function popup(t, m) {
-        document.getElementById('popupTitle').textContent = t;
-        document.getElementById('popupDesc').textContent = m;
-        const el = document.getElementById('popup');
-        el.classList.add('show');
-        setTimeout(() => el.classList.remove('show'), 4000);
-    }
-    
-    document.getElementById('btnConnect').addEventListener('click', conectar);
-    document.getElementById('btnStop').addEventListener('click', desconectar);
-    document.getElementById('btnCredits').addEventListener('click', () => {
-        attCreditosUI();
-        document.getElementById('modalCreditos').classList.add('show');
-    });
-    document.getElementById('btnRecarregar').addEventListener('click', () => {
-        let v = parseInt(document.getElementById('creditInput').value) || 100;
-        if (v < 10) v = 10;
-        creditos += v;
-        salvar();
-        attCreditosUI();
-        document.getElementById('modalCreditos').classList.remove('show');
-        popup('💎 Recarregado!', v + ' créditos adicionados.');
-    });
-    document.getElementById('btnCancelar').addEventListener('click', () => {
-        document.getElementById('modalCreditos').classList.remove('show');
-    });
-    
+
+    creditos--;
+    creditosUsados++;
+    salvar();
     attCreditosUI();
-    popup('Sistema Pronto 💎', 'Clique CONECTAR. Gráfico TradingView REAL!');
+
+    const s = gerarSinal();
+
+    document.getElementById('lastUpd').textContent = new Date().toLocaleTimeString('pt-BR');
+    document.getElementById('priceDisp').textContent = '$' + fmt(s.price);
+    document.getElementById('priceMax').textContent  = fmt(s.price + 5);
+    document.getElementById('priceMin').textContent  = fmt(s.price - 5);
+
+    const mainEl = document.getElementById('signalMain');
+    if (s.tipo === 'COMPRA') {
+      mainEl.textContent = 'COMPRAR ▲';
+      mainEl.className   = 'sig-main sig-compra';
+    } else if (s.tipo === 'VENDA') {
+      mainEl.textContent = 'VENDER ▼';
+      mainEl.className   = 'sig-main sig-venda';
+    } else {
+      mainEl.textContent = 'ESPERAR';
+      mainEl.className   = 'sig-main sig-espera';
+    }
+
+    document.getElementById('confPct').textContent = s.conf.toFixed(0);
+    const fill = document.getElementById('confFill');
+    fill.style.width  = s.conf + '%';
+    fill.className    = 'conf-fill fill-' + s.tipo.toLowerCase();
+
+    document.getElementById('sysScore').textContent = s.score.toFixed(1) + '/10';
+    document.getElementById('lvlEntry').textContent = '$' + fmt(s.price);
+
+    if (s.tipo === 'COMPRA') {
+      document.getElementById('lvlTP').textContent = '$' + fmt(s.price + s.tpDist);
+      document.getElementById('lvlSL').textContent = '$' + fmt(s.price - s.slDist);
+    } else if (s.tipo === 'VENDA') {
+      document.getElementById('lvlTP').textContent = '$' + fmt(s.price - s.tpDist);
+      document.getElementById('lvlSL').textContent = '$' + fmt(s.price + s.slDist);
+    } else {
+      document.getElementById('lvlTP').textContent = '---';
+      document.getElementById('lvlSL').textContent = '---';
+    }
+
+    document.getElementById('rsiVal').textContent  = s.rsiV.toFixed(1).replace('.', ',');
+    document.getElementById('rsiVal').style.color  = s.rsiV < 30 ? '#3dffa0' : s.rsiV > 70 ? '#ff5e6b' : '#dde4f5';
+
+    document.getElementById('emaVal').textContent  = s.ema32 > s.ema176 ? 'CRUZ DOURADA ▲' : 'CRUZ DA MORTE ▼';
+    document.getElementById('emaVal').style.color  = s.ema32 > s.ema176 ? '#3dffa0' : '#ff5e6b';
+
+    document.getElementById('macdVal').textContent = fmt(s.macdH);
+    document.getElementById('macdVal').style.color = s.macdH > 0 ? '#3dffa0' : '#ff5e6b';
+
+    const utLabel = s.utBotCruzou ? (s.tipo === 'COMPRA' ? 'CRUZOU ▲' : 'CRUZOU ▼') : 'NEUTRO';
+    document.getElementById('utVal').textContent = utLabel;
+    document.getElementById('utVal').style.color = s.utBotCruzou ? '#3dffa0' : '#4a5980';
+
+    document.getElementById('statusBadge').textContent = '🟢 AO VIVO';
+    document.getElementById('statusBadge').className   = 'status-badge s-on';
+    document.getElementById('liveDot').style.background = '#3dffa0';
+
+    // ─── DISPARA ALERTAS QUANDO UT BOT CRUZA ──────────────────────────────
+    if (s.utBotCruzou && s.tipo !== 'ESPERAR') {
+      dispararAlerta(s.tipo, s.price, s.conf);
+    }
+  }
+
+  // ─── CONECTAR / DESCONECTAR ───────────────────────────────────────────────
+  function conectar() {
+    if (conectado) return;
+    if (creditos <= 0) { document.getElementById('modalCreditos').classList.add('show'); return; }
+    // Desbloqueia AudioContext na ação do utilizador
+    try { getAudioCtx().resume(); } catch(e){}
+    conectado = true;
+    tick();
+    timer = setInterval(tick, 60000);
+    cdSecs = 60;
+    document.getElementById('countdown').textContent = '60s';
+    cdTimer = setInterval(() => {
+      cdSecs--;
+      document.getElementById('countdown').textContent = cdSecs + 's';
+      if (cdSecs <= 0) cdSecs = 60;
+    }, 1000);
+    popup('✅ Conectado!', 'Gráfico TradingView REAL + Sinais.');
+  }
+
+  function desconectar() {
+    conectado = false;
+    if (timer)   clearInterval(timer);
+    if (cdTimer) clearInterval(cdTimer);
+    timer = null; cdTimer = null;
+    document.getElementById('statusBadge').textContent = '⬤ OFFLINE';
+    document.getElementById('statusBadge').className   = 'status-badge s-off';
+    document.getElementById('liveDot').style.background = '#4a5980';
+    document.getElementById('countdown').textContent = '--s';
+    popup('Desconectado', 'Sistema parado.');
+  }
+
+  // ─── POPUP ────────────────────────────────────────────────────────────────
+  function popup(t, m) {
+    document.getElementById('popupTitle').textContent = t;
+    document.getElementById('popupDesc').textContent  = m;
+    const el = document.getElementById('popup');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
+  // ─── EVENTOS ──────────────────────────────────────────────────────────────
+  document.getElementById('btnConnect').addEventListener('click', conectar);
+  document.getElementById('btnStop').addEventListener('click', desconectar);
+  document.getElementById('btnCredits').addEventListener('click', () => {
+    attCreditosUI();
+    document.getElementById('modalCreditos').classList.add('show');
+  });
+  document.getElementById('btnRecarregar').addEventListener('click', () => {
+    let v = parseInt(document.getElementById('creditInput').value) || 100;
+    if (v < 10) v = 10;
+    creditos += v;
+    salvar();
+    attCreditosUI();
+    document.getElementById('modalCreditos').classList.remove('show');
+    popup('💎 Recarregado!', v + ' créditos adicionados.');
+  });
+  document.getElementById('btnCancelar').addEventListener('click', () => {
+    document.getElementById('modalCreditos').classList.remove('show');
+  });
+
+  // Carrega vozes (Safari / iOS exige chamada prévia)
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+
+  attCreditosUI();
+  popup('Sistema Pronto 💎', 'Clique CONECTAR. Alertas: botão ALERTA ON/OFF.');
+
 })();
 </script>
 </body>
