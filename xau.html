@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAU/USD · Signal Intelligence Pro | Sistema Completo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e17; --surface: #111827; --surface2: #1a2332;
+            --border: rgba(255,185,70,0.15); --border2: rgba(255,185,70,0.08);
+            --gold: #ffb946; --green: #3dffa0; --red: #ff5e6b;
+            --orange: #ff8c42; --blue: #4db8ff; --purple: #a78bfa;
+            --muted: #5a6a8a; --text: #e2e8f0; --text2: #94a3b8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(255,185,70,0.03) 0%, transparent 50%),
+                linear-gradient(rgba(255,185,70,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,185,70,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+        }
+        .container { max-width: 1800px; margin: 0 auto; padding: 10px; }
+        .header {
+            background: var(--surface); border: 1px solid var(--border2); border-radius: 16px;
+            padding: 14px 20px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .logo { display:flex; align-items:center; gap:12px; }
+        .logo-icon {
+            width:42px; height:42px; background: linear-gradient(135deg,#ffb946,#d4952a);
+            border-radius:10px; display:grid; place-items:center; font-size:20px;
+        }
+        .logo-text h1 { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--gold); letter-spacing:1px; }
+        .logo-text span { font-size:9px; color:var(--text2); letter-spacing:2px; }
+        .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .btn {
+            padding:6px 14px; border-radius:20px; border:1px solid;
+            font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+            cursor:pointer; background:transparent; transition:all 0.2s;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .btn-connect { border-color:var(--green); color:var(--green); }
+        .btn-connect:hover { background:rgba(61,255,160,0.1); }
+        .btn-stop { border-color:var(--red); color:var(--red); }
+        .btn-stop:hover { background:rgba(255,94,107,0.1); }
+        .btn-alert { border-color:var(--blue); color:var(--blue); }
+        .btn-alert:hover { background:rgba(77,184,255,0.1); }
+        .btn-credits { border-color:var(--gold); color:var(--gold); }
+        .btn-credits:hover { background:rgba(255,185,70,0.1); }
+        .status { padding:5px 12px; border-radius:20px; font-size:10px; font-weight:700; border:1px solid; }
+        .status-off { border-color:var(--red); color:var(--red); }
+        .status-on  { border-color:var(--green); color:var(--green); animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .session-badge {
+            padding:4px 10px; border-radius:20px; font-size:9px; font-weight:700;
+            border:1px solid var(--border2); color:var(--muted);
+        }
+        .session-badge.active { background:rgba(255,185,70,0.1); border-color:var(--gold); color:var(--gold); }
+
+        .credits-bar {
+            background: linear-gradient(135deg,rgba(255,185,70,0.1),rgba(255,140,66,0.05));
+            border:1px solid var(--border); border-radius:12px; padding:10px 18px;
+            margin-bottom:10px; display:flex; justify-content:space-between;
+            align-items:center; flex-wrap:wrap; gap:10px;
+        }
+        .credits-display { display:flex; align-items:center; gap:10px; }
+        .credits-icon { font-size:28px; animation:float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        .credits-amount { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--gold); }
+        .credits-info { font-size:9px; color:var(--text2); }
+        .credits-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .btn-recharge {
+            padding:8px 18px; border-radius:20px; border:2px solid var(--gold);
+            background:rgba(255,185,70,0.15); color:var(--gold); font-weight:700;
+            font-family:'Syne',sans-serif; font-size:12px; cursor:pointer; transition:all 0.3s;
+        }
+        .btn-recharge:hover { background:rgba(255,185,70,0.3); transform:scale(1.05); }
+        .btn-recharge.small { padding:5px 12px; font-size:10px; }
+        .credits-history { font-size:9px; color:var(--muted); display:flex; gap:15px; }
+
+        .info-bar {
+            background:var(--surface); border:1px solid var(--border2); border-radius:10px;
+            padding:8px 16px; margin-bottom:10px; display:flex; gap:15px;
+            flex-wrap:wrap; font-size:10px; align-items:center;
+        }
+        .info-item { display:flex; align-items:center; gap:5px; }
+        .info-label { color:var(--muted); }
+        .info-value { color:var(--text); font-weight:700; }
+        .info-value.gold { color:var(--gold); }
+        .info-value.green { color:var(--green); }
+        .info-value.red { color:var(--red); }
+
+        .main-grid { display:grid; grid-template-columns:1fr 380px; gap:10px; margin-bottom:10px; }
+        @media(max-width:1200px){ .main-grid { grid-template-columns:1fr; } }
+
+        .chart-panel { background:var(--surface); border:1px solid var(--border2); border-radius:16px; overflow:hidden; }
+        .chart-header {
+            padding:12px 16px; border-bottom:1px solid var(--border2);
+            display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+        }
+        .price-display { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--gold); }
+        .price-change { font-size:12px; font-weight:700; }
+        .price-change.up { color:var(--green); }
+        .price-change.down { color:var(--red); }
+        .chart-container { width:100%; height:420px; background:#0d1117; position:relative; }
+        .chart-container iframe { width:100%; height:100%; border:none; }
+        .chart-indicators {
+            padding:8px 16px; border-top:1px solid var(--border2);
+            display:flex; gap:10px; flex-wrap:wrap; font-size:9px; color:var(--muted);
+        }
+        .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+        .dot.orange { background:var(--orange); } .dot.purple { background:var(--purple); }
+        .dot.green { background:var(--green); }   .dot.red { background:var(--red); }
+
+        .mtf-grid {
+            display:grid; grid-template-columns:repeat(4,1fr);
+            gap:6px; padding:10px 16px; border-top:1px solid var(--border2);
+        }
+        .mtf-cell {
+            background:var(--surface2); border-radius:8px; padding:8px;
+            text-align:center; border:1px solid var(--border2);
+        }
+        .mtf-label { font-size:9px; color:var(--muted); letter-spacing:1px; }
+        .mtf-signal { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; margin-top:3px; }
+        .mtf-buy { color:var(--green); } .mtf-sell { color:var(--red); } .mtf-neutral { color:var(--muted); }
+
+        .right-panel { display:flex; flex-direction:column; gap:10px; }
+        .signal-card {
+            background:var(--surface); border:1px solid var(--border2);
+            border-radius:16px; padding:20px; text-align:center;
+        }
+        .signal-label { font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+        .signal-main {
+            font-family:'Syne',sans-serif; font-size:24px; font-weight:800;
+            padding:10px 20px; border-radius:10px; display:inline-block; margin-bottom:12px; letter-spacing:2px;
+        }
+        .signal-buy  { color:var(--green); background:rgba(61,255,160,0.1); border:2px solid rgba(61,255,160,0.3); }
+        .signal-sell { color:var(--red);   background:rgba(255,94,107,0.1); border:2px solid rgba(255,94,107,0.3); }
+        .signal-wait { color:var(--gold);  background:rgba(255,185,70,0.1); border:2px solid rgba(255,185,70,0.3); }
+        .confidence-bar { height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; margin:10px 0; }
+        .confidence-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+        .fill-buy  { background:linear-gradient(90deg,#3dffa0,#00cc6a); }
+        .fill-sell { background:linear-gradient(90deg,#ff5e6b,#cc0033); }
+        .fill-wait { background:linear-gradient(90deg,#ffb946,#cc8800); }
+        .levels { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:10px 0; }
+        .level { background:var(--surface2); border-radius:8px; padding:8px; border:1px solid var(--border2); }
+        .level-label { font-size:8px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+        .level-value { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; margin-top:2px; }
+        .indicators-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .indicator-card {
+            background:var(--surface); border:1px solid var(--border2);
+            border-radius:10px; padding:12px; transition:border-color 0.2s;
+        }
+        .indicator-card:hover { border-color:rgba(255,185,70,0.2); }
+        .indicator-name { font-size:8px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+        .indicator-value { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; }
+        .indicator-sub { font-size:9px; color:var(--text2); margin-top:2px; }
+        .indicator-bar { height:3px; background:rgba(255,255,255,0.05); border-radius:2px; margin-top:8px; overflow:hidden; }
+        .indicator-fill { height:100%; border-radius:2px; transition:width 0.5s ease; }
+
+        .bottom-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px; }
+        @media(max-width:1000px){ .bottom-grid { grid-template-columns:1fr 1fr; } }
+        @media(max-width:600px){  .bottom-grid { grid-template-columns:1fr; } }
+        .panel { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:16px; }
+        .panel-title {
+            font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--gold);
+            letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;
+        }
+        .momentum-score { font-family:'Syne',sans-serif; font-size:40px; font-weight:800; text-align:center; line-height:1; }
+        .momentum-bar { height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden; margin:8px 0; }
+        .momentum-fill { height:100%; border-radius:4px; transition:all 0.6s ease; }
+        .momentum-text { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; text-align:center; padding:8px; border-radius:8px; border:1px solid; }
+        .log-container { max-height:250px; overflow-y:auto; }
+        .log-entry {
+            display:grid; grid-template-columns:40px 80px 1fr;
+            gap:8px; padding:6px 0;
+            border-bottom:1px solid rgba(255,255,255,0.03);
+            font-size:9px; align-items:center;
+        }
+        .log-time { color:var(--muted); }
+        .log-signal { padding:2px 6px; border-radius:4px; font-weight:700; text-align:center; font-size:8px; letter-spacing:0.5px; }
+        .log-buy  { background:rgba(61,255,160,0.15); color:var(--green); }
+        .log-sell { background:rgba(255,94,107,0.15); color:var(--red); }
+        /* FIX #3 — classe dedicada para HOLD */
+        .log-hold { background:rgba(255,185,70,0.15); color:var(--gold); }
+        .log-info { color:var(--muted); }
+        .session-info { font-size:10px; color:var(--text2); line-height:1.8; }
+
+        .modal-overlay {
+            position:fixed; top:0; left:0; right:0; bottom:0;
+            background:rgba(0,0,0,0.8); z-index:10000;
+            display:none; justify-content:center; align-items:center;
+        }
+        .modal-overlay.active { display:flex; }
+        .modal {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; padding:30px; max-width:500px; width:90%; text-align:center;
+        }
+        .modal h2 { font-family:'Syne',sans-serif; color:var(--gold); margin-bottom:20px; }
+        .modal-packages { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:20px 0; }
+        .package {
+            background:var(--surface2); border:2px solid var(--border2);
+            border-radius:12px; padding:15px; cursor:pointer; transition:all 0.3s;
+        }
+        .package:hover { border-color:var(--gold); transform:translateY(-3px); }
+        .package.selected { border-color:var(--green); background:rgba(61,255,160,0.1); }
+        .package-credits { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; }
+        .package-price { font-size:14px; color:var(--text); margin-top:5px; }
+        .package-bonus { font-size:10px; color:var(--green); margin-top:3px; }
+        .btn-buy {
+            padding:12px 30px; border-radius:25px;
+            background:linear-gradient(135deg,var(--gold),#d4952a);
+            color:#000; font-weight:800; border:none;
+            font-family:'Syne',sans-serif; font-size:14px; cursor:pointer;
+            margin-top:15px; transition:all 0.3s;
+        }
+        .btn-buy:hover { transform:scale(1.05); }
+        .btn-close {
+            padding:8px 20px; border-radius:20px; border:1px solid var(--muted); color:var(--muted);
+            background:transparent; cursor:pointer; font-family:'JetBrains Mono',monospace;
+            font-size:11px; margin-top:10px;
+        }
+        .alert-banner {
+            position:fixed; top:0; left:0; right:0; z-index:9999;
+            padding:16px 20px; display:flex; align-items:center; justify-content:center; gap:10px;
+            font-family:'Syne',sans-serif; font-size:20px; font-weight:800; letter-spacing:2px;
+            transform:translateY(-120%);
+            transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .alert-banner.show { transform:translateY(0); }
+        .alert-buy  { background:rgba(0,30,20,0.97); border-bottom:3px solid var(--green); color:var(--green); }
+        .alert-sell { background:rgba(30,0,10,0.97);  border-bottom:3px solid var(--red);   color:var(--red); }
+        .popup {
+            position:fixed; bottom:20px; right:20px; z-index:9998;
+            background:var(--surface); border-radius:12px; padding:12px 16px; max-width:280px;
+            border:1px solid var(--border2);
+            transform:translateY(120px); opacity:0;
+            transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            pointer-events:none; font-size:11px;
+        }
+        .popup.show { transform:translateY(0); opacity:1; }
+        ::-webkit-scrollbar { width:3px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    </style>
+</head>
+<body>
+
+<!-- MODAL DE CRÉDITOS -->
+<div class="modal-overlay" id="creditsModal">
+    <div class="modal">
+        <h2>🪙 RECARREGAR CRÉDITOS</h2>
+        <p style="color:var(--text2);margin-bottom:15px;">Créditos atuais: <span style="color:var(--gold);font-weight:700;" id="modalCredits">0</span></p>
+        <div class="modal-packages" id="packagesContainer"></div>
+        <button class="btn-buy" onclick="purchaseCredits()">💳 COMPRAR CRÉDITOS</button><br>
+        <button class="btn-close" onclick="closeCreditsModal()">FECHAR</button>
+        <p style="font-size:9px;color:var(--muted);margin-top:10px;">* Simulação - Nenhum pagamento real é processado</p>
+    </div>
+</div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alertBanner">
+    <span id="alertIcon">▲</span>
+    <span id="alertText">SINAL</span>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+    <div style="font-weight:700;margin-bottom:3px" id="popupTitle"></div>
+    <div style="color:var(--muted);font-size:10px" id="popupDesc"></div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">
+                <h1>XAU/USD SIGNAL PRO</h1>
+                <span>Multi-Indicador · IA · Tempo Real</span>
+            </div>
+        </div>
+        <div class="controls">
+            <span class="session-badge" id="asiaBadge">🌏 ASIA</span>
+            <span class="session-badge" id="londonBadge">🇬🇧 LONDON</span>
+            <span class="session-badge" id="nyBadge">🗽 NY</span>
+            <span class="status status-off" id="statusBadge">⚫ OFFLINE</span>
+            <button class="btn btn-connect" onclick="connectSystem()">🔌 CONNECT</button>
+            <button class="btn btn-stop"    onclick="disconnectSystem()">🔴 STOP</button>
+            <button class="btn btn-alert"   id="alertBtn" onclick="toggleAlerts()">🔔 ALERTS ON</button>
+            <button class="btn btn-credits" onclick="openCreditsModal()">🪙 CRÉDITOS</button>
+        </div>
+    </div>
+
+    <div class="credits-bar">
+        <div class="credits-display">
+            <span class="credits-icon">🪙</span>
+            <div>
+                <div class="credits-amount" id="creditsAmount">100</div>
+                <div class="credits-info">créditos disponíveis</div>
+            </div>
+        </div>
+        <div class="credits-history">
+            <span>📊 Usados hoje: <strong style="color:var(--text)" id="creditsUsedToday">0</strong></span>
+            <span>🔄 Atualizações: <strong style="color:var(--text)" id="totalUpdates">0</strong></span>
+            <span>⏱️ Próxima em: <strong style="color:var(--text)" id="nextUpdateIn">--s</strong></span>
+        </div>
+        <div class="credits-actions">
+            <button class="btn-recharge small" onclick="openCreditsModal()">+ RECARREGAR</button>
+            <button class="btn-recharge small" onclick="addFreeCredits()" style="background:rgba(61,255,160,0.15);border-color:var(--green);color:var(--green);">🎁 GRÁTIS +10</button>
+        </div>
+    </div>
+
+    <div class="info-bar">
+        <div class="info-item"><span class="info-label">Símbolo:</span><span class="info-value gold">XAU/USD</span></div>
+        <div class="info-item"><span class="info-label">TF:</span><span class="info-value">5min</span></div>
+        <div class="info-item"><span class="info-label">Update:</span><span class="info-value" id="lastUpdate">--:--:--</span></div>
+        <div class="info-item"><span class="info-label">Candles:</span><span class="info-value" id="candleCount">0</span></div>
+        <div class="info-item"><span class="info-label">Score:</span><span class="info-value gold" id="systemScore">0/10</span></div>
+        <div class="info-item"><span class="info-label">Fonte:</span><span class="info-value green" id="dataSource">--</span></div>
+        <div class="info-item"><span class="info-label">Custo/update:</span><span class="info-value red">-1 crédito</span></div>
+    </div>
+
+    <div class="main-grid">
+        <div class="chart-panel">
+            <div class="chart-header">
+                <div>
+                    <div style="font-size:9px;color:var(--muted);letter-spacing:2px;">GOLD · XAU/USD · M5</div>
+                    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+                        <span class="price-display" id="currentPrice">$--.--</span>
+                        <span class="price-change" id="priceChange">--</span>
+                    </div>
+                    <div style="font-size:9px;color:var(--muted);margin-top:3px" id="priceRange">H: -- · L: --</div>
+                </div>
+                <div class="chart-indicators" style="border:none;padding:0;">
+                    <span><span class="dot orange"></span> EMA32</span>
+                    <span><span class="dot purple"></span> EMA176</span>
+                    <span><span class="dot green"></span> Suporte Long</span>
+                    <span><span class="dot red"></span> Resistência Short</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <iframe title="XAUUSD TradingView" srcdoc='
+                    <!DOCTYPE html><html>
+                    <head><meta charset="UTF-8">
+                    <style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#0d1117;}
+                    #tv_chart{width:100%;height:100%;}</style></head>
+                    <body><div id="tv_chart"></div>
+                    <script src="https://s3.tradingview.com/tv.js"><\/script>
+                    <script>(function(){
+                        function init(){
+                            if(typeof TradingView==="undefined"){setTimeout(init,300);return;}
+                            new TradingView.widget({
+                                autosize:true,symbol:"OANDA:XAUUSD",interval:"5",
+                                timezone:"America/Sao_Paulo",theme:"dark",style:"1",locale:"br",
+                                toolbar_bg:"#0d1117",enable_publishing:false,allow_symbol_change:false,
+                                studies:["RSI@tv-basicstudies","MACD@tv-basicstudies","BB@tv-basicstudies","MASimple@tv-basicstudies"],
+                                container_id:"tv_chart"
+                            });
+                        }
+                        init();
+                    })();<\/script>
+                    </body></html>
+                ' sandbox="allow-scripts allow-same-origin" loading="lazy"></iframe>
+            </div>
+            <div class="mtf-grid">
+                <div class="mtf-cell"><div class="mtf-label">M1</div><div class="mtf-signal mtf-neutral" id="mtfM1">--</div></div>
+                <div class="mtf-cell"><div class="mtf-label">M5</div><div class="mtf-signal mtf-neutral" id="mtfM5">--</div></div>
+                <div class="mtf-cell"><div class="mtf-label">M15</div><div class="mtf-signal mtf-neutral" id="mtfM15">--</div></div>
+                <div class="mtf-cell"><div class="mtf-label">H1</div><div class="mtf-signal mtf-neutral" id="mtfH1">--</div></div>
+            </div>
+            <div class="chart-indicators">
+                <span>📊 TradingView OANDA:XAUUSD · delay ~15min</span>
+                <span style="margin-left:auto;">Análise: Yahoo Finance (tempo real)</span>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="signal-card">
+                <div class="signal-label">SINAL ATUAL · XAU/USD</div>
+                <div class="signal-main signal-wait" id="signalDisplay">WAIT</div>
+                <div style="font-size:10px;color:var(--muted);">CONFIANÇA · <span id="confidenceDisplay">--</span>%</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill fill-wait" id="confidenceFill" style="width:0%"></div>
+                </div>
+                <div class="levels">
+                    <div class="level">
+                        <div class="level-label">ENTRADA</div>
+                        <div class="level-value" id="entryLevel" style="color:var(--text)">--.--</div>
+                    </div>
+                    <div class="level">
+                        <div class="level-label">TAKE PROFIT</div>
+                        <div class="level-value" id="tpLevel" style="color:var(--green)">--.--</div>
+                    </div>
+                    <div class="level">
+                        <div class="level-label">STOP LOSS</div>
+                        <div class="level-value" id="slLevel" style="color:var(--red)">--.--</div>
+                    </div>
+                </div>
+                <div style="font-size:9px;color:var(--muted);">
+                    R/R: <span style="color:var(--text)" id="rrRatio">1:--</span> ·
+                    ATR: <span style="color:var(--text)" id="atrValue">--</span> ·
+                    Risk: <span style="color:var(--text)" id="riskPoints">--</span> pts
+                </div>
+            </div>
+            <div class="indicators-grid">
+                <div class="indicator-card">
+                    <div class="indicator-name">RSI (14)</div>
+                    <div class="indicator-value" id="rsiValue" style="color:var(--muted)">--.-</div>
+                    <div class="indicator-sub" id="rsiLabel">Aguardando</div>
+                    <div class="indicator-bar"><div class="indicator-fill" id="rsiFill" style="width:50%;background:var(--muted)"></div></div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-name">UT BOT · ATR</div>
+                    <div class="indicator-value" id="utSignal" style="color:var(--muted);font-size:12px;">---</div>
+                    <div class="indicator-sub" id="utStops">Long: -- | Short: --</div>
+                    <div class="indicator-bar"><div class="indicator-fill" id="utFill" style="width:50%;background:var(--muted)"></div></div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-name">EMA 32/176</div>
+                    <div class="indicator-value" id="emaSignal" style="color:var(--muted);font-size:11px;">---</div>
+                    <div class="indicator-sub" id="emaValues">32: -- | 176: --</div>
+                    <div class="indicator-bar"><div class="indicator-fill" id="emaFill" style="width:50%;background:var(--muted)"></div></div>
+                </div>
+                <div class="indicator-card">
+                    <div class="indicator-name">MACD · 12/26/9</div>
+                    <div class="indicator-value" id="macdHist" style="color:var(--muted);font-size:11px;">--.--</div>
+                    <div class="indicator-sub" id="macdSignal">Signal: --</div>
+                    <div class="indicator-bar"><div class="indicator-fill" id="macdFill" style="width:50%;background:var(--muted)"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-grid">
+        <div class="panel">
+            <div class="panel-title">🎯 MOMENTUM SCORE</div>
+            <div class="momentum-score" id="momentumScore" style="color:var(--muted)">--%</div>
+            <div class="momentum-bar"><div class="momentum-fill" id="momentumFill" style="width:0%;background:var(--muted)"></div></div>
+            <div class="momentum-text" id="momentumText" style="color:var(--muted);border-color:var(--muted);">AGUARDANDO DADOS</div>
+        </div>
+        <div class="panel">
+            <div class="panel-title">🌍 SESSÕES DE MERCADO</div>
+            <div class="session-info">
+                <div>🌏 <strong>Asia</strong> (00-07h UTC): <span style="color:var(--muted)">Baixa volatilidade</span></div>
+                <div>🇬🇧 <strong>London</strong> (07-13h UTC): <span style="color:var(--gold)">Alta volatilidade</span></div>
+                <div>🗽 <strong>New York</strong> (13-20h UTC): <span style="color:var(--green)">Melhor período</span></div>
+                <div>⚡ <strong>Overlap</strong> (13-16h UTC): <span style="color:var(--green)">Pico de volume</span></div>
+                <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:6px;">
+                    <div id="currentSession">Sessão atual: --</div>
+                    <div style="color:var(--muted);font-size:9px;margin-top:3px;" id="nextSession">--</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-title">📋 HISTÓRICO DE SINAIS</div>
+            <div class="log-container" id="signalLog">
+                <div style="text-align:center;color:var(--muted);padding:30px;font-size:10px;">Conecte para visualizar sinais</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ===== CONFIG =====
+    const MAX_CANDLES     = 100;
+    const UPDATE_INTERVAL = 60000;
+    const UPDATE_COST     = 1;
+    const ATR_PERIOD      = 10;
+    const UT_MULTIPLIER   = 1.0;
+
+    // ===== STATE =====
+    let candles           = [];
+    let connected         = false;
+    let updateTimer       = null;
+    let countdownTimer    = null;
+    let countdownSeconds  = 60;
+    let signalHistory     = [];
+    let lastSignalType    = null;
+    let alertsEnabled     = true;
+    let alertTimeout      = null;
+    let popupTimeout      = null;
+    let dataSourceLabel   = '';
+    let totalUpdatesCount = 0;
+    let creditsUsedToday  = 0;
+
+    // ===== CREDITS =====
+    let userCredits     = parseInt(localStorage.getItem('xauCredits') || '100');
+    let selectedPackage = null;   // FIX #6: reset controlado por openCreditsModal
+
+    const creditPackages = [
+        { id:1, credits:50,  price:'R$ 29,90',  bonus:'',            color:'var(--blue)' },
+        { id:2, credits:150, price:'R$ 69,90',  bonus:'+20 grátis',  color:'var(--gold)' },
+        { id:3, credits:500, price:'R$ 199,90', bonus:'+100 grátis', color:'var(--green)' }
+    ];
+
+    function saveCredits() {
+        localStorage.setItem('xauCredits', userCredits.toString());
+        updateCreditsDisplay();
+    }
+
+    function useCredits(amount) {
+        if (userCredits < amount) {
+            showPopup('⚠️ Créditos Insuficientes', 'Recarregue para continuar recebendo sinais.');
+            return false;
+        }
+        userCredits -= amount;
+        creditsUsedToday += amount;
+        saveCredits();
+        if (userCredits <= 10)
+            showPopup('⚠️ Créditos Baixos', 'Apenas ' + userCredits + ' créditos restantes. Recarregue!');
+        return true;
+    }
+
+    function addCredits(amount) {
+        userCredits += amount;
+        saveCredits();
+        showPopup('✅ Créditos Adicionados', '+' + amount + ' créditos. Total: ' + userCredits);
+    }
+
+    function updateCreditsDisplay() {
+        const el = id => document.getElementById(id);
+        if (el('creditsAmount'))   el('creditsAmount').textContent  = userCredits;
+        if (el('modalCredits'))    el('modalCredits').textContent   = userCredits;
+        if (el('creditsUsedToday'))el('creditsUsedToday').textContent = creditsUsedToday;
+        if (el('totalUpdates'))    el('totalUpdates').textContent   = totalUpdatesCount;
+        if (el('creditsAmount')) {
+            el('creditsAmount').style.color =
+                userCredits <= 10  ? 'var(--red)'    :
+                userCredits <= 30  ? 'var(--orange)' : 'var(--gold)';
+        }
+    }
+
+    // FIX #1 — exportar para window (estavam presos no IIFE)
+    window.openCreditsModal = function() {
+        selectedPackage = null;   // FIX #6
+        updateCreditsDisplay();
+        const container = document.getElementById('packagesContainer');
+        container.innerHTML = creditPackages.map(p => `
+            <div class="package" onclick="selectPackage(${p.id})" id="pkg${p.id}">
+                <div class="package-credits" style="color:${p.color}">🪙 ${p.credits}</div>
+                <div class="package-price">${p.price}</div>
+                ${p.bonus ? `<div class="package-bonus">${p.bonus}</div>` : ''}
+            </div>
+        `).join('');
+        document.getElementById('creditsModal').classList.add('active');
+    };
+
+    window.closeCreditsModal = function() {
+        document.getElementById('creditsModal').classList.remove('active');
+        selectedPackage = null;
+    };
+
+    window.selectPackage = function(id) {
+        selectedPackage = id;
+        document.querySelectorAll('.package').forEach(el => el.classList.remove('selected'));
+        const pkgEl = document.getElementById('pkg' + id);
+        if (pkgEl) pkgEl.classList.add('selected');
+    };
+
+    window.purchaseCredits = function() {
+        if (!selectedPackage) { showPopup('❌ Selecione um pacote', 'Escolha um pacote primeiro.'); return; }
+        const pkg = creditPackages.find(p => p.id === selectedPackage);
+        if (!pkg) return;
+        const bonus = pkg.bonus ? parseInt(pkg.bonus.match(/\d+/)?.[0] || '0') : 0;
+        const total = pkg.credits + bonus;
+        addCredits(total);
+        window.closeCreditsModal();
+        showPopup('🎉 Compra Realizada!', total + ' créditos adicionados. ' + pkg.price);
+    };
+
+    window.addFreeCredits = function() {
+        addCredits(10);
+        showPopup('🎁 Créditos Grátis', '+10 créditos promocionais adicionados!');
+    };
+
+    // ===== INDICATORS =====
+    function ema(data, period) {
+        const k = 2 / (period + 1), r = [data[0]];
+        for (let i = 1; i < data.length; i++) r.push(data[i]*k + r[i-1]*(1-k));
+        return r;
+    }
+
+    function rsi(closes, period=14) {
+        if (closes.length < period+1) return new Array(closes.length).fill(null);
+        let gains=[], losses=[];
+        for (let i=1;i<closes.length;i++){
+            const d=closes[i]-closes[i-1]; gains.push(Math.max(d,0)); losses.push(Math.max(-d,0));
+        }
+        let ag=0, al=0;
+        for (let i=0;i<period;i++){ag+=gains[i];al+=losses[i];}
+        ag/=period; al/=period;
+        const out = new Array(period).fill(null);
+        out.push(al===0?100:100-100/(1+ag/al));
+        for (let i=period;i<gains.length;i++){
+            ag=(ag*(period-1)+gains[i])/period; al=(al*(period-1)+losses[i])/period;
+            out.push(al===0?100:100-100/(1+ag/al));
+        }
+        return out;
+    }
+
+    function macd(closes) {
+        const e12=ema(closes,12), e26=ema(closes,26);
+        const line=e12.map((v,i)=>v&&e26[i]?v-e26[i]:null);
+        const valid=line.filter(v=>v!==null);
+        const sig=ema(valid,9);
+        const off=line.length-valid.length;
+        const sigA=new Array(off+valid.length-sig.length).fill(null).concat(sig);
+        const hist=line.map((v,i)=>v!==null&&sigA[i]!==null?v-sigA[i]:null);
+        return {line, signal:sigA, histogram:hist};
+    }
+
+    function atr(candles, period=10) {
+        if (candles.length<2) return [0];
+        const tr=[0];
+        for (let i=1;i<candles.length;i++){
+            const h=candles[i].high,l=candles[i].low,pc=candles[i-1].close;
+            tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
+        }
+        const out=[tr[0]];
+        for (let i=1;i<tr.length;i++) out.push((out[i-1]*(period-1)+tr[i])/period);
+        return out;
+    }
+
+    function utBot(candles, period=10, mult=1.0) {
+        const atrVals=atr(candles,period);
+        const ls=[candles[0].close-atrVals[0]*mult], ss=[candles[0].close+atrVals[0]*mult];
+        const buy=[], sell=[];
+        for (let i=1;i<candles.length;i++){
+            const c=candles[i].close, a=atrVals[i]*mult;
+            ls[i]=c>ls[i-1]?Math.max(ls[i-1],c-a):c-a;
+            ss[i]=c<ss[i-1]?Math.min(ss[i-1],c+a):c+a;
+            if (candles[i-1].close<ls[i-1]&&c>ls[i]) buy.push(i);
+            if (candles[i-1].close>ss[i-1]&&c<ss[i]) sell.push(i);
+        }
+        return {longStops:ls, shortStops:ss, buySignals:buy, sellSignals:sell, atr:atrVals};
+    }
+
+    function stoch(candles, kP=14, dP=3) {
+        const k=[];
+        for (let i=0;i<candles.length;i++){
+            if (i<kP-1){k.push(null);continue;}
+            const sl=candles.slice(i-kP+1,i+1);
+            const hi=Math.max(...sl.map(c=>c.high)), lo=Math.min(...sl.map(c=>c.low));
+            k.push(hi===lo?50:((candles[i].close-lo)/(hi-lo))*100);
+        }
+        const d=[];
+        for (let i=0;i<k.length;i++){
+            if (i<kP+dP-2||k[i]===null){d.push(null);continue;}
+            const s=k.slice(i-dP+1,i+1).filter(v=>v!==null);
+            d.push(s.length?s.reduce((a,b)=>a+b,0)/s.length:null);
+        }
+        return {k, d};
+    }
+
+    function bBands(closes, period=20, dev=2) {
+        const sma=[],up=[],lo=[];
+        for (let i=0;i<closes.length;i++){
+            if (i<period-1){sma.push(null);up.push(null);lo.push(null);continue;}
+            const sl=closes.slice(i-period+1,i+1);
+            const m=sl.reduce((a,b)=>a+b,0)/period;
+            const std=Math.sqrt(sl.reduce((a,b)=>a+(b-m)**2,0)/period);
+            sma.push(m); up.push(m+dev*std); lo.push(m-dev*std);
+        }
+        return {sma,upper:up,lower:lo};
+    }
+
+    // ===== SIGNAL =====
+    function calcSignal(cd) {
+        if (cd.length<40) return null;
+        const closes=cd.map(c=>c.close), li=cd.length-1, cp=closes[li];
+        const rv=rsi(closes,14), e32=ema(closes,32), e176=ema(closes,176);
+        const mc=macd(closes), ut=utBot(cd,ATR_PERIOD,UT_MULTIPLIER);
+        const st=stoch(cd,14,3), bb=bBands(closes,20,2);
+
+        const r=rv[li], e32v=e32[li], e176v=e176[li];
+        const mh=mc.histogram[li], mhp=li>0?mc.histogram[li-1]:null;
+        const ls=ut.longStops[li], shrt=ut.shortStops[li], atrV=ut.atr[li];
+        const sk=st.k[li], sd=st.d[li], bbu=bb.upper[li], bbl=bb.lower[li];
+
+        let score=0; const reasons=[];
+
+        if (r!==null){
+            if (r<30)      {score+=2;reasons.push('RSI oversold');}
+            else if (r>70) {score-=2;reasons.push('RSI overbought');}
+            else if (r<40) {score+=1;reasons.push('RSI zona baixa');}
+            else if (r>60) {score-=1;reasons.push('RSI zona alta');}
+        }
+        if (ut.buySignals.includes(li))       {score+=3;reasons.push('UT Bot CRUZOU COMPRA');}
+        else if (ut.sellSignals.includes(li)) {score-=3;reasons.push('UT Bot CRUZOU VENDA');}
+        else if (cp>ls)                       {score+=1;reasons.push('Preço > Suporte');}
+        else                                  {score-=1;reasons.push('Preço < Resistência');}
+
+        if (e32v&&e176v){
+            if (e32v>e176v){score+=1;reasons.push('EMA32>176');}
+            else           {score-=1;reasons.push('EMA32<176');}
+        }
+        if (mh!==null&&mhp!==null){
+            if (mh>0&&mhp<=0)      {score+=2;reasons.push('MACD cruzou UP');}
+            else if (mh<0&&mhp>=0) {score-=2;reasons.push('MACD cruzou DOWN');}
+            else if (mh>0)         {score+=1;reasons.push('MACD positivo');}
+            else                   {score-=1;reasons.push('MACD negativo');}
+        }
+        if (sk!==null&&sd!==null){
+            if (sk<20&&sk>sd){score+=1;reasons.push('Stoch oversold');}
+            else if (sk>80&&sk<sd){score-=1;reasons.push('Stoch overbought');}
+        }
+        if (bbl!==null&&bbu!==null){
+            if (cp<=bbl){score+=1;reasons.push('Preço na banda inferior');}
+            else if (cp>=bbu){score-=1;reasons.push('Preço na banda superior');}
+        }
+
+        const h=new Date().getUTCHours();
+        const sBonus= h>=13&&h<16?1.5: h>=13&&h<20?1.0: h>=7&&h<13?0.5:0;
+        const ns=Math.min(10,(Math.abs(score)+sBonus)*1.25);
+
+        let sig, conf;
+        if (score>=4)       {sig='BUY';  conf=65+Math.min((score-4)*8,28);}
+        else if (score<=-4) {sig='SELL'; conf=65+Math.min((-score-4)*8,28);}
+        else if (score>=2)  {sig='BUY';  conf=48+score*9;}
+        else if (score<=-2) {sig='SELL'; conf=48+(-score)*9;}
+        else                {sig='HOLD'; conf=35+Math.abs(score)*6;}
+
+        conf=Math.min(93,Math.max(25,conf));
+        const tpD=atrV*2.5, slD=atrV*1.2;
+        const tp=sig==='BUY'?cp+tpD:sig==='SELL'?cp-tpD:cp;
+        const sl2=sig==='BUY'?cp-slD:sig==='SELL'?cp+slD:cp;
+
+        return {
+            signalType:sig, confidence:conf, score, normalizedScore:ns,
+            currentPrice:cp, takeProfit:tp, stopLoss:sl2, riskReward:slD>0?tpD/slD:0,
+            rsi:r, ema32:e32v, ema176:e176v, macdHist:mh, macdSignal:mc.signal[li],
+            longStop:ls, shortStop:shrt, atrVal:atrV, reasons,
+            utBuy:ut.buySignals.includes(li), utSell:ut.sellSignals.includes(li)
+        };
+    }
+
+    function calcMTF(cd) {
+        function analyse(sub) {
+            if (!sub||sub.length<15) return 'NEUTRAL';
+            const cl=sub.map(c=>c.close), li=sub.length-1;
+            const rv=rsi(cl,14), e32=ema(cl,Math.min(32,sub.length-1));
+            const e176=ema(cl,Math.min(176,sub.length-1)), mc=macd(cl);
+            let s=0;
+            const r=rv[li], e32v=e32[li], e176v=e176[li], mh=mc.histogram[li];
+            if (e32v&&e176v&&e32v>e176v) s++; else if (e32v&&e176v) s--;
+            if (mh>0) s++; else if (mh<0) s--;
+            if (r&&r<40) s++; else if (r&&r>60) s--;
+            return s>=2?'BUY':s<=-2?'SELL':'NEUTRAL';
+        }
+        return {m1:analyse(cd.slice(-20)), m5:analyse(cd.slice(-50)), m15:analyse(cd.slice(-70)), h1:analyse(cd.slice(-90))};
+    }
+
+    // ===== UI =====
+    const fmt = v => v!=null ? v.toFixed(2) : '--';
+
+    function updateUI(signal) {
+        if (!signal) return;
+        if (candles.length>=2){
+            const last=candles[candles.length-1], prev=candles[candles.length-2];
+            document.getElementById('currentPrice').textContent='$'+last.close.toFixed(2);
+            const pc=((last.close-prev.close)/prev.close)*100;
+            const ce=document.getElementById('priceChange');
+            ce.textContent=(pc>=0?'+':'')+pc.toFixed(2)+'%';
+            ce.className='price-change '+(pc>=0?'up':'down');
+            document.getElementById('priceRange').textContent='H: '+last.high.toFixed(2)+' · L: '+last.low.toFixed(2);
+        }
+
+        const s10=Math.round(signal.normalizedScore*10)/10;
+        const se=document.getElementById('systemScore');
+        se.textContent=s10.toFixed(1)+'/10';
+        se.style.color=s10>=7?'var(--green)':s10>=4?'var(--gold)':'var(--red)';
+
+        const labels={BUY:'COMPRA ▲',SELL:'VENDA ▼',HOLD:'AGUARDAR'};
+        const sd=document.getElementById('signalDisplay');
+        sd.textContent=labels[signal.signalType];
+        sd.className='signal-main signal-'+(signal.signalType==='BUY'?'buy':signal.signalType==='SELL'?'sell':'wait');
+
+        document.getElementById('confidenceDisplay').textContent=Math.round(signal.confidence);
+        const cf=document.getElementById('confidenceFill');
+        cf.style.width=signal.confidence+'%';
+        cf.className='confidence-fill fill-'+(signal.signalType==='BUY'?'buy':signal.signalType==='SELL'?'sell':'wait');
+
+        document.getElementById('entryLevel').textContent='$'+fmt(signal.currentPrice);
+        document.getElementById('tpLevel').textContent=signal.signalType!=='HOLD'?'$'+fmt(signal.takeProfit):'---';
+        document.getElementById('slLevel').textContent=signal.signalType!=='HOLD'?'$'+fmt(signal.stopLoss):'---';
+        document.getElementById('rrRatio').textContent=signal.signalType!=='HOLD'?'1:'+signal.riskReward.toFixed(1):'1:--';
+        document.getElementById('atrValue').textContent=fmt(signal.atrVal);
+        document.getElementById('riskPoints').textContent=signal.signalType!=='HOLD'?Math.abs(signal.currentPrice-signal.stopLoss).toFixed(1):'--';
+
+        const rc=signal.rsi<30?'var(--green)':signal.rsi>70?'var(--red)':signal.rsi<40?'var(--gold)':'var(--text)';
+        document.getElementById('rsiValue').textContent=signal.rsi!=null?signal.rsi.toFixed(1):'--';
+        document.getElementById('rsiValue').style.color=rc;
+        document.getElementById('rsiLabel').textContent=signal.rsi<30?'OVERSOLD':signal.rsi>70?'OVERBOUGHT':signal.rsi<40?'Zona baixa':'Normal';
+        document.getElementById('rsiFill').style.width=(signal.rsi||50)+'%';
+        document.getElementById('rsiFill').style.background=rc;
+
+        const uc=signal.utBuy?'var(--green)':signal.utSell?'var(--red)':'var(--muted)';
+        document.getElementById('utSignal').textContent=signal.utBuy?'CRUZOU COMPRA':signal.utSell?'CRUZOU VENDA':'NEUTRO';
+        document.getElementById('utSignal').style.color=uc;
+        document.getElementById('utStops').textContent='Long: '+fmt(signal.longStop)+' | Short: '+fmt(signal.shortStop);
+        document.getElementById('utFill').style.width=signal.utBuy?'100%':signal.utSell?'0%':'50%';
+        document.getElementById('utFill').style.background=uc;
+
+        const eu=signal.ema32>signal.ema176;
+        document.getElementById('emaSignal').textContent=eu?'GOLDEN CROSS':'DEATH CROSS';
+        document.getElementById('emaSignal').style.color=eu?'var(--green)':'var(--red)';
+        document.getElementById('emaValues').textContent='32: '+fmt(signal.ema32)+' | 176: '+fmt(signal.ema176);
+        document.getElementById('emaFill').style.width=eu?'80%':'20%';
+        document.getElementById('emaFill').style.background=eu?'var(--green)':'var(--red)';
+
+        const mc2=signal.macdHist>0?'var(--green)':'var(--red)';
+        document.getElementById('macdHist').textContent=fmt(signal.macdHist);
+        document.getElementById('macdHist').style.color=mc2;
+        document.getElementById('macdSignal').textContent='Signal: '+(signal.macdSignal?signal.macdSignal.toFixed(2):'--');
+        document.getElementById('macdFill').style.width=signal.macdHist>0?'75%':'25%';
+        document.getElementById('macdFill').style.background=mc2;
+
+        const mtf=calcMTF(candles);
+        const mtfMap={BUY:{cls:'mtf-buy',text:'BUY ▲'},SELL:{cls:'mtf-sell',text:'SELL ▼'},NEUTRAL:{cls:'mtf-neutral',text:'WAIT'}};
+        ['M1','M5','M15','H1'].forEach((tf,i)=>{
+            const k=['m1','m5','m15','h1'][i];
+            const info=mtfMap[mtf[k]]||mtfMap.NEUTRAL;
+            const el=document.getElementById('mtf'+tf);
+            el.textContent=info.text; el.className='mtf-signal '+info.cls;
+        });
+
+        updateMomentum(signal);
+        addToLog(signal);
+    }
+
+    function updateMomentum(signal) {
+        const h=new Date().getUTCHours();
+        let score=h>=13&&h<16?30:h>=13&&h<20?25:h>=7&&h<13?15:5;
+        if (signal.utBuy||signal.utSell) score+=30;
+        if (signal.rsi<35||signal.rsi>65) score+=20;
+        score=Math.min(score,100);
+
+        document.getElementById('momentumScore').textContent=score+'%';
+        document.getElementById('momentumFill').style.width=score+'%';
+
+        const [color,text]=score>=80?['var(--green)','🔥 MOMENTO EXCELENTE']:
+                           score>=55?['var(--gold)','👍 BOM MOMENTO']:
+                           score>=35?['var(--orange)','⏳ REGULAR']:['var(--red)','🚫 EVITAR'];
+        document.getElementById('momentumScore').style.color=color;
+        document.getElementById('momentumFill').style.background=color;
+        const mt=document.getElementById('momentumText');
+        mt.textContent=text; mt.style.color=color; mt.style.borderColor=color;
+    }
+
+    function addToLog(signal) {
+        // FIX #7: lógica de deduplicação mais precisa
+        const isUTEvent = signal.utBuy || signal.utSell;
+        if (signal.signalType === lastSignalType && !isUTEvent) return;
+        lastSignalType = signal.signalType;
+
+        const time=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+        signalHistory.unshift({
+            time, type:signal.signalType,
+            price:signal.currentPrice.toFixed(2),
+            confidence:Math.round(signal.confidence),
+            reason:signal.reasons[0]||''
+        });
+        if (signalHistory.length>20) signalHistory.pop();
+
+        document.getElementById('signalLog').innerHTML=signalHistory.map(s=>{
+            // FIX #3: classe correta para HOLD (não mais cai no fallback 'sell')
+            const cls  = s.type==='BUY'?'buy':s.type==='SELL'?'sell':'hold';
+            const label= s.type==='BUY'?'COMPRA':s.type==='SELL'?'VENDA':'HOLD';
+            return `<div class="log-entry">
+                <span class="log-time">${s.time}</span>
+                <span class="log-signal log-${cls}">${label}</span>
+                <span class="log-info">$${s.price} · ${s.confidence}% · ${s.reason}</span>
+            </div>`;
+        }).join('');
+
+        if (signal.signalType!=='HOLD'&&signal.confidence>=50)
+            triggerAlert(signal.signalType==='BUY',signal.currentPrice,signal.confidence);
+    }
+
+    function triggerAlert(isBuy,price,confidence){
+        if (!alertsEnabled) return;
+        try {
+            if ('speechSynthesis' in window){
+                window.speechSynthesis.cancel();
+                const msg=new SpeechSynthesisUtterance();
+                msg.lang='pt-BR'; msg.rate=0.9;
+                msg.text=isBuy?`Sinal de compra no ouro. Confiança ${Math.round(confidence)}%.`
+                               :`Sinal de venda no ouro. Confiança ${Math.round(confidence)}%.`;
+                window.speechSynthesis.speak(msg);
+            }
+        } catch(e){}
+        const banner=document.getElementById('alertBanner');
+        banner.className='alert-banner show '+(isBuy?'alert-buy':'alert-sell');
+        document.getElementById('alertIcon').textContent=isBuy?'▲':'▼';
+        document.getElementById('alertText').textContent=(isBuy?'COMPRA':'VENDA')+' XAU/USD · $'+price.toFixed(2);
+        clearTimeout(alertTimeout);
+        alertTimeout=setTimeout(()=>banner.classList.remove('show'),7000);
+    }
+
+    function showPopup(title,desc){
+        document.getElementById('popupTitle').textContent=title;
+        document.getElementById('popupDesc').textContent=desc;
+        const p=document.getElementById('popup');
+        p.classList.add('show');
+        clearTimeout(popupTimeout);
+        popupTimeout=setTimeout(()=>p.classList.remove('show'),4000);
+    }
+
+    function updateSessions(){
+        const h=new Date().getUTCHours();
+        document.getElementById('asiaBadge').classList.toggle('active',  h>=0&&h<7);
+        document.getElementById('londonBadge').classList.toggle('active',h>=7&&h<13);
+        document.getElementById('nyBadge').classList.toggle('active',    h>=13&&h<20);
+        let cur,nxt;
+        if      (h>=0&&h<7)   {cur='Asia (baixa)';       nxt='London em '+(7-h)+'h';}
+        else if (h>=7&&h<13)  {cur='London (alta)';      nxt='NY em '+(13-h)+'h';}
+        else if (h>=13&&h<16) {cur='🔥 OVERLAP (PICO)'; nxt='Fim overlap em '+(16-h)+'h';}
+        else if (h>=16&&h<20) {cur='New York';            nxt='Fechamento em '+(20-h)+'h';}
+        else                  {cur='Fora de sessão';     nxt='Asia em '+(24-h)+'h';}
+        document.getElementById('currentSession').textContent='Sessão: '+cur;
+        document.getElementById('nextSession').textContent='Próxima: '+nxt;
+    }
+
+    // FIX #5: AbortController manual — compatível com todos os browsers
+    function fetchWithTimeout(url, ms) {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), ms);
+        return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(tid));
+    }
+
+    async function fetchYahoo(symbol){
+        const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=5m&range=5d`;
+        const res  = await fetchWithTimeout('https://api.allorigins.win/get?url=' + encodeURIComponent(yUrl), 15000);
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        const outer = await res.json();
+        const data  = JSON.parse(outer.contents);
+        const result = data?.chart?.result?.[0];
+        if (!result) throw new Error('Sem dados');
+        const q=result.indicators.quote[0], ts=result.timestamp;
+        const arr=[];
+        for (let i=0;i<ts.length;i++){
+            if (q.open[i]==null) continue;
+            arr.push({timestamp:ts[i]*1000,open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i],volume:q.volume?q.volume[i]||0:0});
+        }
+        if (arr.length<20) throw new Error('Candles insuficientes');
+        return arr.slice(-MAX_CANDLES);
+    }
+
+    async function fetchCandleData(){
+        for (const {sym,label} of [{sym:'XAUUSD=X',label:'Yahoo XAU/USD Spot'},{sym:'GC=F',label:'Yahoo Gold Futures'}]){
+            try { const d=await fetchYahoo(sym); dataSourceLabel=label; return d; }
+            catch(e){ continue; }
+        }
+        return null;
+    }
+
+    async function tick(){
+        if (!connected) return;
+        // FIX #2: sem créditos → para o sistema por completo (não apenas a chamada)
+        if (!useCredits(UPDATE_COST)){
+            showPopup('⚠️ Sem Créditos', 'Sistema pausado. Recarregue para continuar.');
+            disconnectSystem();
+            return;
+        }
+        document.getElementById('statusBadge').textContent='BUSCANDO...';
+        document.getElementById('statusBadge').className='status status-off';
+
+        const data=await fetchCandleData();
+        if (!data){
+            document.getElementById('statusBadge').textContent='ERRO API';
+            document.getElementById('statusBadge').className='status status-off';
+            return;
+        }
+        candles=data;
+        totalUpdatesCount++;
+        document.getElementById('candleCount').textContent=candles.length;
+        document.getElementById('lastUpdate').textContent=new Date().toLocaleTimeString('pt-BR');
+        document.getElementById('dataSource').textContent=dataSourceLabel;
+
+        const signal=calcSignal(candles);
+        if (signal) updateUI(signal);
+
+        document.getElementById('statusBadge').textContent='LIVE';
+        document.getElementById('statusBadge').className='status status-on';
+
+        // FIX #4: reset do countdown DEPOIS do tick terminar
+        countdownSeconds=60;
+        updateCreditsDisplay();
+    }
+
+    function startCountdown(){
+        clearInterval(countdownTimer);
+        countdownTimer=setInterval(()=>{
+            countdownSeconds=Math.max(0,countdownSeconds-1);
+            document.getElementById('nextUpdateIn').textContent=countdownSeconds+'s';
+        },1000);
+    }
+
+    window.connectSystem = function(){
+        if (connected) return;
+        if (userCredits<UPDATE_COST){
+            showPopup('⚠️ Créditos Insuficientes','Você precisa de pelo menos '+UPDATE_COST+' crédito para conectar.');
+            return;
+        }
+        connected=true;
+        document.getElementById('statusBadge').textContent='CONECTANDO...';
+        document.getElementById('statusBadge').className='status status-off';
+
+        // FIX #4: inicia interval e countdown apenas após o primeiro tick concluir
+        tick().then(()=>{
+            if (!connected) return;
+            updateTimer=setInterval(tick,UPDATE_INTERVAL);
+            startCountdown();
+        });
+
+        showPopup('Sistema Conectado','Analisando XAU/USD. Custo: '+UPDATE_COST+' crédito/update');
+    };
+
+    window.disconnectSystem = function(){
+        if (!connected) return;
+        connected=false;
+        clearInterval(updateTimer);   updateTimer=null;
+        clearInterval(countdownTimer); countdownTimer=null;
+        document.getElementById('statusBadge').textContent='OFFLINE';
+        document.getElementById('statusBadge').className='status status-off';
+        document.getElementById('nextUpdateIn').textContent='--s';
+        showPopup('Sistema Pausado','Conexão interrompida.');
+    };
+
+    window.toggleAlerts = function(){
+        alertsEnabled=!alertsEnabled;
+        const btn=document.getElementById('alertBtn');
+        btn.textContent=alertsEnabled?'🔔 ALERTS ON':'🔕 ALERTS OFF';
+        btn.style.color=alertsEnabled?'var(--blue)':'var(--muted)';
+        showPopup('Alertas '+(alertsEnabled?'Ativados':'Desativados'),'');
+    };
+
+    // ===== INIT =====
+    updateCreditsDisplay();
+    updateSessions();
+    setInterval(updateSessions,30000);
+    document.getElementById('nextUpdateIn').textContent='--s';
+    showPopup('Sistema Pronto','Créditos: '+userCredits+' | Clique CONNECT para iniciar');
+})();
+</script>
+</body>
+</html>
