@@ -797,7 +797,8 @@ setTimeout(()=>{
 // Auto-enter after 8s
 let autoTimer = setTimeout(enterDashboard, 8000);
 
-window.enterDashboard = function(){
+window.enterDashboard = enterDashboard;
+function enterDashboard(){
   clearTimeout(autoTimer);
   const s = document.getElementById('splash');
   s.classList.add('out');
