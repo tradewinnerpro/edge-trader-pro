@@ -1,641 +1,715 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AURUM SIGNAL • Velocity Clock & Gold Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AURUM VELOCITY • Fear Gauge & Gold Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-:root{
-  --bg-deep: #04070c;
-  --bg-card: #0b0f19;
-  --bg-elevated: #111827;
-  --border-dim: rgba(76, 95, 120, 0.25);
-  --border-gold: rgba(196, 154, 82, 0.4);
-  --gold: #d4af5a;
-  --gold-glow: #e6c87a;
-  --green-bull: #2ad48b;
-  --red-bear: #e35f6b;
-  --amber-warning: #ffaa44;
-  --blue-accent: #4d9eff;
-  --text-main: #edf2fb;
-  --text-dim: #8f9bb3;
-  --transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-}
+        body {
+            background: #05070c;
+            color: #eef2ff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            overflow-x: hidden;
+        }
 
-body{
-  background: var(--bg-deep);
-  color: var(--text-main);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  line-height: 1.4;
-}
+        /* scroll */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(196, 154, 82, 0.4);
+            border-radius: 4px;
+        }
 
-/* custom scroll */
-::-webkit-scrollbar{width: 4px; height: 4px;}
-::-webkit-scrollbar-track{background: transparent;}
-::-webkit-scrollbar-thumb{background: var(--border-gold); border-radius: 4px;}
+        /* HEADER */
+        .glass-header {
+            background: rgba(5, 7, 12, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(196, 154, 82, 0.2);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-weight: 900;
+            font-size: 1.7rem;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #e8c878, #c49a52);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .price-panel {
+            display: flex;
+            align-items: baseline;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .gold-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 38px;
+            font-weight: 800;
+            color: #e8c878;
+        }
+        .gold-change {
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .up { color: #2ad48b; }
+        .dn { color: #e35f6b; }
+        .badge-live {
+            background: #0f121c;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            border: 1px solid rgba(42,212,139,0.5);
+        }
 
-/* HEADER */
-.header{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 28px;
-  background: rgba(4,7,12,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-dim);
-  position: sticky;
-  top:0;
-  z-index: 100;
-}
-.logo{
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 800;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-}
-.logo span{color: var(--gold);}
-.live-price-area{
-  display: flex;
-  gap: 28px;
-  align-items: baseline;
-  flex-wrap: wrap;
-}
-.xau-big{
-  font-size: 36px;
-  font-weight: 800;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--gold-glow);
-}
-.xau-change{
-  font-weight: 700;
-  font-size: 18px;
-}
-.up{color: var(--green-bull);}
-.dn{color: var(--red-bear);}
-.update-tag{
-  font-size: 10px;
-  background: var(--bg-elevated);
-  padding: 4px 12px;
-  border-radius: 30px;
-  border: 1px solid var(--border-dim);
-}
+        /* container */
+        .container {
+            max-width: 1600px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
 
-/* main grid 2 colunas */
-.container{
-  max-width: 1600px;
-  margin: 20px auto;
-  padding: 0 24px;
-}
-.two-columns{
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
-}
-@media(max-width: 1000px){ .two-columns{ grid-template-columns: 1fr; } }
+        /* grid principal: medidores duplos + news */
+        .gauge-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 1000px) {
+            .gauge-row { grid-template-columns: 1fr; }
+        }
 
-/* VELOCITY CLOCK (relógio vermelho->verde) */
-.velocity-card{
-  background: var(--bg-card);
-  border-radius: 28px;
-  border: 1px solid var(--border-dim);
-  padding: 18px 24px;
-  margin-bottom: 24px;
-  transition: var(--transition);
-}
-.velocity-header{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-.clock-meter{
-  background: #1a1f2c;
-  border-radius: 60px;
-  height: 14px;
-  overflow: hidden;
-  margin: 12px 0;
-}
-.clock-fill{
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, #e35f6b, #ffaa44, #2ad48b);
-  border-radius: 60px;
-  transition: width 0.4s ease;
-  box-shadow: 0 0 8px rgba(42,212,139,0.3);
-}
-.velocity-value{
-  font-size: 42px;
-  font-weight: 800;
-  font-family: monospace;
-  display: inline-block;
-  margin-right: 8px;
-}
-.velocity-label{
-  font-size: 12px;
-  color: var(--text-dim);
-}
-.volatility-indicator{
-  margin-top: 12px;
-  display: flex;
-  gap: 14px;
-  font-size: 11px;
-}
-/* sessões ativas */
-.sessions-row{
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-.session-pill{
-  background: #0f1420;
-  padding: 4px 12px;
-  border-radius: 30px;
-  font-size: 10px;
-  font-weight: 600;
-  border-left: 2px solid var(--text-dim);
-}
-.session-pill.active{
-  border-left-color: var(--green-bull);
-  background: rgba(42,212,139,0.12);
-  color: var(--green-bull);
-}
+        /* CARD VELOCIMETRO FUTURISTA (relógio vermelho->verde) */
+        .speedometer-card {
+            background: linear-gradient(145deg, #0b0f19, #070a10);
+            border-radius: 48px;
+            border: 1px solid rgba(196,154,82,0.25);
+            padding: 22px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transition: all 0.2s;
+        }
+        .speedo-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .speedo-canvas {
+            text-align: center;
+            position: relative;
+        }
+        canvas#speedCanvas {
+            width: 100%;
+            max-width: 320px;
+            background: transparent;
+            margin: 0 auto;
+        }
+        .speed-value {
+            font-size: 52px;
+            font-weight: 800;
+            font-family: monospace;
+            text-align: center;
+            margin-top: -20px;
+            color: #ffd966;
+        }
+        .speed-label {
+            text-align: center;
+            font-size: 12px;
+            color: #8f9bb5;
+        }
+        .momentum-tag {
+            display: inline-block;
+            background: #111827;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-top: 12px;
+            font-weight: 700;
+        }
 
-/* NOTICIAS CLASSIFICADAS 1-5 TOURO/URSO */
-.news-main{
-  background: var(--bg-card);
-  border-radius: 24px;
-  border: 1px solid var(--border-dim);
-  overflow: hidden;
-}
-.news-tabs{
-  display: flex;
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--border-dim);
-  gap: 2px;
-}
-.tab{
-  flex:1;
-  padding: 12px 8px;
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.tab.active{
-  color: var(--gold);
-  border-bottom: 2px solid var(--gold);
-  background: rgba(212,175,90,0.08);
-}
-.news-pane{
-  display: none;
-  max-height: 580px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-.news-pane.active{ display: block; }
-.news-item-card{
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  transition: background 0.2s;
-  cursor: pointer;
-}
-.news-item-card:hover{ background: rgba(212,175,90,0.05); }
-.news-head{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-  align-items: center;
-}
-.bull-strength, .bear-strength{
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 40px;
-  background: rgba(0,0,0,0.5);
-}
-.strength-1{ color: #6c757d; border-left: 2px solid #6c757d; }
-.strength-2{ color: #86a3c3; border-left: 2px solid #86a3c3; }
-.strength-3{ color: #d4af5a; border-left: 2px solid #d4af5a; }
-.strength-4{ color: var(--green-bull); border-left: 2px solid var(--green-bull); font-weight: 900; }
-.strength-5{ color: #1effa0; border-left: 2px solid #1effa0; text-shadow: 0 0 2px; }
-.bear-1{ color: #6c757d; }
-.bear-2{ color: #c47a7a; }
-.bear-3{ color: #ff8c6e; }
-.bear-4{ color: var(--red-bear); }
-.bear-5{ color: #ff2f4a; text-shadow: 0 0 2px; }
+        /* FEAR & GREED GAUGE (estilo relógio/medidor circular) */
+        .fear-card {
+            background: linear-gradient(145deg, #0b0f19, #070a10);
+            border-radius: 48px;
+            border: 1px solid rgba(196,154,82,0.25);
+            padding: 22px 20px;
+        }
+        .fear-canvas-wrap {
+            text-align: center;
+            position: relative;
+        }
+        canvas#fearCanvas {
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        .fear-value-text {
+            font-size: 48px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+        .fear-status {
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
 
-.news-title{
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-.news-summary{
-  font-size: 11px;
-  color: var(--text-dim);
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
-}
-.news-source{ font-size: 9px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 12px;}
+        /* NOTICIAS CLASSIFICADAS 1-5 TOURO/URSO */
+        .news-feed {
+            background: #0b0f19;
+            border-radius: 32px;
+            border: 1px solid rgba(196,154,82,0.2);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        .news-tabs {
+            display: flex;
+            background: #111827;
+            border-bottom: 1px solid #1e293b;
+        }
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 14px 8px;
+            color: #8f9bb5;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            color: #c49a52;
+            border-bottom: 2px solid #c49a52;
+        }
+        .news-pane {
+            display: none;
+            max-height: 540px;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .news-pane.active {
+            display: block;
+        }
+        .news-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .news-item:hover {
+            background: rgba(196,154,82,0.08);
+        }
+        .strength-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 40px;
+            margin-bottom: 8px;
+        }
+        .bull-5 { background: #1a3a2a; color: #2ad48b; border-left: 3px solid #2ad48b; }
+        .bull-4 { background: #1e3a2a; color: #7be0a5; }
+        .bull-3 { background: #2a2a1a; color: #e8c878; }
+        .bull-2 { background: #2a2418; color: #c9a96b; }
+        .bull-1 { background: #252525; color: #adadad; }
+        .bear-5 { background: #3a1a1a; color: #ff6b7c; }
+        .bear-4 { background: #3a2323; color: #f05b6e; }
+        .bear-3 { background: #2a1e1e; color: #ff8a6f; }
+        .bear-2 { background: #221c1c; color: #c77d6e; }
+        .bear-1 { background: #1f1c1c; color: #a7857a; }
+        .news-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .news-meta {
+            font-size: 10px;
+            color: #6a7a9a;
+            display: flex;
+            gap: 16px;
+        }
 
-/* Right panel: Fear & Greed, DXY, indices */
-.right-stack{
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.fear-card, .dxy-card, .global-card{
-  background: var(--bg-card);
-  border-radius: 24px;
-  border: 1px solid var(--border-dim);
-  padding: 18px;
-}
-.fear-gauge-bg{
-  background: linear-gradient(90deg, #2e7d32, #f9a825, #c62828);
-  height: 12px;
-  border-radius: 20px;
-  margin: 12px 0;
-}
-.fear-value{
-  font-size: 32px;
-  font-weight: 800;
-}
-.dxy-big{
-  font-size: 28px;
-  font-family: monospace;
-  font-weight: 700;
-}
-.index-ticker{
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.micro-index{
-  background: var(--bg-elevated);
-  border-radius: 20px;
-  padding: 8px;
-  text-align: center;
-  flex:1;
-}
+        /* right panel info indices */
+        .info-side {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .info-card {
+            background: #0b0f19;
+            border-radius: 28px;
+            padding: 18px;
+            border: 1px solid rgba(196,154,82,0.15);
+        }
+        .dxy-value {
+            font-size: 32px;
+            font-family: monospace;
+            font-weight: 700;
+        }
+        .indices-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .indice-badge {
+            background: #111827;
+            padding: 8px 12px;
+            border-radius: 20px;
+            flex: 1;
+            text-align: center;
+        }
 
-/* modal de tradução/toast */
-.toast-gold{
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #0f172a;
-  border-left: 4px solid var(--gold);
-  padding: 12px 20px;
-  border-radius: 16px;
-  font-size: 12px;
-  z-index: 1000;
-  transform: translateY(30px);
-  opacity: 0;
-  transition: 0.25s;
-  pointer-events: none;
-}
-.toast-gold.show{ transform: translateY(0); opacity: 1;}
+        /* toast */
+        .toast-fixed {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172ae6;
+            backdrop-filter: blur(8px);
+            border-left: 4px solid #c49a52;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 200;
+            transform: translateY(40px);
+            opacity: 0;
+            transition: 0.25s;
+            pointer-events: none;
+        }
+        .toast-fixed.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
-/* flash price */
-@keyframes flashUp{ 0%{color:white}50%{color:#2ad48b; text-shadow:0 0 4px}100%{color:var(--gold-glow)}}
-@keyframes flashDn{ 0%{color:white}50%{color:#e35f6b}100%{color:var(--gold-glow)}}
-.flash-up{ animation: flashUp 0.5s ease; }
-.flash-dn{ animation: flashDn 0.5s ease; }
-</style>
+        @keyframes flashGold {
+            0% { text-shadow: 0 0 0px transparent; }
+            50% { text-shadow: 0 0 10px #c49a52; color: #ffe6a3; }
+        }
+        .flash-price {
+            animation: flashGold 0.5s ease;
+        }
+    </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">⚡ AURUM <span>VELOCITY</span></div>
-  <div class="live-price-area">
-    <span class="xau-big" id="xauPrice">$—.——</span>
-    <span class="xau-change" id="xauChange">0.00%</span>
-    <span class="update-tag"><span id="liveIcon">🔴</span> <span id="refreshTimer">AO VIVO</span></span>
-  </div>
+<div class="glass-header">
+    <div class="logo">✦ AURUM VELOCITY</div>
+    <div class="price-panel">
+        <span class="gold-price" id="goldPriceDisplay">$—.——</span>
+        <span class="gold-change" id="goldChangeDisplay">0.00%</span>
+        <span class="badge-live"><span id="liveIndicator">●</span> TEMPO REAL</span>
+    </div>
 </div>
 
 <div class="container">
-  <!-- VELOCITY CLOCK (relógio de velocidade vermelho -> verde) -->
-  <div class="velocity-card">
-    <div class="velocity-header">
-      <span>📈 VELOCITY CLOCK • MOMENTUM RADAR</span>
-      <span>FORÇA DIRECIONAL</span>
-    </div>
-    <div class="clock-meter">
-      <div class="clock-fill" id="velocityFill" style="width: 50%;"></div>
-    </div>
-    <div>
-      <span class="velocity-value" id="velocityValue">0.00</span>
-      <span class="velocity-label">pontos / minuto</span>
-      <span id="directionText" style="margin-left: 12px; font-weight:700;">NEUTRO</span>
-    </div>
-    <div class="volatility-indicator">
-      <span>⚡ ATR (volatilidade): <strong id="atrValue">—</strong></span>
-      <span>📊 Amplitude: <strong id="rangeValue">—</strong></span>
-    </div>
-    <div class="sessions-row" id="sessionList">
-      <div class="session-pill" data-session="asia">🇯🇵 TÓQUIO</div>
-      <div class="session-pill" data-session="london">🇬🇧 LONDRES</div>
-      <div class="session-pill" data-session="ny">🇺🇸 NOVA YORK</div>
-    </div>
-  </div>
+    <!-- DOIS GRANDES MEDIDORES: VELOCIMETRO + FEAR GAUGE (estilo relógio) -->
+    <div class="gauge-row">
+        <!-- SPEEDOMETER (vermelho -> verde) -->
+        <div class="speedometer-card">
+            <div class="speedo-title">
+                <span>⚡ VELOCIDADE DO MERCADO</span>
+                <span>MOMENTUM RADAR</span>
+            </div>
+            <div class="speedo-canvas">
+                <canvas id="speedCanvas" width="400" height="240" style="width:100%; height:auto; max-width:400px"></canvas>
+                <div class="speed-value" id="speedValue">0.00</div>
+                <div class="speed-label">pontos / minuto</div>
+            </div>
+            <div style="text-align: center; margin-top: 12px;">
+                <span class="momentum-tag" id="momentumDirTag">NEUTRO</span>
+                <span class="momentum-tag" id="atrTag" style="margin-left: 8px;">ATR: —</span>
+            </div>
+        </div>
 
-  <!-- duas colunas: notícias classificadas + direita -->
-  <div class="two-columns">
-    <!-- NOTÍCIAS COM CLASSIFICAÇÃO 1-5 TOURO/URSO -->
-    <div class="news-main">
-      <div class="news-tabs">
-        <button class="tab active" data-tab="all">📰 TODAS NOTÍCIAS</button>
-        <button class="tab" data-tab="bull">🐂 TOUROS (1-5★)</button>
-        <button class="tab" data-tab="bear">🐻 URSOS (1-5★)</button>
-        <button class="tab" data-tab="impact">⚡ IMPACTO FORTE</button>
-      </div>
-      <div id="pane-all" class="news-pane active"><div style="padding: 30px; text-align:center;">Carregando notícias e traduções automáticas...</div></div>
-      <div id="pane-bull" class="news-pane"></div>
-      <div id="pane-bear" class="news-pane"></div>
-      <div id="pane-impact" class="news-pane"></div>
+        <!-- FEAR & GREED GAUGE (circular estilo relógio) -->
+        <div class="fear-card">
+            <div class="speedo-title">
+                <span>😨 ÍNDICE MEDO & GANÂNCIA</span>
+                <span>CNN / VIX</span>
+            </div>
+            <div class="fear-canvas-wrap">
+                <canvas id="fearCanvas" width="400" height="240" style="width:100%; height:auto; max-width:380px"></canvas>
+                <div class="fear-value-text" id="fearValueText">49</div>
+                <div class="fear-status" id="fearStatusLabel">NEUTRO</div>
+            </div>
+            <div style="font-size: 10px; text-align: center; margin-top: 6px;">↓ Medo extremo = Ouro sobe   |   Ganância excessiva = Ouro pressão</div>
+        </div>
     </div>
 
-    <!-- RIGHT PANEL: FEAR, DXY, INDICES GLOBAIS -->
-    <div class="right-stack">
-      <div class="fear-card">
-        <div style="display:flex; justify-content: space-between;"><span>😨 ÍNDICE MEDO & GANÂNCIA</span><span id="fearSource">CNN / VIX</span></div>
-        <div class="fear-gauge-bg"></div>
-        <div><span class="fear-value" id="fearValue">45</span><span> / 100</span> <span id="fearLabel" style="margin-left: 12px;">NEUTRO</span></div>
-        <div style="font-size: 10px; margin-top: 8px;">⚠️ Medo extremo → busca por ouro | Ganância excessiva → correção</div>
-      </div>
-      <div class="dxy-card">
-        <div>💵 DXY - DÓLAR INDEX</div>
-        <div class="dxy-big" id="dxySpot">—</div>
-        <div id="dxyChange" class="up">0.00%</div>
-        <div style="margin-top: 6px; font-size:11px;">Correlação inversa com ouro: <span id="corrHint">—</span></div>
-      </div>
-      <div class="global-card">
-        <div>🌍 INDICES GLOBAIS & RISCO</div>
-        <div class="index-ticker">
-          <div class="micro-index"><span>🇺🇸 S&P500</span><br><strong id="spxVal">—</strong><span id="spxChg" class="index-change">0%</span></div>
-          <div class="micro-index"><span>📉 VIX</span><br><strong id="vixVal">—</strong><span id="vixChg" class="index-change"></span></div>
-          <div class="micro-index"><span>⛏️ GDX (OURO MIN)</span><br><strong id="gdxVal">—</strong><span id="gdxChg">0%</span></div>
+    <!-- segunda linha: indices globais + dxy -->
+    <div class="info-side">
+        <div class="info-card">
+            <div>💵 DXY - DÓLAR INDEX</div>
+            <div class="dxy-value" id="dxySpot">—</div>
+            <div id="dxyChange" class="up">0.00%</div>
+            <div style="font-size: 11px; margin-top: 6px;">Correlação inversa com ouro: <span id="corrHint">—</span></div>
         </div>
-        <div class="index-ticker" style="margin-top: 8px;">
-          <div class="micro-index"><span>🇨🇳 CNY (USD/CNH)</span><br><strong id="cnyVal">—</strong><span id="cnyChg">—%</span></div>
-          <div class="micro-index"><span>🛢️ WTI CRUDE</span><br><strong id="wtiVal">—</strong><span id="wtiChg">—%</span></div>
+        <div class="info-card">
+            <div>🌍 INDICES RELEVANTES & VOLATILIDADE</div>
+            <div class="indices-row">
+                <div class="indice-badge"><span>S&P500</span><br><strong id="spxVal">—</strong> <span id="spxChg" style="font-size:10px;">0%</span></div>
+                <div class="indice-badge"><span>VIX (MEDO)</span><br><strong id="vixVal">—</strong> <span id="vixDir"></span></div>
+                <div class="indice-badge"><span>GDX (MINER)</span><br><strong id="gdxVal">—</strong> <span id="gdxChg">0%</span></div>
+            </div>
+            <div class="indices-row">
+                <div class="indice-badge"><span>🇨🇳 USD/CNH</span><br><strong id="cnyVal">—</strong> <span id="cnyChg">0%</span></div>
+                <div class="indice-badge"><span>🛢️ WTI CRUDE</span><br><strong id="wtiVal">—</strong> <span id="wtiChg">0%</span></div>
+                <div class="indice-badge"><span>💰 BITCOIN</span><br><strong id="btcVal">—</strong> <span id="btcChg">0%</span></div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+
+    <!-- NOTICIAS CLASSIFICADAS 1-5 TOURO/URSO -->
+    <div class="news-feed">
+        <div class="news-tabs">
+            <button class="tab-btn active" data-tab="all">📰 TODAS NOTÍCIAS</button>
+            <button class="tab-btn" data-tab="bull">🐂 TOUROS (★1–5)</button>
+            <button class="tab-btn" data-tab="bear">🐻 URSOS (★1–5)</button>
+            <button class="tab-btn" data-tab="impact">⚡ ALTO IMPACTO</button>
+        </div>
+        <div id="pane-all" class="news-pane active"><div style="padding: 40px; text-align:center;">Carregando notícias e classificações de força...</div></div>
+        <div id="pane-bull" class="news-pane"></div>
+        <div id="pane-bear" class="news-pane"></div>
+        <div id="pane-impact" class="news-pane"></div>
+    </div>
 </div>
 
-<div id="toastMessage" class="toast-gold">📰 Notícia classificada com IA</div>
+<div id="toastMsg" class="toast-fixed">✨ Dados atualizados</div>
 
 <script>
-// ========== GLOBAL STATE ==========
-let goldPrice = 2740.50;
-let prevGoldPrice = 2738.20;
-let dxyValue = 103.25;
-let fearGreed = 48;
-let newsMaster = [];     // array de notícias com titulo, resumo, sentimento, força (1-5)
-let velocity = 0.28;
-let atrSim = 14.5;
+    (function() {
+        // ---------- STATE ----------
+        let goldPrice = 2748.30;
+        let prevGoldPrice = 2745.10;
+        let dxyValue = 103.18;
+        let vixValue = 15.2;
+        let fearGreed = 48;
+        let velocity = 0.32;
+        let atrValue = 12.4;
+        let newsData = [];
 
-// helpers
-const toast = (msg) => {
-  const el = document.getElementById('toastMessage');
-  el.innerText = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2800);
-};
+        // elementos DOM
+        const goldPriceSpan = document.getElementById('goldPriceDisplay');
+        const goldChangeSpan = document.getElementById('goldChangeDisplay');
+        const speedValueSpan = document.getElementById('speedValue');
+        const momentumDirTag = document.getElementById('momentumDirTag');
+        const atrTagSpan = document.getElementById('atrTag');
+        const fearValueText = document.getElementById('fearValueText');
+        const fearStatusLabel = document.getElementById('fearStatusLabel');
 
-// Simula dados Yahoo / proxy CORS para ouro e dxy + indices
-async function fetchMarketData() {
-  try {
-    const symbols = ['GC=F', 'DX-Y.NYB', '^GSPC', '^VIX', 'GDX', 'USDCNH=X', 'CL=F'];
-    const proxy = (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const requests = symbols.map(async (sym) => {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=5m&range=1d`;
-      const res = await fetch(proxy(url)).then(r => r.json()).catch(() => null);
-      if (!res || !res.chart?.result?.[0]) return null;
-      const quote = res.chart.result[0].indicators.quote[0];
-      const closes = quote.close.filter(v => v !== null);
-      if (!closes.length) return null;
-      const last = closes[closes.length-1];
-      const prevClose = closes[closes.length-2] || last;
-      const changePct = ((last - prevClose)/prevClose)*100;
-      return { sym, last, changePct };
-    });
-    const results = await Promise.all(requests);
-    for (let r of results) {
-      if (!r) continue;
-      if(r.sym === 'GC=F') { goldPrice = r.last; document.getElementById('xauPrice').innerHTML = `$${goldPrice.toFixed(2)}`; 
-        const ch = (r.changePct).toFixed(2);
-        const chEl = document.getElementById('xauChange');
-        chEl.innerHTML = `${r.changePct>=0?'+':''}${ch}%`;
-        chEl.className = `xau-change ${r.changePct>=0?'up':'dn'}`;
-        if(r.changePct>0) document.getElementById('xauPrice').classList.add('flash-up'); else document.getElementById('xauPrice').classList.add('flash-dn');
-        setTimeout(()=>document.getElementById('xauPrice').classList.remove('flash-up','flash-dn'),400);
-      }
-      if(r.sym === 'DX-Y.NYB') { dxyValue = r.last; document.getElementById('dxySpot').innerHTML = dxyValue.toFixed(2); 
-        document.getElementById('dxyChange').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`;
-        document.getElementById('dxyChange').className = r.changePct>=0?'up':'dn';
-        const corr = r.changePct>0.05 ? "Dólar forte -> Ouro sob pressão" : r.changePct<-0.05 ? "Dólar fraco -> Ouro ganha tração" : "Correlação neutra";
-        document.getElementById('corrHint').innerText = corr;
-      }
-      if(r.sym === '^GSPC') { document.getElementById('spxVal').innerHTML = r.last.toFixed(1); document.getElementById('spxChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
-      if(r.sym === '^VIX') { document.getElementById('vixVal').innerHTML = r.last.toFixed(2); let vix = r.last; updateFearFromVix(vix); }
-      if(r.sym === 'GDX') { document.getElementById('gdxVal').innerHTML = r.last.toFixed(2); document.getElementById('gdxChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
-      if(r.sym === 'USDCNH=X') { document.getElementById('cnyVal').innerHTML = r.last.toFixed(4); document.getElementById('cnyChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
-      if(r.sym === 'CL=F') { document.getElementById('wtiVal').innerHTML = r.last.toFixed(2); document.getElementById('wtiChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
-    }
-  } catch(e) { console.warn(e); }
-}
+        // Toast helper
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2800);
+        }
 
-function updateFearFromVix(vix){
-  let newFear = 50;
-  if(vix > 28) newFear = 18; else if(vix > 22) newFear = 32; else if(vix > 18) newFear = 40; else if(vix < 14) newFear = 72; else if(vix < 12) newFear = 84;
-  newFear = Math.min(98, Math.max(5, newFear));
-  fearGreed = newFear;
-  document.getElementById('fearValue').innerText = fearGreed;
-  let label = fearGreed<=25?'MEDO EXTREMO': fearGreed<=45?'MEDO': fearGreed<=65?'NEUTRO': fearGreed<=85?'GANÂNCIA':'GANÂNCIA EXTREMA';
-  document.getElementById('fearLabel').innerText = label;
-}
+        // ========== VELOCITY GAUGE (speedometer vermelho-verde) ==========
+        const speedCanvas = document.getElementById('speedCanvas');
+        let speedCtx = speedCanvas.getContext('2d');
+        function drawSpeedometer(percentage) {
+            // percentage 0-100, mapeia 0% = vermelho, 100% = verde
+            const w = speedCanvas.width, h = speedCanvas.height;
+            const cx = w/2, cy = h-20, radius = Math.min(w, h*0.68);
+            speedCtx.clearRect(0, 0, w, h);
+            // fundo escuro
+            speedCtx.beginPath();
+            speedCtx.arc(cx, cy, radius, Math.PI, 2*Math.PI);
+            speedCtx.strokeStyle = '#1e293b';
+            speedCtx.lineWidth = 18;
+            speedCtx.stroke();
+            // arco colorido gradiente
+            const startAng = Math.PI;
+            const endAng = Math.PI + (percentage/100) * Math.PI;
+            const gradient = speedCtx.createLinearGradient(cx-radius*0.5, cy, cx+radius*0.5, cy-radius*0.5);
+            gradient.addColorStop(0, '#e35f6b');
+            gradient.addColorStop(0.5, '#f0a040');
+            gradient.addColorStop(1, '#2ad48b');
+            speedCtx.beginPath();
+            speedCtx.arc(cx, cy, radius, startAng, endAng);
+            speedCtx.lineWidth = 18;
+            speedCtx.strokeStyle = gradient;
+            speedCtx.stroke();
+            // ticks
+            for(let i=0;i<=10;i++) {
+                let ang = Math.PI + (i/10)*Math.PI;
+                let x1 = cx + Math.cos(ang)*(radius-12);
+                let y1 = cy + Math.sin(ang)*(radius-12);
+                let x2 = cx + Math.cos(ang)*(radius-4);
+                let y2 = cy + Math.sin(ang)*(radius-4);
+                speedCtx.beginPath();
+                speedCtx.moveTo(x1,y1);
+                speedCtx.lineTo(x2,y2);
+                speedCtx.strokeStyle = i%5===0?'#c49a52':'#4a5568';
+                speedCtx.lineWidth = i%5===0?2:1;
+                speedCtx.stroke();
+            }
+            // ponteiro
+            let pointerAng = Math.PI + (percentage/100)*Math.PI;
+            let ptrLen = radius-10;
+            let xp = cx + Math.cos(pointerAng)*ptrLen;
+            let yp = cy + Math.sin(pointerAng)*ptrLen;
+            speedCtx.beginPath();
+            speedCtx.moveTo(cx, cy);
+            speedCtx.lineTo(xp, yp);
+            speedCtx.lineWidth = 3;
+            speedCtx.strokeStyle = '#ffe6b3';
+            speedCtx.shadowBlur = 0;
+            speedCtx.stroke();
+            speedCtx.beginPath();
+            speedCtx.arc(cx, cy, 6, 0, 2*Math.PI);
+            speedCtx.fillStyle = '#c49a52';
+            speedCtx.fill();
+        }
 
-// NOTÍCIAS CLASSE 1-5 TOURO/URSO + tradução automática via API (fake translate melhorado com mapa)
-const fakeTranslate = (text) => {
-  if(!text) return "";
-  // simulate portuguese friendly
-  let translated = text.replace(/Gold/gi, 'Ouro').replace(/Federal Reserve/gi, 'Federal Reserve').replace(/dollar/gi, 'dólar')
-    .replace(/inflation/gi, 'inflação').replace(/rate hike/gi, 'alta de juros').replace(/safe haven/gi, 'porto seguro');
-  return translated.length > 20 ? translated : text;
-};
+        // ========== FEAR GAUGE (estilo relógio) ==========
+        const fearCanvas = document.getElementById('fearCanvas');
+        let fearCtx = fearCanvas.getContext('2d');
+        function drawFearGauge(value) {
+            const w = fearCanvas.width, h = fearCanvas.height;
+            const cx = w/2, cy = h-22, radius = Math.min(w, h*0.65);
+            fearCtx.clearRect(0, 0, w, h);
+            // arco fundo
+            fearCtx.beginPath();
+            fearCtx.arc(cx, cy, radius, Math.PI, 2*Math.PI);
+            fearCtx.strokeStyle = '#222d3a';
+            fearCtx.lineWidth = 16;
+            fearCtx.stroke();
+            // setor colorido
+            let percent = Math.min(100, Math.max(0, value));
+            const start = Math.PI;
+            const end = Math.PI + (percent/100)*Math.PI;
+            const grad = fearCtx.createLinearGradient(cx-radius*0.4, cy, cx+radius*0.4, cy-radius*0.3);
+            grad.addColorStop(0, '#2e7d32');
+            grad.addColorStop(0.5, '#f9a825');
+            grad.addColorStop(1, '#c62828');
+            fearCtx.beginPath();
+            fearCtx.arc(cx, cy, radius, start, end);
+            fearCtx.lineWidth = 16;
+            fearCtx.strokeStyle = grad;
+            fearCtx.stroke();
+            // labels
+            fearCtx.fillStyle = '#9aa5c5';
+            fearCtx.font = 'bold 12px "Inter"';
+            fearCtx.fillText('MEDO', cx-radius+10, cy+10);
+            fearCtx.fillText('GANÂNCIA', cx+radius-50, cy+10);
+            // marcador central
+            let angle = Math.PI + (percent/100)*Math.PI;
+            let handLen = radius-10;
+            let fx = cx + Math.cos(angle)*handLen;
+            let fy = cy + Math.sin(angle)*handLen;
+            fearCtx.beginPath();
+            fearCtx.moveTo(cx, cy);
+            fearCtx.lineTo(fx, fy);
+            fearCtx.strokeStyle = '#fff5e0';
+            fearCtx.lineWidth = 2.5;
+            fearCtx.stroke();
+            fearCtx.beginPath();
+            fearCtx.arc(cx, cy, 6, 0, 2*Math.PI);
+            fearCtx.fillStyle = '#c49a52';
+            fearCtx.fill();
+        }
 
-function strengthToEmoji(score, isBull){
-  if(isBull){
-    if(score===5) return '🔥🔥🔥 FORÇA 5/5 TOURO SUPER';
-    if(score===4) return '📈 FORÇA 4/5 TOURO FORTE';
-    if(score===3) return '➡️ FORÇA 3/5 TOURO MODERADO';
-    if(score===2) return '🍃 FORÇA 2/5 TOURO FRACO';
-    return '🌀 FORÇA 1/5 LEVE ALTA';
-  } else {
-    if(score===5) return '💀💀 FORÇA 5/5 URSO EXTREMO';
-    if(score===4) return '📉 FORÇA 4/5 URSO FORTE';
-    if(score===3) return '➡️ FORÇA 3/5 URSO MODERADO';
-    if(score===2) return '🍂 FORÇA 2/5 URSO FRACO';
-    return '🌀 FORÇA 1/5 LEVE BAIXA';
-  }
-}
+        // Atualiza medidores com base nos dados
+        function updateGauges() {
+            let speedPercent = Math.min(98, Math.max(2, (velocity / 3.5) * 100));
+            drawSpeedometer(speedPercent);
+            speedValueSpan.innerText = velocity.toFixed(2);
+            // direcao
+            let priceDelta = goldPrice - prevGoldPrice;
+            let momentumText = priceDelta > 0.2 ? "🚀 ACELERANDO ALTA" : (priceDelta < -0.2 ? "📉 VELOCIDADE BAIXISTA" : "➡️ MOMENTUM NEUTRO");
+            momentumDirTag.innerText = momentumText;
+            atrTagSpan.innerText = `ATR: $${atrValue.toFixed(2)}`;
+            // Fear Gauge
+            drawFearGauge(fearGreed);
+            fearValueText.innerText = fearGreed;
+            let fearLabel = fearGreed <= 25 ? "MEDO EXTREMO" : (fearGreed <= 45 ? "MEDO" : (fearGreed <= 65 ? "NEUTRO" : (fearGreed <= 85 ? "GANÂNCIA" : "GANÂNCIA EXTREMA")));
+            fearStatusLabel.innerText = fearLabel;
+        }
 
-function classifyNewsStrength(title, summary){
-  const text = (title + ' ' + summary).toLowerCase();
-  let bullScore = 0, bearScore = 0;
-  const bullTerms = ['surge', 'rally', 'compra recorde', 'alta', 'bull', 'inflação', 'geopolítica', 'crise', 'porto seguro', 'fed dovish', 'cortes de juros'];
-  const bearTerms = ['queda', 'bear', 'hawkish', 'dólar forte', 'juros altos', 'etf outflow', 'venda massiva', 'recuo', 'pressão', 'desaceleração'];
-  bullTerms.forEach(w => { if(text.includes(w)) bullScore+= (w==='surge'||w==='compra recorde')?2:1; });
-  bearTerms.forEach(w => { if(text.includes(w)) bearScore+= (w==='dólar forte'||w==='etf outflow')?2:1; });
-  let sentiment = 'NEUTRAL';
-  let strength = 3;
-  if(bullScore > bearScore+1){
-    sentiment = 'BULL';
-    strength = Math.min(5, Math.max(1, Math.floor(bullScore/1.5)+1));
-    if(strength>5) strength=5;
-  } else if(bearScore > bullScore+1){
-    sentiment = 'BEAR';
-    strength = Math.min(5, Math.max(1, Math.floor(bearScore/1.5)+1));
-    if(strength>5) strength=5;
-  } else { strength = 2; sentiment = 'NEUTRAL'; }
-  return { sentiment, strength };
-}
+        // Buscar dados Yahoo Finance (ouro, dxy, vix, indices)
+        async function fetchMarketData() {
+            const symbols = ['GC=F', 'DX-Y.NYB', '^VIX', '^GSPC', 'GDX', 'USDCNH=X', 'CL=F', 'BTC-USD'];
+            const proxy = (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            try {
+                const results = await Promise.all(symbols.map(async (sym) => {
+                    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=5m&range=1d`;
+                    const res = await fetch(proxy(url)).then(r=>r.json()).catch(()=>null);
+                    if(!res?.chart?.result?.[0]) return null;
+                    const quote = res.chart.result[0].indicators.quote[0];
+                    const closes = quote.close.filter(v=>v!==null);
+                    if(!closes.length) return null;
+                    const last = closes[closes.length-1];
+                    const prevClose = closes[closes.length-2] || last;
+                    const changePct = ((last-prevClose)/prevClose)*100;
+                    return { sym, last, changePct };
+                }));
+                for(let r of results) {
+                    if(!r) continue;
+                    if(r.sym === 'GC=F') {
+                        goldPrice = r.last;
+                        prevGoldPrice = goldPrice - (r.changePct * 0.2);
+                        goldPriceSpan.innerText = `$${goldPrice.toFixed(2)}`;
+                        goldChangeSpan.innerText = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`;
+                        goldChangeSpan.className = `gold-change ${r.changePct>=0?'up':'dn'}`;
+                        goldPriceSpan.classList.add('flash-price');
+                        setTimeout(()=>goldPriceSpan.classList.remove('flash-price'),400);
+                    }
+                    if(r.sym === 'DX-Y.NYB') { dxyValue = r.last; document.getElementById('dxySpot').innerHTML = dxyValue.toFixed(2); document.getElementById('dxyChange').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; document.getElementById('dxyChange').className = r.changePct>=0?'up':'dn'; let corr = r.changePct>0.08?'Dólar forte → Ouro sob pressão':r.changePct<-0.08?'Dólar fraco → Ouro impulsionado':'Neutro'; document.getElementById('corrHint').innerText=corr; }
+                    if(r.sym === '^VIX') { vixValue = r.last; document.getElementById('vixVal').innerHTML = vixValue.toFixed(2); let f = 50; if(vixValue>28) f=18; else if(vixValue>22) f=32; else if(vixValue>18) f=42; else if(vixValue<14) f=70; else if(vixValue<12) f=84; else f=55; fearGreed = Math.min(98,Math.max(5,f)); updateGauges(); }
+                    if(r.sym === '^GSPC') { document.getElementById('spxVal').innerHTML = r.last.toFixed(1); document.getElementById('spxChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
+                    if(r.sym === 'GDX') { document.getElementById('gdxVal').innerHTML = r.last.toFixed(2); document.getElementById('gdxChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
+                    if(r.sym === 'USDCNH=X') { document.getElementById('cnyVal').innerHTML = r.last.toFixed(4); document.getElementById('cnyChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
+                    if(r.sym === 'CL=F') { document.getElementById('wtiVal').innerHTML = r.last.toFixed(2); document.getElementById('wtiChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
+                    if(r.sym === 'BTC-USD') { document.getElementById('btcVal').innerHTML = r.last.toFixed(0); document.getElementById('btcChg').innerHTML = `${r.changePct>=0?'+':''}${r.changePct.toFixed(2)}%`; }
+                }
+                // atualiza volatilidade (velocidade)
+                let delta = goldPrice - prevGoldPrice;
+                velocity = Math.min(3.8, Math.abs(delta)*1.2 + 0.15);
+                atrValue = 11 + Math.abs(delta)*2.5;
+                updateGauges();
+            } catch(e) { console.warn(e); }
+        }
 
-async function fetchHighQualityNews(){
-  const yahooUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=gold%20XAU%20USD%20Fed%20inflation&newsCount=22`;
-  const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl)}`;
-  try {
-    const resp = await fetch(proxy);
-    const data = await resp.json();
-    const articles = data.news || [];
-    if(articles.length){
-      newsMaster = articles.map(art => {
-        const title = art.title || '';
-        const summary = art.summary || '';
-        const { sentiment, strength } = classifyNewsStrength(title, summary);
-        return {
-          title: fakeTranslate(title),
-          summary: fakeTranslate(summary.substring(0, 140)),
-          link: art.link,
-          publisher: art.publisher || 'Yahoo Finance',
-          sentiment,
-          strength,
-          time: art.providerPublishTime ? new Date(art.providerPublishTime*1000).toLocaleTimeString('pt-BR') : 'agora'
-        };
-      });
-    } else throw new Error();
-  } catch(e) {
-    // fallback notícias reais + classificações 1-5 
-    newsMaster = [
-      {title:"Fed sinaliza manutenção de juros, ouro respira", summary:"Declarações indicam pausa nos aumentos, beneficiando o metal", link:"#", publisher:"Reuters", sentiment:"BULL", strength:4},
-      {title:"Inflação ao consumidor (CPI) supera expectativas", summary:"Dólar dispara e pressiona ouro para baixo", link:"#", publisher:"Bloomberg", sentiment:"BEAR", strength:5},
-      {title:"Tensões no Oriente Médio elevam demanda por ativos seguros", summary:"Ouro sobe com aversão ao risco global", link:"#", publisher:"CNBC", sentiment:"BULL", strength:5},
-      {title:"ETF de ouro registram saída líquida de US$ 1,2bi", summary:"Investidores institucionais reduzem exposição", link:"#", publisher:"FT", sentiment:"BEAR", strength:4},
-      {title:"BC da China aumenta reservas de ouro pelo 5º mês", summary:"Compra estrutural de longo prazo", link:"#", publisher:"SCMP", sentiment:"BULL", strength:3},
-      {title:"Dados de emprego americano surpreendem", summary:"Mercado de trabalho aquecido fortalece dólar", link:"#", publisher:"WSJ", sentiment:"BEAR", strength:3},
-      {title:"Mineração de ouro: custos em alta limitam oferta", summary:"Suporte para preços no longo prazo", link:"#", publisher:"Mining.com", sentiment:"BULL", strength:2}
-    ];
-    newsMaster.forEach(n => { if(!n.strength){ const cls = classifyNewsStrength(n.title,n.summary); n.sentiment = cls.sentiment; n.strength = cls.strength; } n.title = fakeTranslate(n.title); n.summary = fakeTranslate(n.summary); });
-  }
-  renderNewsAll();
-}
+        // Notícias reais + classificação 1-5 (Touro/Urso)
+        async function fetchNewsWithStrength() {
+            const yahooNewsUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=gold%20XAU%20Federal%20Reserve%20inflation%20economy&newsCount=26`;
+            const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooNewsUrl)}`;
+            try {
+                const resp = await fetch(proxy);
+                const data = await resp.json();
+                const articles = data.news || [];
+                if(articles.length) {
+                    newsData = articles.map(art => {
+                        const title = art.title || '';
+                        const summary = art.summary || '';
+                        const { sentiment, strength } = classifyStrength(title + ' ' + summary);
+                        return {
+                            title: translatePT(title),
+                            summary: translatePT(summary.substring(0,120)),
+                            link: art.link,
+                            publisher: art.publisher || 'Yahoo Finance',
+                            sentiment,
+                            strength,
+                            time: new Date(art.providerPublishTime*1000).toLocaleTimeString('pt-BR')
+                        };
+                    });
+                } else throw new Error();
+            } catch(e) {
+                newsData = [
+                    { title:"Fed sinaliza pausa nos juros, ouro sobe", summary:"Expectativa de alívio monetário", link:"#", publisher:"Reuters", sentiment:"BULL", strength:4, time:"agora"},
+                    { title:"CPI acima do previsto: dólar dispara e derruba ouro", summary:"Pressão inflacionária persistente", link:"#", publisher:"Bloomberg", sentiment:"BEAR", strength:5, time:"agora"},
+                    { title:"Tensões geopolíticas elevam demanda por ouro", summary:"Aversão ao risco global", link:"#", publisher:"CNBC", sentiment:"BULL", strength:5, time:"1h atrás"},
+                    { title:"ETF de ouro registram saídas recorde", summary:"Investidores migram para risco", link:"#", publisher:"FT", sentiment:"BEAR", strength:4, time:"2h atrás"},
+                    { title:"BC chinês aumenta reservas de ouro pelo 6º mês", summary:"Compra estrutural de longo prazo", link:"#", publisher:"SCMP", sentiment:"BULL", strength:3, time:"hoje"}
+                ];
+            }
+            renderNewsPanels();
+        }
 
-function renderNewsAll(){
-  const bullList = [], bearList = [], impactList = [], allList = [];
-  newsMaster.forEach(n => {
-    const strengthClass = n.sentiment === 'BULL' ? `bull-strength strength-${n.strength}` : (n.sentiment==='BEAR' ? `bear-strength bear-${n.strength}` : 'neutral-badge');
-    const strengthText = n.sentiment === 'BULL' ? strengthToEmoji(n.strength, true) : (n.sentiment==='BEAR' ? strengthToEmoji(n.strength, false) : '⚖️ NEUTRO');
-    const html = `<div class="news-item-card" onclick="window.open('${n.link}','_blank')">
-      <div class="news-head">
-        <span class="${strengthClass}">${strengthText}</span>
-        <span style="font-size:9px;">${n.time}</span>
-      </div>
-      <div class="news-title">${n.title}</div>
-      <div class="news-summary">${n.summary} <span class="news-source">${n.publisher}</span></div>
-    </div>`;
-    allList.push(html);
-    if(n.sentiment === 'BULL') bullList.push(html);
-    else if(n.sentiment === 'BEAR') bearList.push(html);
-    if(n.strength >= 4 || n.sentiment === 'BEAR' && n.strength>=4) impactList.push(html);
-  });
-  document.getElementById('pane-all').innerHTML = allList.length ? allList.join('') : '<div style="padding:20px;">Sem notícias</div>';
-  document.getElementById('pane-bull').innerHTML = bullList.length ? bullList.join('') : '<div style="padding:20px;">Nenhuma notícia de alta forte</div>';
-  document.getElementById('pane-bear').innerHTML = bearList.length ? bearList.join('') : '<div>Sem notícias baixistas</div>';
-  document.getElementById('pane-impact').innerHTML = impactList.length ? impactList.join('') : '<div>Eventos de alto impacto em breve</div>';
-}
+        function classifyStrength(text) {
+            const txt = text.toLowerCase();
+            let bullScore=0, bearScore=0;
+            const bullWords = ['surge','rally','alta','bull','inflação','geopolítica','crise','dovish','cortes','compra recorde','safe haven'];
+            const bearWords = ['queda','bear','hawkish','dólar forte','juros altos','outflow','selloff','pressão','desaceleração','forte emprego'];
+            bullWords.forEach(w => { if(txt.includes(w)) bullScore+= (w==='compra recorde'?2:1); });
+            bearWords.forEach(w => { if(txt.includes(w)) bearScore+= (w==='dólar forte'?2:1); });
+            let strength = 2; let sentiment = 'NEUTRAL';
+            if(bullScore > bearScore+1) { sentiment='BULL'; strength = Math.min(5, Math.floor(bullScore/1.2)+1); }
+            else if(bearScore > bullScore+1) { sentiment='BEAR'; strength = Math.min(5, Math.floor(bearScore/1.2)+1); }
+            else { sentiment='NEUTRAL'; strength=2; }
+            return { sentiment, strength };
+        }
 
-// VELOCITY CLOCK (relógio vermelho -> verde)
-function updateVelocityClock(){
-  const priceChange = goldPrice - prevGoldPrice;
-  velocity = Math.abs(priceChange) * 0.9 + (Math.random() * 0.2);
-  velocity = Math.min(3.2, velocity);
-  const percentSpeed = Math.min(100, (velocity / 2.5) * 100);
-  document.getElementById('velocityFill').style.width = `${percentSpeed}%`;
-  document.getElementById('velocityValue').innerHTML = velocity.toFixed(2);
-  let direction = priceChange > 0.2 ? "🚀 ACELERANDO ALTA" : priceChange < -0.2 ? "📉 VELOCIDADE BAIXISTA" : "➡️ MOMENTUM NEUTRO";
-  let colorDir = priceChange>0 ? "var(--green-bull)" : priceChange<0 ? "var(--red-bear)" : "var(--gold)";
-  document.getElementById('directionText').innerHTML = direction;
-  document.getElementById('directionText').style.color = colorDir;
-  // ATR simulado
-  atrSim = 12 + Math.abs(priceChange)*3;
-  document.getElementById('atrValue').innerHTML = `$${atrSim.toFixed(2)}`;
-  document.getElementById('rangeValue').innerHTML = `$${(Math.abs(priceChange)*1.8).toFixed(2)}`;
-  prevGoldPrice = goldPrice;
-  // sessões ativas
-  const hourUTC = new Date().getUTCHours();
-  const londonActive = (hourUTC>=8 && hourUTC<17);
-  const nyActive = (hourUTC>=13 && hourUTC<22);
-  const asiaActive = (hourUTC>=0 && hourUTC<8);
-  document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
-  if(asiaActive) document.querySelector('[data-session="asia"]')?.classList.add('active');
-  if(londonActive) document.querySelector('[data-session="london"]')?.classList.add('active');
-  if(nyActive) document.querySelector('[data-session="ny"]')?.classList.add('active');
-}
+        function translatePT(text) {
+            if(!text) return '';
+            return text.replace(/Gold/gi,'Ouro').replace(/Federal Reserve/gi,'Federal Reserve').replace(/dollar/gi,'dólar').replace(/inflation/gi,'inflação').replace(/rate hike/gi,'alta de juros');
+        }
 
-// TIMER + FULL REFRESH
-async function fullRefresh(){
-  await fetchMarketData();
-  if(newsMaster.length===0) await fetchHighQualityNews(); else renderNewsAll();
-  updateVelocityClock();
-  document.getElementById('refreshTimer').innerHTML = new Date().toLocaleTimeString('pt-BR');
-  toast(`⚡ Ouro $${goldPrice.toFixed(2)} | Velocidade ${velocity.toFixed(2)} pts/min`);
-}
+        function renderNewsPanels() {
+            const allDiv = document.getElementById('pane-all');
+            const bullDiv = document.getElementById('pane-bull');
+            const bearDiv = document.getElementById('pane-bear');
+            const impactDiv = document.getElementById('pane-impact');
+            let allHtml='', bullHtml='', bearHtml='', impactHtml='';
+            newsData.forEach(n => {
+                const strengthClass = n.sentiment === 'BULL' ? `bull-${n.strength}` : (n.sentiment==='BEAR'?`bear-${n.strength}`:'neutral-badge');
+                const strengthText = n.sentiment === 'BULL' ? `🐂 TOURO FORÇA ${n.strength}/5` : (n.sentiment==='BEAR'?`🐻 URSO FORÇA ${n.strength}/5`:`⚖️ NEUTRO`);
+                const card = `<div class="news-item" onclick="window.open('${n.link}','_blank')">
+                    <div><span class="strength-badge ${strengthClass}">${strengthText}</span></div>
+                    <div class="news-title">${n.title}</div>
+                    <div class="news-meta"><span>${n.publisher}</span> <span>🕒 ${n.time}</span></div>
+                    <div style="font-size:11px; color:#8f9bb5;">${n.summary}</div>
+                </div>`;
+                allHtml += card;
+                if(n.sentiment === 'BULL') bullHtml += card;
+                if(n.sentiment === 'BEAR') bearHtml += card;
+                if(n.strength >= 4 || (n.sentiment==='BEAR' && n.strength>=3)) impactHtml += card;
+            });
+            allDiv.innerHTML = allHtml || '<div style="padding:30px;">Sem notícias recentes</div>';
+            bullDiv.innerHTML = bullHtml || '<div style="padding:30px;">Nenhuma notícia de alta forte</div>';
+            bearDiv.innerHTML = bearHtml || '<div style="padding:30px;">Nenhuma notícia de baixa</div>';
+            impactDiv.innerHTML = impactHtml || '<div style="padding:30px;">Eventos de alto impacto aguardando</div>';
+        }
 
-// init tabs
-function initTabs(){
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.news-pane').forEach(p => p.classList.remove('active'));
-      document.getElementById(`pane-${tabId}`).classList.add('active');
-    });
-  });
-}
+        // Tabs
+        function initTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.news-pane').forEach(p=>p.classList.remove('active'));
+                    document.getElementById(`pane-${tab}`).classList.add('active');
+                });
+            });
+        }
 
-setInterval(()=>{ fullRefresh(); }, 38000);
-fullRefresh();
-initTabs();
-setInterval(()=>{ updateVelocityClock(); }, 3000);
+        // Update velocity e atr constantemente
+        setInterval(() => {
+            let fakeDelta = (Math.random() - 0.5) * 0.4;
+            velocity = Math.min(3.5, Math.max(0.1, velocity + fakeDelta*0.1));
+            atrValue = Math.min(28, atrValue + (Math.random()-0.5)*0.2);
+            updateGauges();
+        }, 5000);
+
+        async function fullRefresh() {
+            await fetchMarketData();
+            if(newsData.length===0) await fetchNewsWithStrength();
+            showToast(`Ouro $${goldPrice.toFixed(2)} · Velocidade ${velocity.toFixed(2)}`);
+        }
+
+        fullRefresh();
+        initTabs();
+        setInterval(fullRefresh, 45000);
+        drawSpeedometer(30);
+        drawFearGauge(48);
+    })();
 </script>
 </body>
 </html>
