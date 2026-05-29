@@ -2,768 +2,794 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AURUM VELOCITY • Fear Gauge & Market Ticker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM PRO · Gold Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root{
+  --bg:#05080e;--s1:#090d18;--s2:#0e1524;--s3:#141e32;
+  --gold:#c49a52;--gold2:#e8c878;--gold3:rgba(196,154,82,.10);--gold4:rgba(196,154,82,.04);
+  --green:#1de9a4;--red:#e84060;--amber:#f0a040;--blue:#4db3ff;
+  --text:#d8cebe;--text2:#7a8ca8;--muted:#384860;
+  --border:rgba(196,154,82,.09);--border2:rgba(196,154,82,.18);
+  --ff-d:'Fraunces',Georgia,serif;--ff-m:'JetBrains Mono',monospace;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--ff-m);font-size:11px;
+  background-image:radial-gradient(ellipse 70% 40% at 15% 0%,rgba(196,154,82,.05) 0%,transparent 50%),
+  radial-gradient(ellipse 50% 30% at 85% 100%,rgba(77,179,255,.03) 0%,transparent 50%);}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-:root {
-  --bg-deep: #04070c;
-  --bg-card: #0b0f19;
-  --bg-elevated: #111827;
-  --border-dim: rgba(76, 95, 120, 0.25);
-  --border-gold: rgba(196, 154, 82, 0.4);
-  --gold: #d4af5a;
-  --gold-glow: #e6c87a;
-  --green-bull: #2ad48b;
-  --red-bear: #e35f6b;
-  --text-main: #edf2fb;
-  --text-dim: #8f9bb3;
-}
+/* TICKER */
+.ticker-wrap{background:var(--s1);border-bottom:1px solid var(--border);}
+.ticker-wrap iframe{display:block;}
 
-body {
-  background: radial-gradient(circle at 20% 30%, #03070e, #000000);
-  color: var(--text-main);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  line-height: 1.4;
-  overflow-x: hidden;
-}
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;background:var(--s1);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;border:1px solid var(--border2);
+  display:grid;place-items:center;font-family:var(--ff-d);font-size:18px;font-weight:900;color:var(--gold);}
+.logo-name{font-family:var(--ff-d);font-size:18px;font-weight:700;color:var(--gold2);letter-spacing:3px;}
+.logo-sub{font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:1px;}
+.hdr-price{display:flex;align-items:baseline;gap:8px;}
+.hdr-p{font-family:var(--ff-d);font-size:30px;font-weight:900;color:var(--gold2);line-height:1;}
+.hdr-ch{font-size:12px;font-weight:600;}
+.hdr-ch.up{color:var(--green);}.hdr-ch.dn{color:var(--red);}
+.hdr-hl{font-size:9px;color:var(--muted);}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pill-live{padding:4px 10px;border-radius:2px;font-size:8px;font-weight:600;
+  letter-spacing:2px;border:1px solid var(--green);color:var(--green);
+  background:rgba(29,233,164,.06);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sess-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;}
+.sess-dot.on{background:var(--green);animation:blink 1.5s infinite;}
+.sess-dot.off{background:var(--muted);}
+.next-upd{font-size:9px;color:var(--muted);}
+.btn-ref{padding:5px 12px;border:1px solid var(--border2);border-radius:2px;
+  background:transparent;color:var(--gold);font-family:var(--ff-m);font-size:9px;
+  cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.btn-ref:hover{border-color:var(--gold);background:var(--gold3);}
 
-/* TICKER ROTATIVO (FAIXA DE ÍNDICES) */
-.ticker-container {
-  background: #03070e;
-  border-bottom: 1px solid var(--border-gold);
-  border-top: 1px solid var(--border-gold);
-  padding: 8px 0;
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-  z-index: 20;
-}
-.ticker-track {
-  display: inline-block;
-  animation: scrollTicker 45s linear infinite;
-  white-space: nowrap;
-}
-.ticker-item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-right: 40px;
-  background: #0f172a;
-  padding: 5px 20px;
-  border-radius: 40px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-}
-.ticker-symbol { color: var(--text-dim); letter-spacing: 0.5px; }
-.ticker-price { font-weight: 800; color: #fff; }
-.ticker-change { font-size: 11px; font-weight: 700; }
-@keyframes scrollTicker {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-.ticker-container:hover .ticker-track {
-  animation-play-state: paused;
-}
+/* WRAP */
+.wrap{max-width:1900px;margin:0 auto;padding:10px;}
 
-/* HEADER com Ouro e Dólar em destaque */
-.header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 28px;
-  background: rgba(4,7,12,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-gold);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.logo {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 800;
-  font-size: 1.5rem;
-}
-.logo span { color: var(--gold); }
-.badge { font-size: 9px; background: #1e293b; padding: 2px 10px; border-radius: 40px; }
-.live-price-area {
-  display: flex;
-  gap: 32px;
-  align-items: baseline;
-  flex-wrap: wrap;
-  background: #0a0f1a80;
-  padding: 8px 24px;
-  border-radius: 60px;
-  backdrop-filter: blur(4px);
-}
-.price-block { display: flex; align-items: baseline; gap: 8px; }
-.price-label { font-size: 11px; color: var(--text-dim); }
-.xau-big {
-  font-size: 32px;
-  font-weight: 800;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--gold-glow);
-}
-.dxy-big-header {
-  font-size: 24px;
-  font-weight: 800;
-  font-family: monospace;
-  color: #fff;
-}
-.xau-change, .dxy-change-header { font-weight: 700; font-size: 14px; }
-.up { color: var(--green-bull); }
-.dn { color: var(--red-bear); }
-.update-tag { font-size: 10px; background: var(--bg-elevated); padding: 4px 12px; border-radius: 30px; }
+/* GRID MAIN */
+.grid-main{display:grid;grid-template-columns:1fr 340px;gap:10px;margin-bottom:10px;}
+@media(max-width:1200px){.grid-main{grid-template-columns:1fr;}}
 
-/* container */
-.container {
-  max-width: 1600px;
-  margin: 24px auto;
-  padding: 0 24px;
-}
-.two-columns {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
-}
-@media(max-width: 1000px) { .two-columns { grid-template-columns: 1fr; } }
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.card-hdr{padding:8px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.card-title{font-family:var(--ff-d);font-size:11px;font-weight:700;
+  color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.card-sub{font-size:8px;color:var(--muted);}
 
-/* VELOCITY CLOCK */
-.velocity-card {
-  background: var(--bg-card);
-  border-radius: 28px;
-  border: 1px solid var(--border-dim);
-  padding: 18px 24px;
-  margin-bottom: 24px;
-}
-.clock-meter {
-  background: #1a1f2c;
-  border-radius: 60px;
-  height: 14px;
-  overflow: hidden;
-  margin: 12px 0;
-}
-.clock-fill {
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, #e35f6b, #ffaa44, #2ad48b);
-  border-radius: 60px;
-  transition: width 0.4s ease;
-}
-.velocity-value {
-  font-size: 42px;
-  font-weight: 800;
-  font-family: monospace;
-  display: inline-block;
-  margin-right: 8px;
-}
-.session-pill {
-  background: #0f1420;
-  padding: 4px 14px;
-  border-radius: 30px;
-  font-size: 10px;
-  font-weight: 600;
-  border-left: 2px solid var(--text-dim);
-}
-.session-pill.active {
-  border-left-color: var(--green-bull);
-  background: rgba(42,212,139,0.12);
-  color: var(--green-bull);
-}
+/* TV WIDGETS */
+.tv-wrap{background:#050a10;}
+.tv-wrap iframe,.tradingview-widget-container{width:100%;height:100%;border:none;display:block;}
+.chart-h{height:420px;}
+.tech-h{height:420px;}
+.ovw-h{height:220px;}
+.cal-h{height:360px;}
+.news-h{height:380px;}
 
-/* VELOCÍMETRO DE MEDO CIRCULAR */
-.fear-gauge-container {
-  background: linear-gradient(145deg, #0c1122, #050a14);
-  border-radius: 32px;
-  padding: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.gauge-wrapper {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  margin: 0 auto 16px;
-}
-.gauge-svg {
-  transform: rotate(-90deg);
-  width: 100%;
-  height: 100%;
-}
-.gauge-bg {
-  stroke: #1e293b;
-  stroke-width: 20;
-  fill: none;
-}
-.gauge-fill {
-  stroke: url(#gaugeGradient);
-  stroke-width: 20;
-  fill: none;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.5s ease;
-}
-.gauge-needle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: 80px;
-  background: linear-gradient(180deg, var(--gold-glow), #ffdd88);
-  border-radius: 4px;
-  transform-origin: 50% 0%;
-  transform: translateX(-50%) rotate(0deg);
-  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-  box-shadow: 0 0 8px rgba(212,175,90,0.6);
-}
-.gauge-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  background: var(--gold);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px var(--gold);
-  z-index: 5;
-}
-.fear-value-large {
-  font-size: 48px;
-  font-weight: 900;
-  font-family: monospace;
-  color: var(--gold-glow);
-}
-.fear-label {
-  font-size: 14px;
-  font-weight: 700;
-  padding: 4px 16px;
-  border-radius: 40px;
-  display: inline-block;
-}
-.fear-label.extreme-fear { background: #8b000050; color: #ff6b6b; }
-.fear-label.fear { background: #ff6b6b30; color: #ffaa88; }
-.fear-label.neutral { background: #d4af5a30; color: var(--gold); }
-.fear-label.greed { background: #2ad48b30; color: #2ad48b; }
-.fear-label.extreme-greed { background: #00ffaa30; color: #00ffaa; }
+/* TRADINGVIEW WIDGET CONTAINER */
+.tradingview-widget-container{position:relative;}
+.tradingview-widget-container__widget{width:100%;height:100%;}
 
-/* NOTICIAS */
-.news-main {
-  background: var(--bg-card);
-  border-radius: 24px;
-  border: 1px solid var(--border-dim);
-  overflow: hidden;
-}
-.news-tabs {
-  display: flex;
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--border-dim);
-}
-.tab {
-  flex: 1;
-  padding: 12px 8px;
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-weight: 700;
-  font-size: 11px;
-  cursor: pointer;
-}
-.tab.active {
-  color: var(--gold);
-  border-bottom: 2px solid var(--gold);
-  background: rgba(212,175,90,0.08);
-}
-.news-pane {
-  display: none;
-  max-height: 500px;
-  overflow-y: auto;
-}
-.news-pane.active { display: block; }
-.news-item-card {
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  cursor: pointer;
-}
-.news-item-card:hover { background: rgba(212,175,90,0.05); }
-.bull-strength, .bear-strength {
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 40px;
-  background: rgba(0,0,0,0.5);
-}
-.strength-4{ color: var(--green-bull); border-left: 2px solid var(--green-bull); }
-.strength-5{ color: #1effa0; border-left: 2px solid #1effa0; }
-.bear-4{ color: var(--red-bear); border-left: 2px solid var(--red-bear); }
-.bear-5{ color: #ff2f4a; border-left: 2px solid #ff2f4a; }
+/* ROW 2 — 3 columns */
+.grid-r2{display:grid;grid-template-columns:240px 1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:1200px){.grid-r2{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.grid-r2{grid-template-columns:1fr;}}
 
-.right-stack { display: flex; flex-direction: column; gap: 20px; }
-.dxy-card, .global-card {
-  background: var(--bg-card);
-  border-radius: 24px;
-  border: 1px solid var(--border-dim);
-  padding: 18px;
-}
-.index-ticker {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.micro-index {
-  background: var(--bg-elevated);
-  border-radius: 20px;
-  padding: 8px;
-  text-align: center;
-  flex: 1;
-}
-.toast-gold {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #0f172a;
-  border-left: 4px solid var(--gold);
-  padding: 12px 20px;
-  border-radius: 16px;
-  font-size: 12px;
-  z-index: 1000;
-  transform: translateY(30px);
-  opacity: 0;
-  transition: 0.25s;
-  pointer-events: none;
-}
-.toast-gold.show { transform: translateY(0); opacity: 1; }
-@keyframes flashGold { 0%{text-shadow:0 0 0}50%{text-shadow:0 0 8px #d4af5a;color:#ffe1a0} }
-.flash-gold { animation: flashGold 0.4s ease; }
+/* ROW NEWS */
+.grid-news{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:1100px){.grid-news{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.grid-news{grid-template-columns:1fr;}}
+
+/* GAUGE */
+.gauge-body{padding:14px;text-align:center;}
+.gauge-canvas-wrap{position:relative;display:inline-block;}
+canvas#gauge{display:block;}
+.gauge-pct{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  font-family:var(--ff-d);font-size:32px;font-weight:900;line-height:1;}
+.gauge-lbl{font-size:9px;letter-spacing:2px;margin-top:4px;}
+.gauge-sub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:8px;}
+.gs{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:6px 4px;text-align:center;}
+.gs-v{font-family:var(--ff-d);font-size:13px;font-weight:700;}
+.gs-l{font-size:7px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+
+/* AI BANNER */
+.ai-banner{background:linear-gradient(135deg,rgba(196,154,82,.06),rgba(77,179,255,.04));
+  border:1px solid var(--border2);border-radius:4px;padding:12px 14px;margin-bottom:10px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;}
+.ai-icon{font-family:var(--ff-d);font-size:20px;font-weight:900;color:var(--gold);}
+.ai-text{font-family:var(--ff-d);font-size:12px;color:var(--text);line-height:1.6;font-weight:300;}
+.ai-text.loading{color:var(--muted);font-style:italic;font-size:10px;}
+.ai-dir{font-family:var(--ff-d);font-size:16px;font-weight:700;text-align:right;}
+.ai-conf{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px;text-align:right;}
+.ai-bdg{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:2px;
+  margin-top:5px;display:inline-block;}
+
+/* NEWS */
+.news-col-hdr{padding:8px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;}
+.news-col-icon{font-size:13px;}
+.news-col-name{font-family:var(--ff-d);font-size:11px;font-weight:700;letter-spacing:1px;}
+.news-col-cnt{margin-left:auto;font-size:8px;padding:2px 6px;border-radius:2px;
+  border:1px solid var(--border);color:var(--muted);}
+.news-body{max-height:340px;overflow-y:auto;}
+.news-item{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03);
+  cursor:pointer;transition:background .15s;}
+.news-item:hover{background:var(--gold4);}
+.ni-time{font-size:8px;color:var(--muted);margin-bottom:2px;}
+.ni-title{font-family:var(--ff-d);font-size:11px;font-weight:400;color:var(--text);
+  line-height:1.5;margin-bottom:3px;}
+.ni-src{font-size:8px;color:var(--text2);}
+.news-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:10px;}
+
+/* SYMBOL INFO ROW */
+.sinfo-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px;}
+@media(max-width:1000px){.sinfo-grid{grid-template-columns:repeat(3,1fr);}}
+.sinfo-card{background:var(--s1);border:1px solid var(--border);border-radius:4px;padding:10px;text-align:center;}
+.si-lbl{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.si-val{font-family:var(--ff-d);font-size:15px;font-weight:700;line-height:1;}
+.si-sub{font-size:8px;color:var(--text2);margin-top:2px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:16px;right:16px;z-index:999;
+  background:var(--s2);border:1px solid var(--border2);border-radius:4px;
+  padding:9px 13px;max-width:250px;font-size:10px;
+  transform:translateY(20px);opacity:0;pointer-events:none;
+  transition:all .35s cubic-bezier(.22,1,.36,1);}
+.toast.show{transform:none;opacity:1;}
+.toast b{color:var(--gold2);display:block;margin-bottom:2px;}
+
+/* ANIMATIONS */
+.price-up{animation:pUp .5s ease;}
+.price-dn{animation:pDn .5s ease;}
+@keyframes pUp{0%{opacity:.5}50%{color:var(--green)}100%{opacity:1}}
+@keyframes pDn{0%{opacity:.5}50%{color:var(--red)}100%{opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- HEADER COM OURO E DÓLAR DESTAQUE -->
-<div class="header">
-  <div class="logo">⚡ AURUM <span>VELOCITY</span> <span class="badge">LIVE DATA</span></div>
-  <div class="live-price-area">
-    <div class="price-block">
-      <span class="price-label">XAU/USD</span>
-      <span class="xau-big" id="xauPrice">$—.——</span>
-      <span class="xau-change" id="xauChange">0.00%</span>
-    </div>
-    <div class="price-block">
-      <span class="price-label">DXY</span>
-      <span class="dxy-big-header" id="dxyHeaderPrice">—.——</span>
-      <span class="dxy-change-header" id="dxyHeaderChange">0.00%</span>
-    </div>
-    <span class="update-tag"><span id="liveIcon">🔴</span> <span id="refreshTimer">AO VIVO</span></span>
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="tradingview-widget-container" style="height:46px">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {"symbols":[
+      {"proName":"OANDA:XAUUSD","title":"GOLD (XAU/USD)"},
+      {"proName":"OANDA:XAGUSD","title":"PRATA (XAG/USD)"},
+      {"proName":"OANDA:NAS100USD","title":"NASDAQ (NDX)"},
+      {"proName":"OANDA:SPX500USD","title":"S&P500"},
+      {"proName":"OANDA:US30USD","title":"DOW JONES"},
+      {"proName":"TVC:DXY","title":"DÓLAR (DXY)"},
+      {"proName":"OANDA:BTCUSD","title":"BTC/USD"},
+      {"proName":"TVC:USOIL","title":"WTI OIL"},
+      {"proName":"TVC:VIX","title":"VIX (MEDO)"}
+    ],
+    "showSymbolLogo":false,"colorTheme":"dark","isTransparent":true,
+    "displayMode":"adaptive","locale":"br","height":44}
+    </script>
   </div>
 </div>
 
-<!-- FAIXA ROTATIVA DE ÍNDICES (TICKER) -->
-<div class="ticker-container">
-  <div class="ticker-track" id="tickerTrack">
-    <!-- populado via JS -->
-  </div>
-</div>
-
-<div class="container">
-  <!-- VELOCITY CLOCK -->
-  <div class="velocity-card">
-    <div style="display:flex; justify-content: space-between;">
-      <span>📈 VELOCITY CLOCK • MOMENTUM RADAR</span>
-      <span>FORÇA DIRECIONAL</span>
-    </div>
-    <div class="clock-meter">
-      <div class="clock-fill" id="velocityFill" style="width: 50%;"></div>
-    </div>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-mark">A</div>
     <div>
-      <span class="velocity-value" id="velocityValue">0.00</span>
-      <span>pts / minuto</span>
-      <span id="directionText" style="margin-left: 12px; font-weight:700;">NEUTRO</span>
-    </div>
-    <div style="margin-top:12px; display:flex; gap:14px; font-size:11px;">
-      <span>⚡ ATR: <strong id="atrValue">—</strong></span>
-      <span>📊 Amplitude: <strong id="rangeValue">—</strong></span>
-    </div>
-    <div class="sessions-row" id="sessionList" style="display:flex; gap:12px; margin-top:16px;">
-      <div class="session-pill" data-session="asia">🇯🇵 TÓQUIO</div>
-      <div class="session-pill" data-session="london">🇬🇧 LONDRES</div>
-      <div class="session-pill" data-session="ny">🇺🇸 NOVA YORK</div>
+      <div class="logo-name">AURUM PRO</div>
+      <div class="logo-sub">Gold Intelligence · XAU/USD · Real Time</div>
     </div>
   </div>
-
-  <div class="two-columns">
-    <!-- NOTÍCIAS -->
-    <div class="news-main">
-      <div class="news-tabs">
-        <button class="tab active" data-tab="all">📰 TODAS</button>
-        <button class="tab" data-tab="bull">🐂 TOUROS (1-5★)</button>
-        <button class="tab" data-tab="bear">🐻 URSOS (1-5★)</button>
-        <button class="tab" data-tab="impact">⚡ IMPACTO</button>
-      </div>
-      <div id="pane-all" class="news-pane active"><div style="padding:30px;text-align:center;">Carregando notícias...</div></div>
-      <div id="pane-bull" class="news-pane"></div>
-      <div id="pane-bear" class="news-pane"></div>
-      <div id="pane-impact" class="news-pane"></div>
-    </div>
-
-    <!-- RIGHT PANEL COM VELOCÍMETRO DE MEDO -->
-    <div class="right-stack">
-      <!-- VELOCÍMETRO CIRCULAR DO MEDO -->
-      <div class="fear-gauge-container">
-        <div style="display:flex; justify-content: space-between; margin-bottom:8px;">
-          <span>😨 VELOCÍMETRO DO MEDO</span>
-          <span>FEAR & GREED</span>
-        </div>
-        <div class="gauge-wrapper">
-          <svg class="gauge-svg" viewBox="0 0 200 200">
-            <defs>
-              <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#2e7d32"/>
-                <stop offset="25%" stop-color="#8bc34a"/>
-                <stop offset="50%" stop-color="#f9a825"/>
-                <stop offset="75%" stop-color="#ff7043"/>
-                <stop offset="100%" stop-color="#c62828"/>
-              </linearGradient>
-            </defs>
-            <circle class="gauge-bg" cx="100" cy="100" r="82" />
-            <circle class="gauge-fill" id="gaugeFillCircle" cx="100" cy="100" r="82" stroke-dasharray="515" stroke-dashoffset="257.5" />
-          </svg>
-          <div class="gauge-needle" id="fearNeedle"></div>
-          <div class="gauge-center"></div>
-        </div>
-        <div>
-          <span class="fear-value-large" id="fearValueDisplay">48</span>
-          <span> / 100</span>
-        </div>
-        <div id="fearStatusBadge" class="fear-label neutral">NEUTRO</div>
-        <div style="font-size: 10px; margin-top: 12px;">⚠️ Medo extremo → busca por ouro | Ganância → correção</div>
-      </div>
-
-      <div class="dxy-card">
-        <div>💵 DXY - DÓLAR INDEX</div>
-        <div style="font-size:32px; font-family:monospace; font-weight:700;" id="dxySpot">—</div>
-        <div id="dxyChange" class="up">0.00%</div>
-        <div style="margin-top:6px; font-size:11px;">Correlação: <span id="corrHint">—</span></div>
-      </div>
-
-      <div class="global-card">
-        <div>🌍 INDICES & RISCO</div>
-        <div class="index-ticker">
-          <div class="micro-index"><span>🇺🇸 S&P500</span><br><strong id="spxVal">—</strong><span id="spxChg">0%</span></div>
-          <div class="micro-index"><span>📉 VIX</span><br><strong id="vixVal">—</span></div>
-          <div class="micro-index"><span>⛏️ GDX</span><br><strong id="gdxVal">—</strong><span id="gdxChg">0%</span></div>
-        </div>
-        <div class="index-ticker" style="margin-top:8px;">
-          <div class="micro-index"><span>🇨🇳 CNY</span><br><strong id="cnyVal">—</strong><span id="cnyChg">—%</span></div>
-          <div class="micro-index"><span>🛢️ WTI</span><br><strong id="wtiVal">—</strong><span id="wtiChg">—%</span></div>
-        </div>
-      </div>
-    </div>
+  <div class="hdr-price">
+    <span class="hdr-p" id="hP">$—.——</span>
+    <span class="hdr-ch" id="hCh">——</span>
+    <span class="hdr-hl" id="hHL">H: — · L: —</span>
+  </div>
+  <div class="hdr-right">
+    <span style="font-size:9px;color:var(--muted)">
+      <span class="sess-dot" id="sdAsia"></span>ASIA
+      <span class="sess-dot" style="margin-left:8px" id="sdLdn"></span>LONDON
+      <span class="sess-dot" style="margin-left:8px" id="sdNY"></span>NY
+    </span>
+    <span class="next-upd">↻ <strong id="cdT">60</strong>s</span>
+    <button class="btn-ref" onclick="fetchAll()">ATUALIZAR</button>
+    <span class="pill-live" id="liveP">CARREGANDO</span>
   </div>
 </div>
 
-<div id="toastMessage" class="toast-gold">📊 Dados reais atualizados</div>
+<!-- TOAST -->
+<div class="toast" id="toast"><b id="tT"></b><span id="tD"></span></div>
+
+<div class="wrap">
+
+  <!-- MAIN GRID: Chart + Technical Analysis -->
+  <div class="grid-main">
+
+    <!-- CHART -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Gráfico · XAU/USD</span>
+        <span class="card-sub" id="chartSrc">OANDA · TradingView</span>
+      </div>
+      <div class="tv-wrap chart-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {"autosize":true,"symbol":"OANDA:XAUUSD","interval":"15","timezone":"America/Sao_Paulo",
+          "theme":"dark","style":"1","locale":"br","allow_symbol_change":false,
+          "calendar":false,"support_host":"https://www.tradingview.com",
+          "studies":["STD;RSI","STD;MACD","STD;Bollinger_Bands"],
+          "backgroundColor":"#050a10","gridColor":"rgba(196,154,82,0.04)"}
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Technical Analysis widget -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Análise Técnica · XAU/USD</span>
+        <span class="card-sub">Osciladores · MMs · Sumário</span>
+      </div>
+      <div class="tv-wrap tech-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+          {"interval":"15m","width":"100%","isTransparent":true,"height":"100%",
+          "symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"multiple",
+          "locale":"br","colorTheme":"dark"}
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYMBOL OVERVIEW — performance with time range buttons -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-hdr">
+      <span class="card-title">Desempenho · XAU/USD</span>
+      <span class="card-sub">1D · 5D · 1M · 6M · YTD · 1A · 5A · 10A</span>
+    </div>
+    <div class="tv-wrap ovw-h">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+        {"symbols":[["OANDA:XAUUSD|1D"],["OANDA:XAGUSD|1D"],["TVC:DXY|1D"]],"chartOnly":false,
+        "width":"100%","height":"100%","locale":"br","colorTheme":"dark","autosize":true,
+        "showVolume":false,"showMA":false,"hideDateRanges":false,"hideMarketStatus":false,
+        "hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":
+        "JetBrains Mono, monospace","fontSize":"10","noTimeScale":false,"valuesTracking":"1",
+        "changeMode":"price-and-percent","chartType":"area","maLineColor":"#2962FF",
+        "maLineWidth":1,"maLength":9,"lineWidth":2,"lineType":0,"dateRanges":
+        ["1d|1","5d|5","1m|30","6m|1W","12m|1M","60m|1M","all|1M"]}
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYMBOL INFO STATS (custom fetched) -->
+  <div class="sinfo-grid">
+    <div class="sinfo-card">
+      <div class="si-lbl">ABERTURA</div>
+      <div class="si-val" id="siOpen" style="color:var(--text)">—</div>
+      <div class="si-sub">dia atual</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">FECHAMENTO ANT.</div>
+      <div class="si-val" id="siPrev" style="color:var(--text)">—</div>
+      <div class="si-sub">ontem</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">MÁXIMA</div>
+      <div class="si-val" id="siH" style="color:var(--green)">—</div>
+      <div class="si-sub">hoje</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">MÍNIMA</div>
+      <div class="si-val" id="siL" style="color:var(--red)">—</div>
+      <div class="si-sub">hoje</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">ATR · 14</div>
+      <div class="si-val" id="siATR" style="color:var(--gold)">—</div>
+      <div class="si-sub">volatilidade</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">VARIAÇÃO</div>
+      <div class="si-val" id="siVar">—%</div>
+      <div class="si-sub">no dia</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Probability + Calendar + AI -->
+  <div class="grid-r2">
+
+    <!-- GAUGE -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Probabilidade</span></div>
+      <div class="gauge-body">
+        <div class="gauge-canvas-wrap">
+          <canvas id="gauge" width="200" height="110"></canvas>
+          <div class="gauge-pct" id="gPct" style="color:var(--muted)">—%</div>
+        </div>
+        <div class="gauge-lbl" id="gLbl" style="color:var(--muted)">CALCULANDO</div>
+        <div class="gauge-sub">
+          <div class="gs"><div class="gs-v" id="gsTech" style="color:var(--muted)">—</div><div class="gs-l">TÉCNICO</div></div>
+          <div class="gs"><div class="gs-v" id="gsSent" style="color:var(--muted)">—</div><div class="gs-l">NOTÍCIAS</div></div>
+          <div class="gs"><div class="gs-v" id="gsCal" style="color:var(--muted)">—</div><div class="gs-l">AGENDA</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR (TradingView Events) -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Calendário Econômico</span>
+        <span class="card-sub">Eventos USD · Alto Impacto</span>
+      </div>
+      <div class="tv-wrap cal-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+          {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%",
+          "locale":"br","importanceFilter":"0,1","countryFilter":"us,eu,gb,jp,cn"}
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET OVERVIEW (correlações) -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Mercados Correlatos</span>
+        <span class="card-sub">DXY · VIX · Oil · Prata</span>
+      </div>
+      <div class="tv-wrap cal-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          {"colorTheme":"dark","dateRange":"1D","showChart":true,"locale":"br",
+          "largeChartUrl":"","isTransparent":true,"showSymbolLogo":false,
+          "showFloatingTooltip":false,"width":"100%","height":"100%","plotLineColorGrowing":"#1de9a4",
+          "plotLineColorFalling":"#e84060","gridLineColor":"rgba(196,154,82,0.04)",
+          "scaleFontColor":"#7a8ca8","belowLineFillColorGrowing":"rgba(29,233,164,0.05)",
+          "belowLineFillColorFalling":"rgba(232,64,96,0.05)",
+          "belowLineFillColorGrowingBottom":"transparent",
+          "belowLineFillColorFallingBottom":"transparent","symbolActiveColor":"rgba(196,154,82,0.1)",
+          "tabs":[
+            {"title":"Commodities","symbols":[
+              {"s":"TVC:GOLD","d":"Ouro (XAU)"},{"s":"OANDA:XAGUSD","d":"Prata (XAG)"},
+              {"s":"TVC:USOIL","d":"Petróleo WTI"},{"s":"TVC:NATURALGAS","d":"Gás Natural"}
+            ],"originalTitle":"Commodities"},
+            {"title":"Dólar","symbols":[
+              {"s":"TVC:DXY","d":"Índice Dólar"},{"s":"FX:EURUSD","d":"EUR/USD"},
+              {"s":"FX:USDJPY","d":"USD/JPY"},{"s":"TVC:US10Y","d":"Treasury 10Y"}
+            ],"originalTitle":"Dollar"},
+            {"title":"Índices","symbols":[
+              {"s":"OANDA:SPX500USD","d":"S&P 500"},{"s":"OANDA:NAS100USD","d":"Nasdaq"},
+              {"s":"TVC:VIX","d":"VIX"},{"s":"OANDA:US30USD","d":"Dow Jones"}
+            ],"originalTitle":"Indices"}
+          ]}
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI PREDICTION BANNER -->
+  <div class="ai-banner" id="aiBanner">
+    <div class="ai-icon">◆</div>
+    <div class="ai-text loading" id="aiText">Aguardando dados para análise de inteligência artificial…</div>
+    <div>
+      <div class="ai-dir" id="aiDir" style="color:var(--muted)">—</div>
+      <div class="ai-conf" id="aiConf">PERSPECTIVA IA</div>
+      <div class="ai-bdg" id="aiBdg" style="border:1px solid var(--muted);color:var(--muted)">IA INATIVA</div>
+    </div>
+  </div>
+
+  <!-- NEWS COLUMNS -->
+  <div class="grid-news">
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">🐂</span>
+        <span class="news-col-name" style="color:var(--green)">ALTA · TOUROS</span>
+        <span class="news-col-cnt" id="cBull">0</span>
+      </div>
+      <div class="news-body" id="nBull"><div class="news-empty">Carregando…</div></div>
+    </div>
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">🐻</span>
+        <span class="news-col-name" style="color:var(--red)">BAIXA · URSOS</span>
+        <span class="news-col-cnt" id="cBear">0</span>
+      </div>
+      <div class="news-body" id="nBear"><div class="news-empty">Carregando…</div></div>
+    </div>
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">⚡</span>
+        <span class="news-col-name" style="color:var(--amber)">ALTO IMPACTO</span>
+        <span class="news-col-cnt" id="cImpact">0</span>
+      </div>
+      <div class="news-body" id="nImpact"><div class="news-empty">Carregando…</div></div>
+    </div>
+  </div>
+
+  <!-- NEWS TIMELINE (TradingView) -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-hdr">
+      <span class="card-title">Feed de Notícias · TradingView</span>
+      <span class="card-sub">XAU/USD · Gold · Commodities</span>
+    </div>
+    <div class="tv-wrap news-h">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+        {"feedMode":"symbol","symbol":"OANDA:XAUUSD","isTransparent":true,
+        "displayMode":"regular","width":"100%","height":"100%",
+        "colorTheme":"dark","locale":"br"}
+        </script>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
 
 <script>
-// ========== CONFIGURAÇÃO ==========
-const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-let goldPrice = 2745.50;
-let prevGoldPrice = 2743.20;
-let dxyValue = 103.35;
-let fearGreed = 48;
-let newsMaster = [];
-let velocity = 0.28;
+(function(){
+'use strict';
 
-// Atualiza o VELOCÍMETRO DE MEDO (circular com ponteiro)
-function updateFearGauge(value) {
-  const clampedValue = Math.min(100, Math.max(0, value));
-  // Ângulo: -90° (esquerda/medo) até +90° (direita/ganância)
-  const angle = -90 + (clampedValue / 100) * 180;
-  document.getElementById('fearNeedle').style.transform = `translateX(-50%) rotate(${angle}deg)`;
-  
-  // Arco circular
-  const circumference = 2 * Math.PI * 82; // ~515.2
-  const dashOffset = circumference * (1 - (clampedValue / 100));
-  document.getElementById('gaugeFillCircle').style.strokeDashoffset = dashOffset;
-  
-  document.getElementById('fearValueDisplay').innerText = Math.round(clampedValue);
-  
-  let status = '', statusClass = '';
-  if (clampedValue <= 25) { status = 'MEDO EXTREMO'; statusClass = 'extreme-fear'; }
-  else if (clampedValue <= 45) { status = 'MEDO'; statusClass = 'fear'; }
-  else if (clampedValue <= 55) { status = 'NEUTRO'; statusClass = 'neutral'; }
-  else if (clampedValue <= 80) { status = 'GANÂNCIA'; statusClass = 'greed'; }
-  else { status = 'GANÂNCIA EXTREMA'; statusClass = 'extreme-greed'; }
-  
-  const badge = document.getElementById('fearStatusBadge');
-  badge.innerText = status;
-  badge.className = `fear-label ${statusClass}`;
+// ── STATE ───────────────────────────────────────────────
+let candles=[], newsItems=[], calEvents=[];
+let techScore=50, sentScore=50, calScore=50;
+let lastPrice=0, countdown=60, cdInt=null, toastTO=null;
+
+// ── SENTIMENT WORDS ─────────────────────────────────────
+const BULL=['surge','surges','rises','rise','rally','gain','safe haven','inflation',
+  'rate cut','dovish','crisis','war','tension','recession','fear','uncertainty',
+  'weak dollar','etf inflow','central bank buy','demand','record','hedge',
+  'gold climbs','bullion','xau up','geopolit'];
+const BEAR=['falls','drops','declines','rate hike','hawkish','strong dollar',
+  'yields rise','risk-on','recovery','strong jobs','gold slides','retreats',
+  'selloff','correction','outflow','profit taking','xau down'];
+const HIGH_IMP=['fomc','federal reserve','powell','rate decision','cpi','nfp',
+  'non-farm','gdp','inflation data','jobs report','fed minutes','rate hike',
+  'rate cut','interest rate','breaking'];
+
+const EVENT_BIAS=[
+  {keys:['Non-Farm','NFP','Payroll'],         bias:'BEAR',note:'Emprego forte → USD sobe → Ouro cai'},
+  {keys:['CPI','Consumer Price','Inflation'],  bias:'BULL',note:'Inflação alta → Ouro protege'},
+  {keys:['PPI','Producer Price'],              bias:'BULL',note:'Inflação produtora → alta Ouro'},
+  {keys:['FOMC','Federal Funds','Rate Decision'],bias:'WATCH',note:'Depende da decisão'},
+  {keys:['Powell','Fed Chair'],                bias:'WATCH',note:'Discurso movimenta fortemente'},
+  {keys:['GDP','Gross Domestic'],              bias:'BEAR', note:'PIB forte → risk-on → pressão Ouro'},
+  {keys:['Jobless Claims'],                    bias:'BULL', note:'Desemprego → safe haven'},
+  {keys:['ISM','PMI'],                         bias:'BEAR', note:'Manufatura forte → USD sobe'},
+  {keys:['Retail Sales'],                      bias:'BEAR', note:'Consumo forte → USD sobe'},
+];
+
+function classifyEvent(title=''){
+  const t=title.toLowerCase();
+  for(const ev of EVENT_BIAS) if(ev.keys.some(k=>t.includes(k.toLowerCase()))) return ev;
+  return {bias:'WATCH',note:'Evento de impacto moderado'};
 }
 
-function updateFearFromVix(vix) {
-  let newFear = 50;
-  if (vix > 30) newFear = 15;
-  else if (vix > 25) newFear = 25;
-  else if (vix > 22) newFear = 32;
-  else if (vix > 18) newFear = 42;
-  else if (vix < 14) newFear = 68;
-  else if (vix < 12) newFear = 82;
-  else if (vix < 10) newFear = 92;
-  fearGreed = Math.min(98, Math.max(5, newFear));
-  updateFearGauge(fearGreed);
+function scoreNews(title=''){
+  const t=title.toLowerCase();
+  let s=0;
+  BULL.forEach(w=>{if(t.includes(w))s+=2;});
+  BEAR.forEach(w=>{if(t.includes(w))s-=2;});
+  const hi=HIGH_IMP.some(w=>t.includes(w));
+  return {bias:s>3?'BULL':s<-3?'BEAR':'NEUTRAL',score:s,hi};
 }
 
-// BUSCA DADOS REAIS VIA YAHOO FINANCE
-async function fetchMarketData() {
-  try {
-    const symbols = ['GC=F', 'DX-Y.NYB', '^GSPC', '^VIX', 'GDX', 'USDCNH=X', 'CL=F'];
-    const results = {};
-    
-    for (const sym of symbols) {
-      try {
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=5m&range=1d`;
-        const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
-        const data = await resp.json();
-        if (!data.chart?.result?.[0]) continue;
-        const quote = data.chart.result[0].indicators.quote[0];
-        const closes = quote.close.filter(v => v !== null);
-        if (!closes.length) continue;
-        const last = closes[closes.length-1];
-        const prevClose = closes[closes.length-2] || last;
-        const changePct = ((last - prevClose)/prevClose)*100;
-        results[sym] = { last, changePct };
-      } catch(e) { console.warn(`${sym} error`, e); }
-    }
-    
-    // Atualiza OURO
-    if (results['GC=F']) {
-      goldPrice = results['GC=F'].last;
-      const chg = results['GC=F'].changePct;
-      document.getElementById('xauPrice').innerHTML = `$${goldPrice.toFixed(2)}`;
-      const chEl = document.getElementById('xauChange');
-      chEl.innerHTML = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`;
-      chEl.className = `xau-change ${chg >= 0 ? 'up' : 'dn'}`;
-      document.getElementById('xauPrice').classList.add('flash-gold');
-      setTimeout(() => document.getElementById('xauPrice').classList.remove('flash-gold'), 400);
-    }
-    
-    // Atualiza DÓLAR (DXY)
-    if (results['DX-Y.NYB']) {
-      dxyValue = results['DX-Y.NYB'].last;
-      const dxyChg = results['DX-Y.NYB'].changePct;
-      document.getElementById('dxyHeaderPrice').innerHTML = dxyValue.toFixed(2);
-      document.getElementById('dxyHeaderChange').innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
-      document.getElementById('dxyHeaderChange').className = `dxy-change-header ${dxyChg >= 0 ? 'up' : 'dn'}`;
-      document.getElementById('dxySpot').innerHTML = dxyValue.toFixed(2);
-      document.getElementById('dxyChange').innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
-      document.getElementById('dxyChange').className = dxyChg >= 0 ? 'up' : 'dn';
-      const corrMsg = dxyChg > 0.1 ? "Dólar forte → Ouro sob pressão" : dxyChg < -0.1 ? "Dólar fraco → Ouro ganha" : "Neutro";
-      document.getElementById('corrHint').innerText = corrMsg;
-    }
-    
-    // S&P500
-    if (results['^GSPC']) {
-      document.getElementById('spxVal').innerHTML = results['^GSPC'].last.toFixed(1);
-      document.getElementById('spxChg').innerHTML = `${results['^GSPC'].changePct >= 0 ? '+' : ''}${results['^GSPC'].changePct.toFixed(2)}%`;
-    }
-    
-    // VIX e FEAR
-    if (results['^VIX']) {
-      const vix = results['^VIX'].last;
-      document.getElementById('vixVal').innerHTML = vix.toFixed(2);
-      updateFearFromVix(vix);
-    }
-    
-    // GDX
-    if (results['GDX']) {
-      document.getElementById('gdxVal').innerHTML = results['GDX'].last.toFixed(2);
-      document.getElementById('gdxChg').innerHTML = `${results['GDX'].changePct >= 0 ? '+' : ''}${results['GDX'].changePct.toFixed(2)}%`;
-    }
-    
-    // USD/CNH
-    if (results['USDCNH=X']) {
-      document.getElementById('cnyVal').innerHTML = results['USDCNH=X'].last.toFixed(4);
-      document.getElementById('cnyChg').innerHTML = `${results['USDCNH=X'].changePct >= 0 ? '+' : ''}${results['USDCNH=X'].changePct.toFixed(2)}%`;
-    }
-    
-    // WTI
-    if (results['CL=F']) {
-      document.getElementById('wtiVal').innerHTML = results['CL=F'].last.toFixed(2);
-      document.getElementById('wtiChg').innerHTML = `${results['CL=F'].changePct >= 0 ? '+' : ''}${results['CL=F'].changePct.toFixed(2)}%`;
-    }
-    
-    // ATUALIZA TICKER ROTATIVO (faixa de índices)
-    updateTicker(results);
-    
-  } catch(e) { console.warn('Erro fetchMarketData:', e); }
+// ── INDICATORS ──────────────────────────────────────────
+function ema(d,p){const k=2/(p+1);const r=[d[0]];for(let i=1;i<d.length;i++)r.push(d[i]*k+r[i-1]*(1-k));return r;}
+
+function calcRSI(c,p=14){
+  if(c.length<p+2)return null;
+  let ag=0,al=0;
+  for(let i=1;i<=p;i++){const d=c[i]-c[i-1];ag+=Math.max(d,0);al+=Math.max(-d,0);}
+  ag/=p;al/=p;
+  for(let i=p+1;i<c.length;i++){const d=c[i]-c[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p;}
+  return al===0?100:100-100/(1+ag/al);
 }
 
-// FAIXA ROTATIVA DE ÍNDICES (TICKER)
-function updateTicker(market) {
-  const spx = market['^GSPC'] || { last: 5420, changePct: 0.1 };
-  const ndx = { last: 18950, changePct: 0.2 };
-  const dxy = market['DX-Y.NYB'] || { last: 103.3, changePct: 0.05 };
-  const vix = market['^VIX'] || { last: 15.2, changePct: -0.5 };
-  const gdx = market['GDX'] || { last: 37.5, changePct: 0.3 };
-  const usdcnh = market['USDCNH=X'] || { last: 7.252, changePct: 0.02 };
-  const wti = market['CL=F'] || { last: 78.2, changePct: 0.4 };
-  
-  const tickerItems = [
-    { sym: "DXY", val: dxy.last, chg: dxy.changePct },
-    { sym: "S&P500", val: spx.last, chg: spx.changePct },
-    { sym: "NASDAQ", val: ndx.last, chg: ndx.changePct },
-    { sym: "VIX", val: vix.last, chg: vix.changePct },
-    { sym: "GDX", val: gdx.last, chg: gdx.changePct },
-    { sym: "USD/CNH", val: usdcnh.last, chg: usdcnh.changePct },
-    { sym: "WTI", val: wti.last, chg: wti.changePct }
-  ];
-  
-  let html = '';
-  for (let i = 0; i < 2; i++) { // duplica para efeito infinito
-    tickerItems.forEach(item => {
-      html += `<div class="ticker-item">
-        <span class="ticker-symbol">${item.sym}</span>
-        <span class="ticker-price">${item.sym === 'VIX' ? item.val.toFixed(2) : item.val.toFixed(2)}</span>
-        <span class="ticker-change ${item.chg >= 0 ? 'up' : 'dn'}">${item.chg >= 0 ? '+' : ''}${item.chg.toFixed(2)}%</span>
-      </div>`;
-    });
+function calcMACD(c){
+  const e12=ema(c,12),e26=ema(c,26);
+  const ln=e12.map((v,i)=>v-e26[i]);
+  const sg=ema(ln.slice(-9),9);
+  return{hist:ln[ln.length-1]-sg[sg.length-1],line:ln[ln.length-1]};
+}
+
+function calcATR(cds,p=14){
+  let s=0;const n=Math.min(p,cds.length-1);
+  for(let i=cds.length-n;i<cds.length;i++){
+    const tr=Math.max(cds[i].high-cds[i].low,
+      Math.abs(cds[i].high-cds[i-1].close),Math.abs(cds[i].low-cds[i-1].close));
+    s+=tr;
   }
-  document.getElementById('tickerTrack').innerHTML = html;
+  return s/n;
 }
 
-// VELOCITY CLOCK
-function updateVelocityClock() {
-  const priceChange = goldPrice - prevGoldPrice;
-  velocity = Math.abs(priceChange) * 1.2 + 0.1;
-  velocity = Math.min(3.5, velocity);
-  const percentSpeed = Math.min(100, (velocity / 2.8) * 100);
-  document.getElementById('velocityFill').style.width = `${percentSpeed}%`;
-  document.getElementById('velocityValue').innerHTML = velocity.toFixed(2);
-  
-  let direction = priceChange > 0.25 ? "🚀 ACELERANDO ALTA" : priceChange < -0.25 ? "📉 VELOCIDADE BAIXISTA" : "➡️ MOMENTUM NEUTRO";
-  let colorDir = priceChange > 0 ? "var(--green-bull)" : priceChange < 0 ? "var(--red-bear)" : "var(--gold)";
-  document.getElementById('directionText').innerHTML = direction;
-  document.getElementById('directionText').style.color = colorDir;
-  document.getElementById('atrValue').innerHTML = `$${(12 + Math.abs(priceChange) * 3).toFixed(2)}`;
-  document.getElementById('rangeValue').innerHTML = `$${(Math.abs(priceChange) * 1.8).toFixed(2)}`;
-  prevGoldPrice = goldPrice;
-  
-  // Sessões ativas
-  const hourUTC = new Date().getUTCHours();
-  document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
-  if (hourUTC >= 0 && hourUTC < 8) document.querySelector('[data-session="asia"]')?.classList.add('active');
-  if (hourUTC >= 8 && hourUTC < 17) document.querySelector('[data-session="london"]')?.classList.add('active');
-  if (hourUTC >= 13 && hourUTC < 22) document.querySelector('[data-session="ny"]')?.classList.add('active');
+function analyzeCandles(cds){
+  if(cds.length<30)return null;
+  const cl=cds.map(c=>c.close);
+  const price=cl[cl.length-1];
+  const rsi=calcRSI(cl,14);
+  const e200=ema(cl,Math.min(200,cl.length-1));
+  const macd=calcMACD(cl);
+  const atr=calcATR(cds,14);
+  const e200v=e200[e200.length-1];
+  let score=50;
+  if(rsi<30)score+=15;else if(rsi<40)score+=8;else if(rsi>70)score-=15;else if(rsi>60)score-=8;
+  if(price>e200v)score+=12;else score-=12;
+  if(macd.hist>0)score+=10;else score-=10;
+  return{price,rsi,e200v,macd,atr,score:Math.min(100,Math.max(0,score))};
 }
 
-// NOTÍCIAS CLASSIFICADAS
-function classifyNewsStrength(title, summary) {
-  const text = (title + ' ' + summary).toLowerCase();
-  let bullScore = 0, bearScore = 0;
-  const bullTerms = ['surge', 'rally', 'alta', 'bull', 'inflação', 'geopolítica', 'porto seguro', 'dovish', 'cortes'];
-  const bearTerms = ['queda', 'bear', 'hawkish', 'dólar forte', 'juros', 'outflow', 'pressão'];
-  bullTerms.forEach(w => { if(text.includes(w)) bullScore++; });
-  bearTerms.forEach(w => { if(text.includes(w)) bearScore++; });
-  if (bullScore > bearScore) return { sentiment: 'BULL', strength: Math.min(5, bullScore + 2) };
-  if (bearScore > bullScore) return { sentiment: 'BEAR', strength: Math.min(5, bearScore + 2) };
-  return { sentiment: 'NEUTRAL', strength: 2 };
-}
-
-async function fetchNews() {
-  const url = `https://query1.finance.yahoo.com/v1/finance/search?q=gold%20XAU%20USD%20Fed&newsCount=12`;
-  try {
-    const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
-    const data = await resp.json();
-    if (data.news && data.news.length) {
-      newsMaster = data.news.slice(0, 10).map(art => {
-        const { sentiment, strength } = classifyNewsStrength(art.title || '', art.summary || '');
-        return {
-          title: art.title || '',
-          summary: (art.summary || '').substring(0, 120),
-          link: art.link || '#',
-          publisher: art.publisher || 'Yahoo',
-          sentiment,
-          strength,
-          time: new Date().toLocaleTimeString('pt-BR')
-        };
-      });
-    } else throw new Error();
-  } catch(e) {
-    newsMaster = [
-      { title:"Fed sinaliza corte de juros", summary:"Ouro reage com alta", publisher:"Reuters", sentiment:"BULL", strength:4, time:"agora", link:"#" },
-      { title:"CPI surpreende, dólar forte", summary:"Ouro pressionado", publisher:"Bloomberg", sentiment:"BEAR", strength:5, time:"agora", link:"#" },
-      { title:"Tensões geopolíticas", summary:"Demanda por porto seguro", publisher:"CNBC", sentiment:"BULL", strength:5, time:"agora", link:"#" }
-    ];
+// ── GAUGE ────────────────────────────────────────────────
+function drawGauge(pct){
+  const cv=document.getElementById('gauge');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,cx=W/2,cy=H-10,r=H-22;
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);
+  ctx.lineWidth=13;ctx.strokeStyle='rgba(255,255,255,.05)';ctx.stroke();
+  const col=pct>=65?'#1de9a4':pct>=45?'#c49a52':'#e84060';
+  const gr=ctx.createLinearGradient(0,0,W,0);
+  if(pct>=65){gr.addColorStop(0,'#e84060');gr.addColorStop(.5,'#c49a52');gr.addColorStop(1,'#1de9a4');}
+  else if(pct>=45){gr.addColorStop(0,'#e84060');gr.addColorStop(1,'#c49a52');}
+  else{gr.addColorStop(0,'#5a0015');gr.addColorStop(1,'#e84060');}
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+(pct/100)*Math.PI,false);
+  ctx.lineWidth=13;ctx.lineCap='round';ctx.strokeStyle=gr;ctx.stroke();
+  for(let i=0;i<=10;i++){
+    const a=Math.PI+(i/10)*Math.PI;
+    const x1=cx+Math.cos(a)*(r-16),y1=cy+Math.sin(a)*(r-16);
+    const x2=cx+Math.cos(a)*(r-7),y2=cy+Math.sin(a)*(r-7);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+    ctx.strokeStyle=i%5===0?'rgba(196,154,82,.4)':'rgba(255,255,255,.1)';
+    ctx.lineWidth=i%5===0?1.5:1;ctx.stroke();
   }
-  renderNews();
+  const gp=document.getElementById('gPct');
+  gp.textContent=pct+'%';gp.style.color=col;
+  const gl=document.getElementById('gLbl');
+  if(pct>=70){gl.textContent='🐂 VIÉS ALTISTA';gl.style.color='var(--green)';}
+  else if(pct>=55){gl.textContent='🟡 LEVEMENTE ALTISTA';gl.style.color='var(--gold)';}
+  else if(pct>=45){gl.textContent='⚖️ NEUTRO';gl.style.color='var(--muted)';}
+  else if(pct>=30){gl.textContent='🟠 LEVEMENTE BAIXISTA';gl.style.color='var(--amber)';}
+  else{gl.textContent='🐻 VIÉS BAIXISTA';gl.style.color='var(--red)';}
 }
 
-function renderNews() {
-  const allList = [], bullList = [], bearList = [], impactList = [];
-  newsMaster.forEach(n => {
-    const strengthClass = n.sentiment === 'BULL' ? `bull-strength strength-${n.strength}` : `bear-strength bear-${n.strength}`;
-    const strengthText = n.sentiment === 'BULL' ? `🐂 TOURO ${n.strength}/5` : `🐻 URSO ${n.strength}/5`;
-    const html = `<div class="news-item-card" onclick="window.open('${n.link}','_blank')">
-      <div style="display:flex; justify-content:space-between;">
-        <span class="${strengthClass}">${strengthText}</span>
-        <span style="font-size:9px;">${n.time}</span>
-      </div>
-      <div style="font-weight:600; margin:6px 0;">${n.title}</div>
-      <div style="font-size:11px; color:var(--text-dim);">${n.summary} <span style="background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:12px;">${n.publisher}</span></div>
+function calcProbability(){
+  if(newsItems.length>0){
+    let st=0;newsItems.forEach(n=>{const s=scoreNews(n.title||'');st+=s.score;});
+    sentScore=Math.min(100,Math.max(0,50+(st/newsItems.length)*5));
+  }
+  const tech=candles.length>20?analyzeCandles(candles):null;
+  if(tech) techScore=tech.score;
+  const final=Math.round((techScore*.45)+(sentScore*.35)+(calScore*.20));
+  return{prob:final,tech};
+}
+
+// ── RENDER PRICE ─────────────────────────────────────────
+function renderPrice(){
+  if(candles.length<2)return;
+  const last=candles[candles.length-1];
+  const first=candles.find(c=>new Date(c.ts).toDateString()===new Date().toDateString())||candles[0];
+  const prev=candles[0];
+  const pct=((last.close-first.close)/first.close)*100;
+  const dayH=Math.max(...candles.slice(-80).map(c=>c.high));
+  const dayL=Math.min(...candles.slice(-80).map(c=>c.low));
+  const atr=analyzeCandles(candles)?.atr||0;
+
+  const el=document.getElementById('hP');
+  el.classList.remove('price-up','price-dn');
+  void el.offsetWidth;
+  el.classList.add(last.close>lastPrice&&lastPrice>0?'price-up':'price-dn');
+  el.textContent='$'+last.close.toFixed(2);
+  lastPrice=last.close;
+
+  const ch=document.getElementById('hCh');
+  ch.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  ch.className='hdr-ch '+(pct>=0?'up':'dn');
+  document.getElementById('hHL').textContent='H: $'+dayH.toFixed(2)+' · L: $'+dayL.toFixed(2);
+
+  document.getElementById('siOpen').textContent='$'+first.close.toFixed(2);
+  document.getElementById('siPrev').textContent='$'+prev.close.toFixed(2);
+  document.getElementById('siH').textContent='$'+dayH.toFixed(2);
+  document.getElementById('siL').textContent='$'+dayL.toFixed(2);
+  document.getElementById('siATR').textContent='$'+atr.toFixed(2);
+  const varEl=document.getElementById('siVar');
+  varEl.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  varEl.style.color=pct>=0?'var(--green)':'var(--red)';
+
+  const h=new Date().getUTCHours();
+  document.getElementById('sdAsia').className='sess-dot '+(h>=0&&h<7?'on':'off');
+  document.getElementById('sdLdn').className='sess-dot '+(h>=7&&h<13?'on':'off');
+  document.getElementById('sdNY').className='sess-dot '+(h>=13&&h<20?'on':'off');
+}
+
+function renderScores(){
+  const tc=document.getElementById('gsTech');
+  const sc=document.getElementById('gsSent');
+  tc.textContent=techScore.toFixed(0)+'%';
+  sc.textContent=sentScore.toFixed(0)+'%';
+  tc.style.color=techScore>60?'var(--green)':techScore<40?'var(--red)':'var(--gold)';
+  sc.style.color=sentScore>60?'var(--green)':sentScore<40?'var(--red)':'var(--gold)';
+  document.getElementById('gsCal').textContent=calScore.toFixed(0)+'%';
+  document.getElementById('gsCal').style.color=calScore>60?'var(--green)':calScore<40?'var(--red)':'var(--gold)';
+}
+
+// ── RENDER NEWS ───────────────────────────────────────────
+function renderNews(){
+  const bull=[],bear=[],imp=[];
+  let st=0;
+  newsItems.forEach(n=>{
+    const s=scoreNews(n.title||'');
+    st+=s.score;
+    const age=n.providerPublishTime?tAgo(n.providerPublishTime*1000):'—';
+    const src=n.publisher||'Yahoo Finance';
+    const url=n.link||'#';
+    const h=`<div class="news-item" onclick="window.open('${url}','_blank')">
+      <div class="ni-time">${age} · ${src}</div>
+      <div class="ni-title">${n.title||'—'}</div>
     </div>`;
-    allList.push(html);
-    if (n.sentiment === 'BULL') bullList.push(html);
-    if (n.sentiment === 'BEAR') bearList.push(html);
-    if (n.strength >= 4) impactList.push(html);
+    if(s.hi) imp.push(h);
+    if(s.bias==='BULL') bull.push(h);
+    else if(s.bias==='BEAR') bear.push(h);
   });
-  document.getElementById('pane-all').innerHTML = allList.join('');
-  document.getElementById('pane-bull').innerHTML = bullList.length ? bullList.join('') : '<div style="padding:20px;">Sem notícias de alta</div>';
-  document.getElementById('pane-bear').innerHTML = bearList.length ? bearList.join('') : '<div style="padding:20px;">Sem notícias de baixa</div>';
-  document.getElementById('pane-impact').innerHTML = impactList.length ? impactList.join('') : '<div style="padding:20px;">Sem eventos de alto impacto</div>';
+  if(newsItems.length>0) sentScore=Math.min(100,Math.max(0,50+(st/newsItems.length)*5));
+
+  const fill=(id,items,cntId)=>{
+    document.getElementById(id).innerHTML=items.length?items.join(''):'<div class="news-empty">Sem notícias classificadas</div>';
+    document.getElementById(cntId).textContent=items.length;
+  };
+  fill('nBull',bull,'cBull');
+  fill('nBear',bear,'cBear');
+  fill('nImpact',imp,'cImpact');
 }
 
-function initTabs() {
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.news-pane').forEach(p => p.classList.remove('active'));
-      document.getElementById(`pane-${tabId}`).classList.add('active');
+function tAgo(ts){
+  const d=(Date.now()-ts)/1000;
+  if(d<60)return Math.round(d)+'s';
+  if(d<3600)return Math.round(d/60)+'min';
+  if(d<86400)return Math.round(d/3600)+'h';
+  return Math.round(d/86400)+'d';
+}
+
+// ── AI PREDICTION ─────────────────────────────────────────
+async function getAI(prob,tech){
+  const aiText=document.getElementById('aiText');
+  const aiBdg=document.getElementById('aiBdg');
+  const aiDir=document.getElementById('aiDir');
+  aiText.textContent='Analisando dados…';aiText.className='ai-text loading';
+  aiBdg.textContent='IA PROCESSANDO';
+  aiBdg.style.cssText='border:1px solid var(--amber);color:var(--amber)';
+
+  const price=candles.length?candles[candles.length-1].close.toFixed(2):'N/A';
+  const topN=newsItems.slice(0,4).map(n=>n.title).join('; ');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`Analista XAU/USD. Responda APENAS JSON puro:
+{"prediction":"...","direction":"ALTA|BAIXA|NEUTRO","confidence":75,"catalyst":"..."}
+
+Dados: Preço=$${price}, Prob=${prob}%, RSI=${tech?.rsi?.toFixed(1)||'--'}, MACD=${tech?.macd?.hist>0?'positivo':'negativo'}, EMA200=${tech?.price>tech?.e200v?'acima':'abaixo'}, Notícias: ${topN}
+
+"prediction": máximo 55 palavras em português, tom profissional. "catalyst": principal catalisador.`}]})
     });
-  });
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+    const r=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    aiText.textContent=r.prediction;aiText.className='ai-text';
+    const col=r.direction==='ALTA'?'var(--green)':r.direction==='BAIXA'?'var(--red)':'var(--gold)';
+    aiDir.textContent=r.direction;aiDir.style.color=col;
+    document.getElementById('aiConf').textContent=`CONFIANÇA ${r.confidence}% · ${r.catalyst||''}`;
+    aiBdg.textContent='◆ IA AURUM ATIVA';
+    aiBdg.style.cssText=`border:1px solid ${col};color:${col}`;
+  }catch(e){
+    const dir=prob>60?'ALTA':prob<40?'BAIXA':'NEUTRO';
+    const col=prob>60?'var(--green)':prob<40?'var(--red)':'var(--gold)';
+    aiText.textContent=`Probabilidade ${prob}% ${dir.toLowerCase()} baseada em ${newsItems.length} notícias e indicadores técnicos.`;
+    aiText.className='ai-text';aiDir.textContent=dir;aiDir.style.color=col;
+    aiBdg.textContent='ANÁLISE LOCAL';aiBdg.style.cssText='border:1px solid var(--muted);color:var(--muted)';
+  }
 }
 
-async function fullRefresh() {
-  await fetchMarketData();
-  updateVelocityClock();
-  document.getElementById('refreshTimer').innerHTML = new Date().toLocaleTimeString('pt-BR');
-  document.getElementById('liveIcon').innerHTML = '🔴';
-  setTimeout(() => document.getElementById('liveIcon').innerHTML = '🔴', 500);
-  const toast = document.getElementById('toastMessage');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+// ── DATA FETCH ────────────────────────────────────────────
+function fw(url,ms){
+  const c=new AbortController();const id=setTimeout(()=>c.abort(),ms||10000);
+  return fetch(url,{signal:c.signal}).finally(()=>clearTimeout(id));
 }
 
-// INICIALIZAÇÃO
-(async function init() {
-  await fetchNews();
-  renderNews();
-  initTabs();
-  await fullRefresh();
-  setInterval(fullRefresh, 30000);
-  setInterval(updateVelocityClock, 3000);
+async function fetchPrice(){
+  const yu='https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=15m&range=5d';
+  const pxs=[`https://api.allorigins.win/get?url=${encodeURIComponent(yu)}`,
+              `https://api.allorigins.win/raw?url=${encodeURIComponent(yu)}`,
+              `https://corsproxy.io/?url=${encodeURIComponent(yu)}`];
+  for(const px of pxs){
+    try{
+      const r=await fw(px,9000);if(!r.ok)continue;
+      const t=await r.text();let j=JSON.parse(t);
+      if(j.contents)try{j=JSON.parse(j.contents);}catch{}
+      const res=j?.chart?.result?.[0];if(!res)continue;
+      const q=res.indicators.quote[0];const ts=res.timestamp;
+      const out=[];
+      for(let i=0;i<ts.length;i++){if(q.close[i]==null)continue;
+        out.push({ts:ts[i]*1000,open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]});}
+      if(out.length>10){candles=out.slice(-200);return true;}
+    }catch(e){continue;}
+  }
+  return false;
+}
+
+async function fetchNews(){
+  const yu=`https://query1.finance.yahoo.com/v1/finance/search?q=gold%20XAU%20price&newsCount=18&enableNavLinks=false`;
+  const pxs=[`https://api.allorigins.win/get?url=${encodeURIComponent(yu)}`,
+              `https://corsproxy.io/?url=${encodeURIComponent(yu)}`];
+  for(const px of pxs){
+    try{
+      const r=await fw(px,9000);if(!r.ok)continue;
+      const t=await r.text();let j=JSON.parse(t);
+      if(j.contents)try{j=JSON.parse(j.contents);}catch{}
+      const news=j?.news||[];if(news.length>0){newsItems=news;return true;}
+    }catch(e){continue;}
+  }
+  return false;
+}
+
+function toast(title,desc){
+  document.getElementById('tT').textContent=title;
+  document.getElementById('tD').textContent=desc;
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(toastTO);
+  toastTO=setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+async function fetchAll(){
+  document.getElementById('liveP').textContent='BUSCANDO…';
+  document.getElementById('liveP').style.borderColor='var(--amber)';
+  document.getElementById('liveP').style.color='var(--amber)';
+
+  const[priceOk,newsOk]=await Promise.all([fetchPrice(),fetchNews()]);
+
+  if(priceOk){renderPrice();}
+  if(newsOk){renderNews();}
+
+  const{prob,tech}=calcProbability();
+  drawGauge(prob);renderScores();
+  getAI(prob,tech);
+
+  document.getElementById('liveP').textContent='AO VIVO';
+  document.getElementById('liveP').style.borderColor='var(--green)';
+  document.getElementById('liveP').style.color='var(--green)';
+  document.getElementById('chartSrc').textContent='Yahoo Finance · '+new Date().toLocaleTimeString('pt-BR');
+  countdown=60;
+  toast('◆ Dados atualizados',`Preço + ${newsItems.length} notícias classificadas`);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+drawGauge(50);
+fetchAll();
+cdInt=setInterval(()=>{
+  countdown--;
+  document.getElementById('cdT').textContent=Math.max(0,countdown);
+  if(countdown<=0){countdown=60;fetchAll();}
+},1000);
+
 })();
 </script>
 </body>
