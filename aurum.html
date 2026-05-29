@@ -128,7 +128,6 @@ body{
 .pill-off{border-color:var(--muted);color:var(--muted);}
 .pill-on{border-color:var(--green);color:var(--green);animation:blink 2s infinite;}
 .pill-busy{border-color:var(--amber);color:var(--amber);}
-.pill-sync{border-color:var(--blue);color:var(--blue);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.45}}
 
 /* SESSION BADGES */
@@ -208,9 +207,8 @@ body{
 .panel-body{padding:12px 14px;}
 
 /* CHART */
-.chart-wrap{height:420px;background:#050a10;position:relative;}
+.chart-wrap{height:420px;background:#050a10;}
 .chart-wrap iframe{width:100%;height:100%;border:none;}
-#chartContainer{width:100%;height:100%;}
 .mtf-row{
   display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
   border-top:1px solid var(--border);background:var(--border);
@@ -313,15 +311,6 @@ body{
   border-radius:2px;font-size:9px;
 }
 
-/* PRICE SYNC INDICATOR */
-.sync-indicator{
-  display:flex;align-items:center;gap:6px;
-  padding:3px 8px;border-radius:2px;font-size:8px;
-  font-weight:600;letter-spacing:1px;
-}
-.sync-live{background:var(--green2);color:var(--green);border:1px solid rgba(29,233,160,0.3);}
-.sync-delayed{background:var(--red2);color:var(--red);border:1px solid rgba(232,67,92,0.3);}
-
 /* AI ANALYSIS */
 .ai-panel{
   background:var(--s1);border:1px solid var(--border);
@@ -422,22 +411,6 @@ body{
 .adx-fill{height:100%;border-radius:2px;transition:width 0.5s ease;}
 .adx-val{font-size:9px;font-weight:600;width:36px;text-align:right;}
 
-/* LAST PRICE OVERLAY */
-.price-overlay{
-  position:absolute;top:12px;right:16px;z-index:10;
-  background:rgba(6,10,18,0.92);border:1px solid var(--border2);
-  border-radius:4px;padding:8px 14px;display:flex;align-items:center;gap:10px;
-  pointer-events:none;
-}
-.price-overlay .current-price{
-  font-family:var(--ff-d);font-size:22px;font-weight:800;color:var(--gold2);
-}
-.price-overlay .sync-dot{
-  width:8px;height:8px;border-radius:50%;flex-shrink:0;
-}
-.sync-dot.green{background:var(--green);box-shadow:0 0 8px var(--green);}
-.sync-dot.red{background:var(--red);box-shadow:0 0 8px var(--red);}
-
 ::-webkit-scrollbar{width:2px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:1px;}
@@ -454,7 +427,7 @@ body{
   <div class="splash-features">
     <div class="sf"><div class="sf-num" id="sfNum1">0</div><div class="sf-label">Indicadores</div></div>
     <div class="sf"><div class="sf-num" id="sfNum2">0</div><div class="sf-label">Fontes de dados</div></div>
-    <div class="sf"><div class="sf-num" id="sfNum3">0%</div><div class="sf-label">Precisão do sinal</div></div>
+    <div class="sf"><div class="sf-num" id="sfNum3">0%</div><div class="sf-label">IA · Confiança máx.</div></div>
   </div>
   <button class="splash-enter" onclick="enterDashboard()">ENTRAR NO TERMINAL →</button>
   <div class="splash-legal">© AURUM Intelligence · Uso educacional · Não constitui conselho de investimento</div>
@@ -499,10 +472,6 @@ body{
       </div>
     </div>
     <div class="hdr-mid">
-      <span class="sync-indicator sync-live" id="syncIndicator">
-        <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-        PREÇO REAL
-      </span>
       <span class="sess" id="sb-asia">ASIA</span>
       <span class="sess" id="sb-ldn">LONDON</span>
       <span class="sess" id="sb-ny">NEW YORK</span>
@@ -518,7 +487,7 @@ body{
   <!-- TICKER + CREDITS -->
   <div class="ticker">
     <div>
-      <div style="font-size:8px;color:var(--muted);letter-spacing:3px;margin-bottom:4px;">GOLD · XAU/USD SPOT · FONTE: TRADINGVIEW</div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:3px;margin-bottom:4px;">GOLD · XAU/USD SPOT</div>
       <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
         <span class="tk-price" id="tkPrice">$—.——</span>
         <span class="tk-change" id="tkChange">--</span>
@@ -539,8 +508,8 @@ body{
         <span class="tk-val" id="tkScore">0 / 10</span>
       </div>
       <div class="tk-item">
-        <span class="tk-lbl">Sincronização</span>
-        <span class="tk-val g" id="tkSyncAge">0s</span>
+        <span class="tk-lbl">Fonte</span>
+        <span class="tk-val g" id="tkSource">—</span>
       </div>
       <div class="tk-item">
         <span class="tk-lbl">Próxima</span>
@@ -565,18 +534,30 @@ body{
     <!-- CHART -->
     <div class="panel">
       <div class="panel-hdr">
-        <span class="panel-title">Gráfico · OANDA:XAUUSD · M5 · TEMPO REAL</span>
-        <div style="display:flex;gap:8px;font-size:9px;color:var(--muted);align-items:center">
-          <span id="chartPriceDisplay" style="color:var(--gold2);font-weight:600;font-size:14px;font-family:var(--ff-d)">$—.——</span>
+        <span class="panel-title">Gráfico · OANDA:XAUUSD · M5</span>
+        <div style="display:flex;gap:8px;font-size:9px;color:var(--muted)">
+          <span>▬ EMA 32</span><span>▬ EMA 176</span><span>▬ Bollinger</span>
         </div>
       </div>
-      <div class="chart-wrap" id="chartWrap">
-        <div id="chartContainer"></div>
-        <div class="price-overlay" id="priceOverlay">
-          <span class="sync-dot green" id="syncDot"></span>
-          <span class="current-price" id="overlayPrice">$—.——</span>
-          <span style="font-size:8px;color:var(--muted)">BID</span>
-        </div>
+      <div class="chart-wrap">
+        <iframe title="XAUUSD Chart" sandbox="allow-scripts allow-same-origin" loading="lazy" srcdoc='
+<!DOCTYPE html><html><head>
+<style>html,body{margin:0;padding:0;width:100%;height:100%;background:#050a10;overflow:hidden;}</style>
+</head><body>
+<div id="c" style="width:100%;height:100%"></div>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+(function init(){
+  if(typeof TradingView==="undefined"){setTimeout(init,300);return;}
+  new TradingView.widget({
+    autosize:true,symbol:"OANDA:XAUUSD",interval:"5",
+    timezone:"America/Sao_Paulo",theme:"dark",style:"1",locale:"br",
+    toolbar_bg:"#050a10",enable_publishing:false,allow_symbol_change:false,
+    studies:["RSI@tv-basicstudies","MACD@tv-basicstudies","BB@tv-basicstudies"],
+    container_id:"c"
+  });
+})();
+</script></body></html>'></iframe>
       </div>
       <div class="mtf-row" id="mtfRow">
         <div class="mtf-cell"><div class="mtf-lbl">M1</div><div class="mtf-sig sig-neu" id="mtf1">—</div></div>
@@ -762,9 +743,6 @@ body{
 </div><!-- /wrap -->
 </div><!-- /dashboard -->
 
-<!-- TradingView Charting Library -->
-<script src="https://s3.tradingview.com/tv.js"></script>
-
 <script>
 (function(){
 'use strict';
@@ -784,18 +762,12 @@ let cdTimer = null;
 let cdSecs = 60;
 let alertTO = null;
 let toastTO = null;
+let dataSource = '';
 let selPkg = null;
 let aiActive = false;
-let tvWidget = null;
-let realtimePrice = null;
-let lastPriceUpdate = null;
-let priceAgeSeconds = 0;
-let priceAgeTimer = null;
-let highPrice = 0;
-let lowPrice = Infinity;
 
 const COST = 1;
-const INTERVAL = 5000; // Atualiza a cada 5 segundos (bem mais rápido que antes)
+const INTERVAL = 60000;
 const PACKAGES = [
   {id:1, credits:50,  price:'R$ 29,90', bonus:0,   color:'var(--blue)'},
   {id:2, credits:150, price:'R$ 69,90', bonus:20,  color:'var(--gold)'},
@@ -818,10 +790,11 @@ function animCount(el, target, suffix, duration){
 
 setTimeout(()=>{
   animCount(document.getElementById('sfNum1'), 12, '', 1200);
-  animCount(document.getElementById('sfNum2'), 1, '', 1000);
-  animCount(document.getElementById('sfNum3'), 99, '%', 1400);
+  animCount(document.getElementById('sfNum2'), 3, '', 1000);
+  animCount(document.getElementById('sfNum3'), 93, '%', 1400);
 }, 2800);
 
+// Auto-enter after 8s
 let autoTimer = setTimeout(enterDashboard, 8000);
 
 window.enterDashboard = enterDashboard;
@@ -839,261 +812,7 @@ function enterDashboard(){
 };
 
 // ═══════════════════════════════════════
-// TRADINGVIEW WIDGET (FONTE ÚNICA DE PREÇO)
-// ═══════════════════════════════════════
-function initTradingViewWidget(){
-  if(typeof TradingView === 'undefined'){
-    setTimeout(initTradingViewWidget, 300);
-    return;
-  }
-
-  tvWidget = new TradingView.widget({
-    container_id: "chartContainer",
-    autosize: true,
-    symbol: "OANDA:XAUUSD",
-    interval: "5",
-    timezone: "America/Sao_Paulo",
-    theme: "dark",
-    style: "1",
-    locale: "br",
-    toolbar_bg: "#050a10",
-    enable_publishing: false,
-    allow_symbol_change: false,
-    hide_side_toolbar: true,
-    studies: [
-      "RSI@tv-basicstudies",
-      "MACD@tv-basicstudies",
-      "BB@tv-basicstudies",
-      "MAExp@tv-basicstudies"
-    ],
-    disabled_features: [
-      "header_symbol_search",
-      "header_compare",
-      "display_market_status",
-      "header_saveload"
-    ],
-    overrides: {
-      "mainSeriesProperties.candleStyle.upColor": "#1de9a0",
-      "mainSeriesProperties.candleStyle.downColor": "#e8435c",
-      "mainSeriesProperties.candleStyle.wickUpColor": "#1de9a0",
-      "mainSeriesProperties.candleStyle.wickDownColor": "#e8435c"
-    }
-  });
-
-  // Aguarda o widget carregar e então começa a extrair preços
-  setTimeout(() => {
-    startPriceExtraction();
-  }, 3000);
-}
-
-// ═══════════════════════════════════════
-// EXTRAÇÃO DE PREÇO EM TEMPO REAL
-// ═══════════════════════════════════════
-function startPriceExtraction(){
-  // Método 1: Tentar obter via postMessage do iframe do TradingView
-  window.addEventListener('message', function(event) {
-    try {
-      if (event.data && typeof event.data === 'string') {
-        const data = JSON.parse(event.data);
-        if (data.price || data.lp || data.close) {
-          const price = parseFloat(data.price || data.lp || data.close);
-          if (!isNaN(price) && price > 1000 && price < 10000) {
-            updateRealtimePrice(price);
-          }
-        }
-      }
-    } catch(e) {}
-  });
-
-  // Método 2: Polling direto no DOM do iframe do TradingView
-  setInterval(() => {
-    pollPriceFromChart();
-  }, 1000);
-
-  // Método 3: WebSocket para dados em tempo real (fallback)
-  connectToPriceFeed();
-}
-
-function pollPriceFromChart(){
-  try {
-    const iframes = document.querySelectorAll('iframe');
-    for (const iframe of iframes) {
-      try {
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        if (!doc) continue;
-        
-        // Procura elementos que contenham preços
-        const allText = doc.body.innerText;
-        const priceMatch = allText.match(/(\d{1,2},\d{3}\.\d{2})/);
-        if (priceMatch) {
-          const price = parseFloat(priceMatch[1].replace(',', ''));
-          if (!isNaN(price) && price > 1000 && price < 10000) {
-            updateRealtimePrice(price);
-            return;
-          }
-        }
-      } catch(e) {}
-    }
-  } catch(e) {}
-}
-
-// ═══════════════════════════════════════
-// WEBSOCKET PARA PREÇO EM TEMPO REAL (FINNHUB)
-// ═══════════════════════════════════════
-let ws = null;
-let wsReconnectTimer = null;
-
-function connectToPriceFeed(){
-  // Finnhub WebSocket (grátis, requer token)
-  // Para usar, cadastre-se em finnhub.io e obtenha uma API key gratuita
-  const FINNHUB_TOKEN = 'demo'; // Substitua por seu token real
-  
-  try {
-    ws = new WebSocket('wss://ws.finnhub.io?token=' + FINNHUB_TOKEN);
-    
-    ws.onopen = function() {
-      console.log('WebSocket conectado ao Finnhub');
-      ws.send(JSON.stringify({type:'subscribe', symbol:'OANDA:XAUUSD'}));
-      updateSyncStatus(true);
-    };
-    
-    ws.onmessage = function(event) {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'trade' && data.data && data.data.length > 0) {
-          const trade = data.data[0];
-          const price = trade.p;
-          if (!isNaN(price) && price > 1000 && price < 10000) {
-            updateRealtimePrice(price);
-          }
-        }
-      } catch(e) {}
-    };
-    
-    ws.onerror = function() {
-      console.log('WebSocket error - usando polling do gráfico');
-    };
-    
-    ws.onclose = function() {
-      updateSyncStatus(false);
-      // Reconectar após 10 segundos
-      clearTimeout(wsReconnectTimer);
-      wsReconnectTimer = setTimeout(connectToPriceFeed, 10000);
-    };
-  } catch(e) {
-    console.log('WebSocket não disponível - usando polling do gráfico');
-  }
-}
-
-function updateSyncStatus(isLive){
-  const indicator = document.getElementById('syncIndicator');
-  const dot = indicator.querySelector('span');
-  if (isLive) {
-    indicator.className = 'sync-indicator sync-live';
-    indicator.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span> PREÇO REAL';
-    document.getElementById('syncDot').className = 'sync-dot green';
-  } else {
-    indicator.className = 'sync-indicator sync-delayed';
-    indicator.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block;"></span> VIA GRÁFICO';
-    document.getElementById('syncDot').className = 'sync-dot red';
-  }
-}
-
-// ═══════════════════════════════════════
-// ATUALIZAÇÃO DE PREÇO (PONTO ÚNICO DE VERDADE)
-// ═══════════════════════════════════════
-function updateRealtimePrice(price){
-  if (!price || isNaN(price)) return;
-  
-  const now = Date.now();
-  lastPriceUpdate = now;
-  priceAgeSeconds = 0;
-  
-  // Atualiza high/low
-  if (price > highPrice) highPrice = price;
-  if (price < lowPrice || lowPrice === Infinity) lowPrice = price;
-  
-  // Se o preço mudou significativamente (0.01+), atualiza
-  if (!realtimePrice || Math.abs(price - realtimePrice) >= 0.01) {
-    realtimePrice = price;
-    
-    // Atualiza display no header do gráfico
-    document.getElementById('chartPriceDisplay').textContent = '$' + price.toFixed(2);
-    
-    // Atualiza overlay no gráfico
-    document.getElementById('overlayPrice').textContent = '$' + price.toFixed(2);
-    
-    // Atualiza ticker principal
-    document.getElementById('tkPrice').textContent = '$' + price.toFixed(2);
-    
-    // Calcula variação
-    if (candles.length > 0) {
-      const prevClose = candles[candles.length - 1].close;
-      const pct = ((price - prevClose) / prevClose) * 100;
-      const chEl = document.getElementById('tkChange');
-      chEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-      chEl.className = 'tk-change ' + (pct >= 0 ? 'up' : 'dn');
-    }
-    
-    document.getElementById('tkRange').textContent = 'H: ' + highPrice.toFixed(2) + ' · L: ' + lowPrice.toFixed(2);
-    document.getElementById('tkUpdate').textContent = new Date().toLocaleTimeString('pt-BR');
-    document.getElementById('tkSyncAge').textContent = '0s';
-    document.getElementById('tkSyncAge').style.color = 'var(--green)';
-    
-    // Cria/atualiza candle atual
-    updateCurrentCandle(price);
-  }
-}
-
-function updateCurrentCandle(price){
-  if (!connected) return;
-  
-  const now = Date.now();
-  const currentMinute = Math.floor(now / 60000) * 60000;
-  
-  if (candles.length === 0) {
-    // Primeiro candle
-    candles.push({
-      ts: currentMinute,
-      open: price,
-      high: price,
-      low: price,
-      close: price,
-      volume: 0
-    });
-  } else {
-    const lastCandle = candles[candles.length - 1];
-    
-    // Se estamos em um novo minuto (ou período de 5min)
-    if (now - lastCandle.ts >= 300000) {
-      // Fecha candle anterior e cria novo
-      candles.push({
-        ts: currentMinute,
-        open: price,
-        high: price,
-        low: price,
-        close: price,
-        volume: 0
-      });
-      
-      // Mantém apenas últimos 100 candles
-      if (candles.length > 100) {
-        candles.shift();
-      }
-      
-      // Recalcula indicadores
-      processNewData();
-    } else {
-      // Atualiza candle atual
-      lastCandle.high = Math.max(lastCandle.high, price);
-      lastCandle.low = Math.min(lastCandle.low, price);
-      lastCandle.close = price;
-    }
-  }
-}
-
-// ═══════════════════════════════════════
-// INDICATOR MATH (Mantido igual)
+// INDICATOR MATH
 // ═══════════════════════════════════════
 function ema(data, period){
   const k = 2/(period+1);
@@ -1234,18 +953,26 @@ function detectPatterns(cds){
   const i=cds.length-1;
   const c=cds[i],p=cds[i-1],pp=cds[i-2];
 
+  // Doji
   const body=Math.abs(c.close-c.open);
   const range=c.high-c.low;
   if(body<range*0.1) patterns.push({name:'Doji',color:'var(--amber)',dir:0});
 
+  // Engulfing
   const pBody=Math.abs(p.close-p.open);
   if(c.open<p.close&&c.close>p.open&&body>pBody&&p.close<p.open&&c.close>c.open)
     patterns.push({name:'Engolfo de Alta',color:'var(--green)',dir:1});
   if(c.open>p.close&&c.close<p.open&&body>pBody&&p.close>p.open&&c.close<c.open)
     patterns.push({name:'Engolfo de Baixa',color:'var(--red)',dir:-1});
 
+  // Hammer
   const lShadow=Math.min(c.open,c.close)-c.low;
   if(lShadow>body*2&&range>0) patterns.push({name:'Martelo',color:'var(--green)',dir:1});
+
+  // Star
+  const ppBody=Math.abs(pp.close-pp.open);
+  if(ppBody>pp.high-pp.low*0.5&&body<ppBody*0.3&&pBody<ppBody*0.3)
+    patterns.push({name:'Estrela',color:'var(--amber)',dir:0});
 
   return patterns;
 }
@@ -1347,7 +1074,7 @@ function calcSignal(cds){
     else if(wR>-20){score-=1;reasons.push('Williams %R overbought');}
   }
 
-  // ADX trend strength
+  // ADX trend strength (multiplier)
   const trendStrong=adxV.adx>25;
   const diConf=adxV.diP>adxV.diM;
 
@@ -1358,9 +1085,11 @@ function calcSignal(cds){
     else if(pos>0.8){score-=1;reasons.push('Próximo à resistência');}
   }
 
+  // ADX + DI direction bonus
   if(trendStrong&&diConf&&score>0){score+=1;reasons.push('ADX: tendência alta confirmada');}
   if(trendStrong&&!diConf&&score<0){score-=1;reasons.push('ADX: tendência baixa confirmada');}
 
+  // Session bonus
   const h=new Date().getUTCHours();
   let sessMult=1;
   if(h>=13&&h<16){sessMult=1.3;reasons.push('Sessão overlap (máximo volume)');}
@@ -1423,6 +1152,53 @@ function calcMTF(cds){
 }
 
 // ═══════════════════════════════════════
+// DATA FETCH
+// ═══════════════════════════════════════
+async function yahooFetch(symbol){
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=5m&range=5d`;
+  const proxies=[
+    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?${encodeURIComponent(url)}`
+  ];
+  for(const p of proxies){
+    try{
+      const r=await fetch(p,{signal:AbortSignal.timeout(14000)});
+      if(!r.ok) continue;
+      const outer=await r.json();
+      const raw=typeof outer.contents==='string'?JSON.parse(outer.contents):outer;
+      const res=raw?.chart?.result?.[0];
+      if(!res) continue;
+      const q=res.indicators.quote[0];
+      const ts=res.timestamp;
+      const out=[];
+      for(let i=0;i<ts.length;i++){
+        if(q.open[i]==null) continue;
+        out.push({
+          ts:ts[i]*1000,
+          open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i],
+          volume:q.volume?q.volume[i]||0:0
+        });
+      }
+      if(out.length<20) continue;
+      return out.slice(-100);
+    }catch(e){continue;}
+  }
+  return null;
+}
+
+async function fetchData(){
+  const symbols=[
+    {sym:'XAUUSD=X',label:'Yahoo · XAU/USD Spot'},
+    {sym:'GC=F',label:'Yahoo · Gold Futures'}
+  ];
+  for(const{sym,label}of symbols){
+    const d=await yahooFetch(sym);
+    if(d){dataSource=label;return d;}
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════
 // AI ANALYSIS (Claude API)
 // ═══════════════════════════════════════
 async function getAIAnalysis(sig){
@@ -1435,7 +1211,21 @@ async function getAIAnalysis(sig){
         max_tokens:1000,
         messages:[{
           role:'user',
-          content:'Você é analista sênior de XAU/USD. Responda APENAS em JSON puro (sem markdown): {"analysis":"...","outlook":"BULLISH|BEARISH|NEUTRAL","keyLevel":"..."}\n\nDados técnicos atuais:\n- Sinal: '+sig.sigType+' | Confiança: '+sig.conf.toFixed(0)+'%\n- Preço: $'+sig.price.toFixed(2)+' | Score: '+sig.effScore.toFixed(1)+'\n- RSI(14): '+sig.rsiVal?.toFixed(1)+' | MACD histograma: '+sig.mhist?.toFixed(2)+'\n- EMA 32/176: '+sig.e32v?.toFixed(2)+' / '+sig.e176v?.toFixed(2)+'\n- UT Bot: '+(sig.utBuy?'COMPRA':sig.utSell?'VENDA':'Neutro')+'\n- ADX: '+sig.adxV?.adx?.toFixed(1)+' | DI+: '+sig.adxV?.diP?.toFixed(1)+'\n- Principais razões: '+sig.reasons.slice(0,3).join('; ')
+          content:`Você é analista sênior de XAU/USD. Responda APENAS em JSON puro (sem markdown): {"analysis":"...","outlook":"BULLISH|BEARISH|NEUTRAL","keyLevel":"..."}
+
+Dados técnicos atuais:
+- Sinal: ${sig.sigType} | Confiança: ${sig.conf.toFixed(0)}%
+- Preço: $${sig.price.toFixed(2)} | Score: ${sig.effScore.toFixed(1)}
+- RSI(14): ${sig.rsiVal?.toFixed(1)} | MACD histograma: ${sig.mhist?.toFixed(2)}
+- EMA 32/176: ${sig.e32v?.toFixed(2)} / ${sig.e176v?.toFixed(2)} → ${sig.e32v>sig.e176v?'Alta':'Baixa'}
+- UT Bot: ${sig.utBuy?'COMPRA':sig.utSell?'VENDA':'Neutro'}
+- ADX: ${sig.adxV?.adx?.toFixed(1)} | DI+: ${sig.adxV?.diP?.toFixed(1)} | DI-: ${sig.adxV?.diM?.toFixed(1)}
+- Williams %R: ${sig.wR?.toFixed(1)} | Stoch K: ${sig.stK?.toFixed(1)}
+- Suporte: $${sig.sr?.sup?.toFixed(2)} | Resistência: $${sig.sr?.res?.toFixed(2)}
+- Principais razões: ${sig.reasons.slice(0,3).join('; ')}
+
+"analysis": máximo 65 palavras em português, tom profissional e institucional.
+"keyLevel": nível de preço mais importante no momento.`
         }]
       })
     });
@@ -1452,7 +1242,7 @@ function fallbackAnalysis(sig){
   const trendDir=sig.e32v>sig.e176v?'ascendente':'descendente';
   const rsiDesc=sig.rsiVal<35?'território de sobrevenda':sig.rsiVal>65?'zona de sobrecompra':'região neutra';
   const adxDesc=sig.adxV?.adx>25?'tendência forte confirmada':'mercado sem tendência definida';
-  const analysis='O ouro apresenta tendência '+trendDir+' nas médias móveis. RSI em '+rsiDesc+' ('+sig.rsiVal?.toFixed(1)+'). MACD '+(sig.mhist>0?'positivo reforça viés comprador':'negativo sugere pressão vendedora')+'. ADX indica '+adxDesc+' ('+sig.adxV?.adx?.toFixed(1)+'). Score geral: '+sig.effScore?.toFixed(1)+'.';
+  const analysis=`O ouro apresenta tendência ${trendDir} nas médias móveis. RSI em ${rsiDesc} (${sig.rsiVal?.toFixed(1)}). MACD ${sig.mhist>0?'positivo reforça viés comprador':'negativo sugere pressão vendedora'}. ADX indica ${adxDesc} (${sig.adxV?.adx?.toFixed(1)}). Score geral: ${sig.effScore?.toFixed(1)}.`;
   const outlook=sig.sigType==='BUY'?'BULLISH':sig.sigType==='SELL'?'BEARISH':'NEUTRAL';
   const keyLevel=sig.sigType==='BUY'?sig.sr?.res?.toFixed(2):sig.sr?.sup?.toFixed(2);
   return {analysis,outlook,keyLevel:keyLevel||sig.price?.toFixed(2)};
@@ -1463,36 +1253,29 @@ function fallbackAnalysis(sig){
 // ═══════════════════════════════════════
 function fmt(v,d=2){return v!=null?v.toFixed(d):'—';}
 
-function processNewData(){
-  if(candles.length < 50) return;
-  
-  const sig = calcSignal(candles);
-  if(sig) updateUI(sig);
-  
-  document.getElementById('statusPill').textContent = 'LIVE';
-  document.getElementById('statusPill').className = 'pill pill-on';
-  document.getElementById('tkCandles').textContent = candles.length;
-  
-  totalUpdates++;
-  if(!useCredits(COST)) {
-    showToast('⚠️ Créditos insuficientes','Recarregue para continuar.');
-    disconnectSystem();
-    return;
-  }
-}
-
 function updateUI(sig){
   if(!sig) return;
 
-  // Price (já atualizado em tempo real via updateRealtimePrice)
-  document.getElementById('tkCandles').textContent = candles.length;
-  document.getElementById('tkUpdate').textContent = new Date().toLocaleTimeString('pt-BR');
+  // Price
+  const last=candles[candles.length-1];
+  const prev=candles[candles.length-2];
+  if(last&&prev){
+    const pct=((last.close-prev.close)/prev.close)*100;
+    document.getElementById('tkPrice').textContent='$'+last.close.toFixed(2);
+    const chEl=document.getElementById('tkChange');
+    chEl.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+    chEl.className='tk-change '+(pct>=0?'up':'dn');
+    document.getElementById('tkRange').textContent='H: '+last.high.toFixed(2)+' · L: '+last.low.toFixed(2);
+  }
 
   // Score
   const sc=sig.normScore;
   const scEl=document.getElementById('tkScore');
   scEl.textContent=sc.toFixed(1)+' / 10';
   scEl.style.color=sc>=7?'var(--green)':sc>=4?'var(--gold)':'var(--red)';
+  document.getElementById('tkSource').textContent=dataSource;
+  document.getElementById('tkUpdate').textContent=new Date().toLocaleTimeString('pt-BR');
+  document.getElementById('tkCandles').textContent=candles.length;
 
   // Signal
   const labels={BUY:'COMPRA ▲',SELL:'VENDA ▼',HOLD:'AGUARDAR'};
@@ -1519,42 +1302,42 @@ function updateUI(sig){
   document.getElementById('iRsi').textContent=fmt(sig.rsiVal,1);
   document.getElementById('iRsi').style.color=rC;
   document.getElementById('iRsiSub').textContent=sig.rsiVal<30?'OVERSOLD':sig.rsiVal>70?'OVERBOUGHT':sig.rsiVal<45?'Zona baixa':'Normal';
-  document.getElementById('iRsiBar').style.cssText='width:'+(sig.rsiVal||50)+'%;background:'+rC;
+  document.getElementById('iRsiBar').style.cssText=`width:${sig.rsiVal||50}%;background:${rC}`;
 
   // UT Bot
   const utC=sig.utBuy?'var(--green)':sig.utSell?'var(--red)':'var(--muted)';
   document.getElementById('iUT').textContent=sig.utBuy?'CRUZOU COMPRA':sig.utSell?'CRUZOU VENDA':'NEUTRO';
   document.getElementById('iUT').style.color=utC;
   document.getElementById('iUTSub').textContent='Long: '+fmt(sig.longS)+' | Short: '+fmt(sig.shortS);
-  document.getElementById('iUTBar').style.cssText='width:'+(sig.utBuy?100:sig.utSell?0:50)+'%;background:'+utC;
+  document.getElementById('iUTBar').style.cssText=`width:${sig.utBuy?100:sig.utSell?0:50}%;background:${utC}`;
 
   // EMA
   const eUp=sig.e32v>sig.e176v;
   document.getElementById('iEMA').textContent=eUp?'GOLDEN CROSS':'DEATH CROSS';
   document.getElementById('iEMA').style.color=eUp?'var(--green)':'var(--red)';
   document.getElementById('iEMASub').textContent='32: '+fmt(sig.e32v)+' | 176: '+fmt(sig.e176v);
-  document.getElementById('iEMABar').style.cssText='width:'+(eUp?80:20)+'%;background:'+(eUp?'var(--green)':'var(--red)');
+  document.getElementById('iEMABar').style.cssText=`width:${eUp?80:20}%;background:${eUp?'var(--green)':'var(--red)'}`;
 
   // MACD
   const mC=sig.mhist>0?'var(--green)':'var(--red)';
   document.getElementById('iMACD').textContent=fmt(sig.mhist);
   document.getElementById('iMACD').style.color=mC;
   document.getElementById('iMACDSub').textContent='Signal: '+fmt(sig.macdSig);
-  document.getElementById('iMACDBar').style.cssText='width:'+(sig.mhist>0?72:28)+'%;background:'+mC;
+  document.getElementById('iMACDBar').style.cssText=`width:${sig.mhist>0?72:28}%;background:${mC}`;
 
   // Williams %R
   const wC=sig.wR<-80?'var(--green)':sig.wR>-20?'var(--red)':'var(--text)';
   document.getElementById('iWR').textContent=fmt(sig.wR,1)+'%';
   document.getElementById('iWR').style.color=wC;
   document.getElementById('iWRSub').textContent=sig.wR<-80?'OVERSOLD':sig.wR>-20?'OVERBOUGHT':'Neutro';
-  document.getElementById('iWRBar').style.cssText='width:'+(100+sig.wR)+'%;background:'+wC;
+  document.getElementById('iWRBar').style.cssText=`width:${100+sig.wR}%;background:${wC}`;
 
   // Stoch
   const sC=sig.stK<20?'var(--green)':sig.stK>80?'var(--red)':'var(--text)';
   document.getElementById('iStoch').textContent=fmt(sig.stK,1);
   document.getElementById('iStoch').style.color=sC;
   document.getElementById('iStochSub').textContent='K: '+fmt(sig.stK,1)+' | D: '+fmt(sig.stD,1);
-  document.getElementById('iStochBar').style.cssText='width:'+(sig.stK||50)+'%;background:'+sC;
+  document.getElementById('iStochBar').style.cssText=`width:${sig.stK||50}%;background:${sC}`;
 
   // MTF
   const mtf=calcMTF(candles);
@@ -1567,8 +1350,14 @@ function updateUI(sig){
 
   // Momentum
   updateMomentum(sig);
+
+  // Patterns
   updatePatterns(sig);
+
+  // Log
   addLog(sig);
+
+  // AI Analysis
   updateAI(sig);
 }
 
@@ -1591,10 +1380,11 @@ function updateMomentum(sig){
 
   document.getElementById('momScore').textContent=score+'%';
   document.getElementById('momScore').style.color=col;
-  document.getElementById('momFill').style.cssText='width:'+score+'%;background:'+col;
+  document.getElementById('momFill').style.cssText=`width:${score}%;background:${col}`;
   const ml=document.getElementById('momLabel');
   ml.textContent=txt;ml.style.color=col;ml.style.borderColor=col;
 
+  // ADX bars
   const a=sig.adxV||{adx:0,diP:0,diM:0};
   document.getElementById('adxBar').style.width=Math.min(a.adx,100)+'%';
   document.getElementById('adxVal').textContent=fmt(a.adx,1);
@@ -1609,29 +1399,29 @@ function updatePatterns(sig){
   let html='';
 
   if(sig.patterns&&sig.patterns.length){
-    html+=sig.patterns.map(p=>'
+    html+=sig.patterns.map(p=>`
       <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03)">
-        <span style="width:8px;height:8px;border-radius:50%;background:'+p.color+';display:inline-block;flex-shrink:0"></span>
-        <span style="font-size:9px;color:var(--text);font-weight:600">'+p.name+'</span>
-        <span style="margin-left:auto;font-size:8px;color:'+p.color+'">'+(p.dir>0?'ALTA':p.dir<0?'BAIXA':'NEUTRO')+'</span>
-      </div>').join('');
+        <span style="width:8px;height:8px;border-radius:50%;background:${p.color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:9px;color:var(--text);font-weight:600">${p.name}</span>
+        <span style="margin-left:auto;font-size:8px;color:${p.color}">${p.dir>0?'ALTA':p.dir<0?'BAIXA':'NEUTRO'}</span>
+      </div>`).join('');
   }else{
     html+='<div style="font-size:9px;color:var(--muted);padding:4px 0">Sem padrões relevantes</div>';
   }
 
   if(sig.sr?.sup){
-    html+='
+    html+=`
     <div style="margin-top:10px;font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">SUPORTE / RESISTÊNCIA</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
       <div style="background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:8px;text-align:center">
         <div style="font-size:7px;color:var(--muted);letter-spacing:2px">SUPORTE</div>
-        <div style="font-family:var(--ff-d);font-size:14px;color:var(--green);margin-top:2px">$'+sig.sr.sup.toFixed(2)+'</div>
+        <div style="font-family:var(--ff-d);font-size:14px;color:var(--green);margin-top:2px">$${sig.sr.sup.toFixed(2)}</div>
       </div>
       <div style="background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:8px;text-align:center">
         <div style="font-size:7px;color:var(--muted);letter-spacing:2px">RESISTÊNCIA</div>
-        <div style="font-family:var(--ff-d);font-size:14px;color:var(--red);margin-top:2px">$'+sig.sr.res.toFixed(2)+'</div>
+        <div style="font-family:var(--ff-d);font-size:14px;color:var(--red);margin-top:2px">$${sig.sr.res.toFixed(2)}</div>
       </div>
-    </div>';
+    </div>`;
   }
   pb.innerHTML=html;
 }
@@ -1671,12 +1461,12 @@ function addLog(sig){
   if(sigHistory.length>25) sigHistory.pop();
 
   document.getElementById('logCount').textContent=sigHistory.length+' sinais';
-  document.getElementById('signalLog').innerHTML=sigHistory.map(s=>'
+  document.getElementById('signalLog').innerHTML=sigHistory.map(s=>`
     <div class="log-entry">
-      <span class="log-t">'+s.t+'</span>
-      <span class="log-sig '+(s.type==='BUY'?'ls-buy':'ls-sell')+'">'+(s.type==='BUY'?'COMPRA':'VENDA')+'</span>
-      <span class="log-info">$'+s.price+' · '+s.conf+'% · '+s.reason+'</span>
-    </div>').join('');
+      <span class="log-t">${s.t}</span>
+      <span class="log-sig ${s.type==='BUY'?'ls-buy':'ls-sell'}">${s.type==='BUY'?'COMPRA':'VENDA'}</span>
+      <span class="log-info">$${s.price} · ${s.conf}% · ${s.reason}</span>
+    </div>`).join('');
 
   if(sig.conf>=55) fireAlert(sig.sigType==='BUY',sig.price,sig.conf);
 }
@@ -1688,7 +1478,7 @@ function fireAlert(buy,price,conf){
       speechSynthesis.cancel();
       const u=new SpeechSynthesisUtterance();
       u.lang='pt-BR';u.rate=0.9;
-      u.text=(buy?'Sinal de compra':'Sinal de venda')+' no ouro. Confiança '+Math.round(conf)+'%.';
+      u.text=`${buy?'Sinal de compra':'Sinal de venda'} no ouro. Confiança ${Math.round(conf)}%.`;
       speechSynthesis.speak(u);
     }
   }catch(e){}
@@ -1735,6 +1525,39 @@ function updateSessions(){
 }
 
 // ═══════════════════════════════════════
+// TICK
+// ═══════════════════════════════════════
+async function tick(){
+  if(!connected) return;
+
+  const pill=document.getElementById('statusPill');
+  pill.textContent='BUSCANDO…';
+  pill.className='pill pill-busy';
+
+  const data=await fetchData();
+  if(!data){
+    pill.textContent='ERRO API';
+    pill.className='pill pill-off';
+    showToast('⚠️ Falha na API','Tentando novamente em 60s…');
+    return;
+  }
+
+  // Deduz crédito SOMENTE após sucesso
+  if(!useCredits(COST)) return;
+
+  candles=data;
+  totalUpdates++;
+
+  const sig=calcSignal(candles);
+  if(sig) updateUI(sig);
+
+  pill.textContent='LIVE';
+  pill.className='pill pill-on';
+  cdSecs=60;
+  updateCreditDisplay();
+}
+
+// ═══════════════════════════════════════
 // CREDITS
 // ═══════════════════════════════════════
 function useCredits(n){
@@ -1770,13 +1593,13 @@ window.grantFree=function(){
 window.openModal=function(){
   document.getElementById('modalBalance').textContent=credits;
   const grid=document.getElementById('pkgGrid');
-  grid.innerHTML=PACKAGES.map(p=>'
-    <div class="pkg" id="pkg'+p.id+'" onclick="selectPkg('+p.id+')">
-      <div class="pkg-cr" style="color:'+p.color+'">'+p.credits+'</div>
+  grid.innerHTML=PACKAGES.map(p=>`
+    <div class="pkg" id="pkg${p.id}" onclick="selectPkg(${p.id})">
+      <div class="pkg-cr" style="color:${p.color}">${p.credits}</div>
       <div style="font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px">CRÉDITOS</div>
-      <div class="pkg-pr">'+p.price+'</div>
-      '+(p.bonus?'<div class="pkg-bonus">+'+p.bonus+' bônus</div>':'')+'
-    </div>').join('');
+      <div class="pkg-pr">${p.price}</div>
+      ${p.bonus?`<div class="pkg-bonus">+${p.bonus} bônus</div>`:''}
+    </div>`).join('');
   document.getElementById('creditsModal').classList.add('open');
 };
 
@@ -1798,7 +1621,7 @@ window.doPurchase=function(){
   if(p){
     addCredits(p.credits+p.bonus);
     closeModal();
-    showToast('✓ Compra confirmada',(p.credits+p.bonus)+' créditos adicionados.');
+    showToast('✓ Compra confirmada',`${p.credits+p.bonus} créditos adicionados.`);
   }
 };
 
@@ -1809,45 +1632,23 @@ window.connectSystem=function(){
   if(connected) return;
   if(credits<COST){showToast('Créditos insuficientes','Recarregue para conectar.');return;}
   connected=true;
-  showToast('Terminal conectado','Analisando XAU/USD em tempo real');
-  
-  // Inicia extração de preço do gráfico
-  startPriceExtraction();
-  
-  // Inicia processamento periódico
-  updateTimer=setInterval(() => {
-    if(candles.length >= 50) {
-      processNewData();
-    }
-  }, INTERVAL);
-  
-  // Timer de contagem regressiva
-  clearInterval(cdTimer);
-  cdSecs = Math.floor(INTERVAL / 1000);
-  cdTimer=setInterval(()=>{
-    cdSecs--;
-    document.getElementById('tkNext').textContent=cdSecs+'s';
-    if(cdSecs<=0) cdSecs=Math.floor(INTERVAL / 1000);
-  },1000);
-  
-  // Timer de idade do preço
-  clearInterval(priceAgeTimer);
-  priceAgeTimer = setInterval(() => {
-    if (lastPriceUpdate) {
-      priceAgeSeconds = Math.floor((Date.now() - lastPriceUpdate) / 1000);
-      document.getElementById('tkSyncAge').textContent = priceAgeSeconds + 's';
-      document.getElementById('tkSyncAge').style.color = 
-        priceAgeSeconds < 5 ? 'var(--green)' : 
-        priceAgeSeconds < 15 ? 'var(--amber)' : 'var(--red)';
-    }
-  }, 1000);
+  showToast('Terminal conectado','Analisando XAU/USD · M5');
+  tick().then(()=>{
+    updateTimer=setInterval(tick,INTERVAL);
+    clearInterval(cdTimer);
+    cdTimer=setInterval(()=>{
+      cdSecs--;
+      document.getElementById('tkNext').textContent=cdSecs+'s';
+      if(cdSecs<=0) cdSecs=60;
+    },1000);
+  });
 };
 
 window.disconnectSystem=function(){
   if(!connected) return;
   connected=false;
-  clearInterval(updateTimer);clearInterval(cdTimer);clearInterval(priceAgeTimer);
-  updateTimer=null;cdTimer=null;priceAgeTimer=null;
+  clearInterval(updateTimer);clearInterval(cdTimer);
+  updateTimer=null;cdTimer=null;
   document.getElementById('statusPill').textContent='OFFLINE';
   document.getElementById('statusPill').className='pill pill-off';
   document.getElementById('tkNext').textContent='--s';
@@ -1869,11 +1670,7 @@ function initDashboard(){
   updateCreditDisplay();
   updateSessions();
   setInterval(updateSessions,30000);
-  
-  // Inicializa gráfico do TradingView (fonte única de verdade)
-  initTradingViewWidget();
-  
-  showToast('AURUM Terminal','Preço 100% real do TradingView · Clique CONNECT');
+  showToast('AURUM Terminal','Créditos: '+credits+' · Clique CONNECT');
 }
 
 })();
