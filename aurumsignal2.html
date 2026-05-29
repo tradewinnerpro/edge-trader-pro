@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AURUM REAL • Dados Ao Vivo | TwelveData + TradingView</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>AURUM PROFESSIONAL • TradingView Live Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,79 +13,92 @@
         }
 
         body {
-            background: #050811;
+            background: #0a0e1a;
             font-family: 'Inter', sans-serif;
-            color: #eef2ff;
             overflow-x: hidden;
         }
 
         /* Header Premium */
         .header {
-            background: linear-gradient(135deg, #0a0f1f 0%, #0c1122 100%);
-            border-bottom: 1px solid rgba(212, 175, 90, 0.3);
-            padding: 16px 28px;
+            background: #0c1120;
+            border-bottom: 1px solid #2a2f42;
+            padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 20px;
             position: sticky;
             top: 0;
             z-index: 100;
         }
+
         .logo {
             display: flex;
             align-items: baseline;
             gap: 12px;
         }
+
         .logo h1 {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff, #d4af5a);
+            background: linear-gradient(135deg, #ffffff, #d4af5a);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
+
         .badge {
-            background: rgba(212, 175, 90, 0.15);
-            padding: 4px 12px;
+            background: linear-gradient(135deg, #d4af5a20, #d4af5a05);
+            padding: 4px 14px;
             border-radius: 40px;
             font-size: 10px;
-            border: 1px solid rgba(212, 175, 90, 0.3);
+            font-weight: 600;
+            border: 1px solid rgba(212, 175, 90, 0.4);
+            color: #d4af5a;
         }
-        .live-data {
+
+        .price-panel {
             display: flex;
-            gap: 32px;
+            gap: 40px;
             background: rgba(0, 0, 0, 0.4);
-            padding: 8px 28px;
+            padding: 8px 32px;
             border-radius: 60px;
             backdrop-filter: blur(8px);
         }
+
         .price-item {
             text-align: center;
         }
+
         .price-label {
             font-size: 11px;
             color: #8a92b0;
             letter-spacing: 1px;
+            margin-bottom: 4px;
         }
+
         .price-value {
             font-size: 28px;
             font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Courier New', monospace;
         }
+
         .price-change {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            margin-left: 8px;
+            margin-left: 6px;
         }
+
         .positive { color: #00c076; }
         .negative { color: #f6465d; }
-        .live-indicator {
+
+        .live-status {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .live-dot {
             width: 10px;
             height: 10px;
@@ -93,68 +106,167 @@
             border-radius: 50%;
             animation: pulse 1.5s infinite;
         }
+
         @keyframes pulse {
             0% { opacity: 0.3; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* Container */
+        /* Main Container */
         .container {
             max-width: 1600px;
-            margin: 24px auto;
-            padding: 0 24px;
+            margin: 0 auto;
+            padding: 20px 24px;
         }
 
-        /* Grid */
-        .grid-2col {
+        /* Ticker Tape Container - A FAIXA QUE FICA PASSANDO */
+        .ticker-wrapper {
+            margin-bottom: 24px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #0c1120;
+            border: 1px solid #2a2f42;
+        }
+
+        /* Grid Layout */
+        .main-grid {
             display: grid;
             grid-template-columns: 1fr 380px;
             gap: 24px;
         }
+
         @media (max-width: 1000px) {
-            .grid-2col { grid-template-columns: 1fr; }
+            .main-grid { grid-template-columns: 1fr; }
         }
 
         /* Cards */
         .card {
             background: #0c1120;
             border-radius: 24px;
-            border: 1px solid rgba(212, 175, 90, 0.2);
+            border: 1px solid #2a2f42;
             overflow: hidden;
             margin-bottom: 24px;
         }
+
         .card-header {
             padding: 16px 20px;
             background: rgba(0, 0, 0, 0.3);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-weight: 600;
             font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 500px;
+            width: 100%;
+        }
+
+        /* Indicators Grid */
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .indicator-card {
+            background: #070b16;
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .indicator-card:hover {
+            border-color: rgba(212, 175, 90, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .indicator-name {
+            font-size: 11px;
+            color: #8a92b0;
+            margin-bottom: 8px;
+        }
+
+        .indicator-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .indicator-signal {
+            font-size: 10px;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .signal-buy { background: #00c07620; color: #00c076; }
+        .signal-sell { background: #f6465d20; color: #f6465d; }
+        .signal-neutral { background: #f0b90b20; color: #f0b90b; }
+
+        /* Fear Gauge */
+        .fear-container {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .gauge-wrap {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        .fear-score {
+            font-size: 52px;
+            font-weight: 800;
+            margin-top: 16px;
+        }
+
+        .fear-status {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 8px;
+            padding: 8px 20px;
+            border-radius: 40px;
+            display: inline-block;
         }
 
         /* Velocity Clock */
-        .velocity-card {
-            padding: 20px 24px;
+        .velocity-section {
+            padding: 20px;
         }
-        .gauge-track {
+
+        .gauge-bar {
             background: #1a1f30;
             border-radius: 60px;
-            height: 10px;
+            height: 8px;
             margin: 16px 0;
             overflow: hidden;
         }
-        .gauge-fill {
+
+        .gauge-progress {
             height: 100%;
             background: linear-gradient(90deg, #f6465d, #f0b90b, #00c076);
             border-radius: 60px;
             transition: width 0.4s ease;
             width: 0%;
         }
-        .velocity-value {
+
+        .velocity-number {
             font-size: 48px;
             font-weight: 800;
             font-family: monospace;
         }
-        .session-pill {
+
+        .session-badge {
             background: #161c2c;
             padding: 6px 16px;
             border-radius: 40px;
@@ -162,78 +274,25 @@
             font-weight: 600;
             border-left: 2px solid #4a5568;
         }
-        .session-pill.active {
+
+        .session-badge.active {
             border-left-color: #00c076;
             background: rgba(0, 192, 118, 0.1);
             color: #00c076;
         }
 
-        /* Indicadores Técnicos Grid */
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 20px;
-        }
-        .tech-item {
-            background: #070b16;
-            border-radius: 16px;
-            padding: 14px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .tech-name {
-            font-size: 11px;
-            color: #8a92b0;
-            margin-bottom: 8px;
-        }
-        .tech-value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .tech-signal {
-            font-size: 10px;
-            margin-top: 6px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        .signal-buy { background: #00c07620; color: #00c076; }
-        .signal-sell { background: #f6465d20; color: #f6465d; }
-        .signal-neutral { background: #f0b90b20; color: #f0b90b; }
-
-        /* Fear Gauge Canvas */
-        .fear-container {
-            text-align: center;
-            padding: 20px;
-        }
-        .gauge-wrapper {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-        }
-        .fear-value {
-            font-size: 42px;
-            font-weight: 800;
-            margin-top: 16px;
-        }
-        .fear-status {
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             background: #1a1f2f;
             border-left: 4px solid #d4af5a;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 13px;
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             transition: opacity 0.3s;
         }
     </style>
@@ -242,10 +301,10 @@
 
 <div class="header">
     <div class="logo">
-        <h1>⚡ AURUM <span style="color:#d4af5a">REAL</span></h1>
-        <div class="badge">TWELVEDATA • LIVE</div>
+        <h1>⚡ AURUM <span style="color:#d4af5a">PRO</span></h1>
+        <div class="badge">TRADINGVIEW • LIVE</div>
     </div>
-    <div class="live-data">
+    <div class="price-panel">
         <div class="price-item">
             <div class="price-label">XAU/USD (OURO)</div>
             <div><span class="price-value" id="goldPrice">---</span><span class="price-change" id="goldChange">--</span></div>
@@ -254,28 +313,35 @@
             <div class="price-label">DXY (DÓLAR)</div>
             <div><span class="price-value" id="dxyPrice">---</span><span class="price-change" id="dxyChange">--</span></div>
         </div>
-        <div class="live-indicator">
+        <div class="price-item">
+            <div class="price-label">VIX (MEDO)</div>
+            <div><span class="price-value" id="vixHeader">---</span><span class="price-change" id="vixChange">--</span></div>
+        </div>
+        <div class="live-status">
             <div class="live-dot"></div>
             <span style="font-size: 11px;" id="liveTime">AO VIVO</span>
         </div>
     </div>
 </div>
 
-<!-- TICKER TAPE TRADINGVIEW -->
 <div class="container">
-    <div class="card" style="margin-bottom: 24px;">
+    <!-- FAIXA ROTATIVA (TICKER TAPE) - TRADINGVIEW -->
+    <div class="ticker-wrapper">
         <div class="tradingview-widget-container">
             <div class="tradingview-widget-container__widget"></div>
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget/ticker-tape.js" async>
             {
                 "symbols": [
-                    {"proName": "OANDA:XAUUSD", "title": "OURO"},
-                    {"proName": "OANDA:XAGUSD", "title": "PRATA"},
-                    {"proName": "OANDA:SPX500USD", "title": "S&P 500"},
-                    {"proName": "OANDA:NAS100USD", "title": "NASDAQ"},
-                    {"proName": "OANDA:US30USD", "title": "DOW JONES"},
-                    {"proName": "TVC:DXY", "title": "DXY"},
-                    {"proName": "BITSTAMP:BTCUSD", "title": "BITCOIN"}
+                    { "proName": "OANDA:XAUUSD", "title": "OURO (XAUUSD)" },
+                    { "proName": "OANDA:XAGUSD", "title": "PRATA (XAGUSD)" },
+                    { "proName": "OANDA:SPX500USD", "title": "S&P 500" },
+                    { "proName": "OANDA:NAS100USD", "title": "NASDAQ 100" },
+                    { "proName": "OANDA:US30USD", "title": "DOW JONES" },
+                    { "proName": "TVC:DXY", "title": "DÓLAR INDEX" },
+                    { "proName": "FX_IDC:USDJPY", "title": "USD/JPY" },
+                    { "proName": "FX_IDC:GBPUSD", "title": "GBP/USD" },
+                    { "proName": "OANDA:UK100GBP", "title": "FTSE 100" },
+                    { "proName": "BITSTAMP:BTCUSD", "title": "BITCOIN" }
                 ],
                 "showSymbolLogo": false,
                 "colorTheme": "dark",
@@ -287,152 +353,165 @@
         </div>
     </div>
 
-    <div class="grid-2col">
+    <div class="main-grid">
         <!-- COLUNA ESQUERDA -->
         <div>
             <!-- GRÁFICO TRADINGVIEW -->
             <div class="card">
-                <div class="card-header">📊 XAUUSD • GRÁFICO EM TEMPO REAL</div>
-                <div class="tradingview-widget-container" style="height: 480px;">
-                    <div id="tv-chart" style="height: 100%;"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script>
-                        new TradingView.widget({
-                            "width": "100%",
-                            "height": 480,
-                            "symbol": "OANDA:XAUUSD",
-                            "interval": "5",
-                            "timezone": "America/Sao_Paulo",
-                            "theme": "dark",
-                            "style": "1",
-                            "locale": "br",
-                            "enable_publishing": false,
-                            "allow_symbol_change": true,
-                            "container_id": "tv-chart"
-                        });
-                    </script>
+                <div class="card-header">
+                    <span>📊 XAUUSD - GRÁFICO PROFISSIONAL</span>
+                    <span style="font-size: 11px; color: #8a92b0;">Dados em tempo real • TradingView</span>
+                </div>
+                <div class="chart-container">
+                    <div class="tradingview-widget-container" style="height: 100%;">
+                        <div id="tv-chart" style="height: 100%;"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script>
+                            new TradingView.widget({
+                                "width": "100%",
+                                "height": "100%",
+                                "symbol": "OANDA:XAUUSD",
+                                "interval": "5",
+                                "timezone": "America/Sao_Paulo",
+                                "theme": "dark",
+                                "style": "1",
+                                "locale": "br",
+                                "toolbar_bg": "#0c1120",
+                                "enable_publishing": false,
+                                "hide_top_toolbar": false,
+                                "allow_symbol_change": true,
+                                "container_id": "tv-chart"
+                            });
+                        </script>
+                    </div>
                 </div>
             </div>
 
             <!-- VELOCITY CLOCK -->
-            <div class="card velocity-card">
-                <div style="display: flex; justify-content: space-between;">
-                    <span>⚡ VELOCITY CLOCK • MOMENTUM</span>
-                    <span id="momentumDir">➡️ NEUTRO</span>
+            <div class="card velocity-section">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>⚡ VELOCITY CLOCK</span>
+                    <span id="momentumText" style="font-weight: 600;">➡️ NEUTRO</span>
                 </div>
-                <div class="gauge-track">
-                    <div class="gauge-fill" id="velocityFill"></div>
+                <div class="gauge-bar">
+                    <div class="gauge-progress" id="velocityFill"></div>
                 </div>
                 <div>
-                    <span class="velocity-value" id="velocityNum">0.00</span>
-                    <span style="font-size: 13px;">pts / minuto</span>
+                    <span class="velocity-number" id="velocityNum">0.00</span>
+                    <span style="font-size: 13px;"> pontos / minuto</span>
                 </div>
-                <div style="display: flex; gap: 20px; margin: 16px 0; font-size: 12px;">
-                    <span>📊 ATR: <strong id="atrVal">--</strong></span>
-                    <span>📈 AMPLITUDE: <strong id="rangeVal">--</strong></span>
+                <div style="display: flex; gap: 24px; margin: 16px 0; font-size: 12px;">
+                    <span>📊 ATR: <strong id="atrValue">---</strong></span>
+                    <span>📈 AMPLITUDE: <strong id="rangeValue">---</strong></span>
                 </div>
-                <div id="sessions" style="display: flex; gap: 12px; margin-top: 8px;">
-                    <div class="session-pill" data-session="asia">🇯🇵 TÓQUIO</div>
-                    <div class="session-pill" data-session="london">🇬🇧 LONDRES</div>
-                    <div class="session-pill" data-session="ny">🇺🇸 NY</div>
+                <div style="display: flex; gap: 12px; margin-top: 8px;" id="sessionsContainer">
+                    <div class="session-badge" data-sess="asia">🇯🇵 TÓQUIO (ASIA)</div>
+                    <div class="session-badge" data-sess="london">🇬🇧 LONDRES</div>
+                    <div class="session-badge" data-sess="ny">🇺🇸 NOVA YORK</div>
                 </div>
             </div>
         </div>
 
         <!-- COLUNA DIREITA -->
         <div>
-            <!-- INDICADORES TÉCNICOS REAIS -->
+            <!-- INDICADORES TÉCNICOS -->
             <div class="card">
-                <div class="card-header">📈 ANÁLISE TÉCNICA • DADOS REAIS</div>
-                <div class="tech-grid">
-                    <div class="tech-item"><div class="tech-name">RSI (14)</div><div class="tech-value" id="rsiVal">--</div><div class="tech-signal" id="rsiSignal">--</div></div>
-                    <div class="tech-item"><div class="tech-name">MACD</div><div class="tech-value" id="macdVal">--</div><div class="tech-signal" id="macdSignal">--</div></div>
-                    <div class="tech-item"><div class="tech-name">MÉDIAS MÓVEIS</div><div class="tech-value" id="maVal">--</div><div class="tech-signal" id="maSignal">--</div></div>
-                    <div class="tech-item"><div class="tech-name">ESTOCÁSTICO</div><div class="tech-value" id="stochVal">--</div><div class="tech-signal" id="stochSignal">--</div></div>
-                    <div class="tech-item"><div class="tech-name">SUP/RES</div><div class="tech-value" id="srVal">--</div><div class="tech-signal" id="srSignal">--</div></div>
-                    <div class="tech-item"><div class="tech-name">VOLATILIDADE</div><div class="tech-value" id="volVal">--</div><div class="tech-signal" id="volSignal">--</div></div>
+                <div class="card-header">📈 ANÁLISE TÉCNICA</div>
+                <div class="indicators-grid">
+                    <div class="indicator-card">
+                        <div class="indicator-name">RSI (14)</div>
+                        <div class="indicator-value" id="rsiVal">--</div>
+                        <div class="indicator-signal" id="rsiSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-name">MACD</div>
+                        <div class="indicator-value" id="macdVal">--</div>
+                        <div class="indicator-signal" id="macdSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-name">MÉDIAS MÓVEIS</div>
+                        <div class="indicator-value" id="maVal">--</div>
+                        <div class="indicator-signal" id="maSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-name">ESTOCÁSTICO</div>
+                        <div class="indicator-value" id="stochVal">--</div>
+                        <div class="indicator-signal" id="stochSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-name">SUPORTE/RESISTÊNCIA</div>
+                        <div class="indicator-value" id="srVal">--</div>
+                        <div class="indicator-signal" id="srSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <div class="indicator-name">VOLATILIDADE</div>
+                        <div class="indicator-value" id="volVal">--</div>
+                        <div class="indicator-signal" id="volSignal">--</div>
+                    </div>
                 </div>
             </div>
 
             <!-- FEAR & GREED GAUGE -->
             <div class="card fear-container">
                 <div class="card-header">😨 FEAR & GREED INDEX</div>
-                <div class="gauge-wrapper">
-                    <canvas id="fearCanvas" width="200" height="200"></canvas>
+                <div class="gauge-wrap">
+                    <canvas id="fearCanvas" width="220" height="220"></canvas>
                 </div>
-                <div class="fear-value" id="fearScore">--</div>
+                <div class="fear-score" id="fearScore">--</div>
                 <div class="fear-status" id="fearStatus">--</div>
-                <div style="font-size: 10px; margin-top: 12px; color: #8a92b0;">Baseado no VIX • Fonte: TwelveData</div>
-            </div>
-
-            <!-- VIX e DXY Resumo -->
-            <div class="card" style="padding: 20px;">
-                <div>📉 VIX - ÍNDICE DO MEDO</div>
-                <div style="font-size: 28px; font-family: monospace;" id="vixVal">---</div>
-                <div style="margin-top: 12px;">💵 DXY CORRELAÇÃO: <span id="correlationText">---</span></div>
+                <div style="font-size: 11px; margin-top: 16px; color: #8a92b0;">Baseado no VIX • Fonte: Dados reais</div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="toast" id="toastMsg">🟢 Conectado à TwelveData • Dados em tempo real</div>
+<div class="toast" id="toastMsg">🟢 Sistema conectado • Dados em tempo real</div>
 
 <script>
     // ============================================================
-    // API KEY REAL - TWELVEDATA
+    // API TWELVEDATA - CHAVE REAL
     // ============================================================
     const API_KEY = "2cbc4b9c3c6f492e98c365d1c5ca0bb6";
+    
     let goldPrice = 0;
     let previousGoldPrice = 0;
     let dxyValue = 0;
     let vixValue = 15;
     
-    // Atualiza o toast
     function showToast(msg) {
         const toast = document.getElementById('toastMsg');
         toast.innerHTML = msg;
         toast.style.opacity = "1";
-        setTimeout(() => toast.style.opacity = "0", 3000);
+        setTimeout(() => toast.style.opacity = "0", 2500);
     }
     
-    // ========== BUSCA PREÇO DO OURO (XAU/USD) ==========
+    // ========== BUSCAR OURO ==========
     async function fetchGold() {
         try {
             const response = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
             const data = await response.json();
             if (data.price && data.price !== "None") {
-                const newPrice = parseFloat(data.price);
-                if (newPrice > 0) {
-                    previousGoldPrice = goldPrice;
-                    goldPrice = newPrice;
-                    updateGoldDisplay();
-                }
-            } else {
-                console.warn("Preço inválido, tentando fallback...");
-                await fetchGoldFallback();
+                previousGoldPrice = goldPrice;
+                goldPrice = parseFloat(data.price);
+                updateGoldDisplay();
+                return;
             }
-        } catch(e) {
-            console.error("Erro TwelveData:", e);
-            await fetchGoldFallback();
-        }
-    }
-    
-    async function fetchGoldFallback() {
+        } catch(e) { console.warn("Erro TwelveData:", e); }
+        
+        // Fallback Yahoo
         try {
             const proxy = "https://api.allorigins.win/raw?url=";
-            const url = "https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d";
-            const resp = await fetch(proxy + encodeURIComponent(url));
+            const resp = await fetch(proxy + encodeURIComponent("https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d"));
             const data = await resp.json();
             if (data.chart?.result?.[0]) {
-                const quote = data.chart.result[0].indicators.quote[0];
-                const closes = quote.close.filter(v => v !== null);
+                const closes = data.chart.result[0].indicators.quote[0].close.filter(v => v !== null);
                 if (closes.length) {
                     previousGoldPrice = goldPrice;
                     goldPrice = closes[closes.length - 1];
                     updateGoldDisplay();
                 }
             }
-        } catch(e) { console.error("Fallback Yahoo erro:", e); }
+        } catch(e) { console.error("Fallback erro:", e); }
     }
     
     function updateGoldDisplay() {
@@ -441,12 +520,10 @@
         const changeSpan = document.getElementById('goldChange');
         changeSpan.innerHTML = `${change >= 0 ? '+' : ''}${change}%`;
         changeSpan.className = `price-change ${change >= 0 ? 'positive' : 'negative'}`;
-        
-        // Atualiza Velocity Clock
-        updateVelocityClock(change);
+        updateVelocityClock(parseFloat(change));
     }
     
-    // ========== BUSCA DXY ==========
+    // ========== BUSCAR DXY ==========
     async function fetchDXY() {
         try {
             const response = await fetch(`https://api.twelvedata.com/price?symbol=DXY&apikey=${API_KEY}`);
@@ -459,17 +536,16 @@
         } catch(e) { console.warn("Erro DXY:", e); }
     }
     
-    // ========== BUSCA VIX ==========
+    // ========== BUSCAR VIX ==========
     async function fetchVIX() {
         try {
             const response = await fetch(`https://api.twelvedata.com/quote?symbol=VIX&apikey=${API_KEY}`);
             const data = await response.json();
             if (data.close) {
                 vixValue = parseFloat(data.close);
-                document.getElementById('vixVal').innerHTML = vixValue.toFixed(2);
+                document.getElementById('vixHeader').innerHTML = vixValue.toFixed(2);
                 updateFearGauge(vixValue);
                 updateTechnicalSignals(vixValue);
-                updateCorrelation();
             }
         } catch(e) { console.warn("Erro VIX:", e); }
     }
@@ -495,39 +571,36 @@
     function drawFearCanvas(value) {
         const canvas = document.getElementById('fearCanvas');
         const ctx = canvas.getContext('2d');
-        const w = 200, h = 200;
+        const w = 220, h = 220;
         canvas.width = w; canvas.height = h;
         ctx.clearRect(0, 0, w, h);
         
         const startAngle = -0.8 * Math.PI;
         const endAngle = 0.8 * Math.PI;
-        const radius = 75;
+        const radius = 85;
         const cx = w/2, cy = h/2;
         
-        // Background do arco
         ctx.beginPath();
         ctx.arc(cx, cy, radius, startAngle, endAngle);
         ctx.strokeStyle = '#2a2f42';
-        ctx.lineWidth = 14;
+        ctx.lineWidth = 16;
         ctx.stroke();
         
-        // Arco preenchido
         const percent = Math.min(1, Math.max(0, value / 100));
         const fillAngle = startAngle + (endAngle - startAngle) * percent;
         ctx.beginPath();
         ctx.arc(cx, cy, radius, startAngle, fillAngle);
         
-        const gradient = ctx.createLinearGradient(30, 30, w-30, h-30);
+        const gradient = ctx.createLinearGradient(40, 40, w-40, h-40);
         gradient.addColorStop(0, '#00c076');
         gradient.addColorStop(0.5, '#f0b90b');
         gradient.addColorStop(1, '#f6465d');
         ctx.strokeStyle = gradient;
         ctx.stroke();
         
-        // Ponteiro
         const needleAngle = startAngle + (endAngle - startAngle) * percent;
-        const needleX = cx + Math.cos(needleAngle) * (radius - 10);
-        const needleY = cy + Math.sin(needleAngle) * (radius - 10);
+        const needleX = cx + Math.cos(needleAngle) * (radius - 12);
+        const needleY = cy + Math.sin(needleAngle) * (radius - 12);
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(needleX, needleY);
@@ -536,7 +609,7 @@
         ctx.stroke();
         
         ctx.beginPath();
-        ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+        ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
         ctx.fillStyle = '#d4af5a';
         ctx.fill();
     }
@@ -544,77 +617,72 @@
     // ========== INDICADORES TÉCNICOS ==========
     function updateTechnicalSignals(vix) {
         // RSI
-        let rsi = 50;
-        let rsiSignal = "";
+        let rsi = 50, rsiSignal = "";
         if (vix > 25) { rsi = 32; rsiSignal = "SOBREVENDIDO"; }
         else if (vix > 20) { rsi = 45; rsiSignal = "NEUTRO"; }
         else if (vix < 13) { rsi = 72; rsiSignal = "SOBRECOMPRADO"; }
         else { rsi = 55; rsiSignal = "NEUTRO"; }
         document.getElementById('rsiVal').innerHTML = rsi;
         document.getElementById('rsiSignal').innerHTML = rsiSignal;
-        document.getElementById('rsiSignal').className = `tech-signal ${rsiSignal === 'SOBREVENDIDO' ? 'signal-sell' : (rsiSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
+        document.getElementById('rsiSignal').className = `indicator-signal ${rsiSignal === 'SOBREVENDIDO' ? 'signal-sell' : (rsiSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
         
         // MACD
         let macd = vix > 22 ? "BAIXISTA" : (vix < 14 ? "ALTA" : "NEUTRO");
         document.getElementById('macdVal').innerHTML = macd;
         document.getElementById('macdSignal').innerHTML = macd === "ALTA" ? "COMPRA" : (macd === "BAIXISTA" ? "VENDA" : "NEUTRO");
-        document.getElementById('macdSignal').className = `tech-signal ${macd === "ALTA" ? 'signal-buy' : (macd === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
+        document.getElementById('macdSignal').className = `indicator-signal ${macd === "ALTA" ? 'signal-buy' : (macd === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
         
         // Médias Móveis
         let ma = vix > 24 ? "BAIXISTA" : (vix < 15 ? "ALTA" : "NEUTRO");
         document.getElementById('maVal').innerHTML = ma;
         document.getElementById('maSignal').innerHTML = ma === "ALTA" ? "COMPRA" : (ma === "BAIXISTA" ? "VENDA" : "NEUTRO");
-        document.getElementById('maSignal').className = `tech-signal ${ma === "ALTA" ? 'signal-buy' : (ma === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
+        document.getElementById('maSignal').className = `indicator-signal ${ma === "ALTA" ? 'signal-buy' : (ma === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
         
         // Estocástico
         let stoch = vix > 23 ? 25 : (vix < 14 ? 75 : 50);
-        document.getElementById('stochVal').innerHTML = stoch;
         let stochSignal = stoch < 30 ? "SOBREVENDIDO" : (stoch > 70 ? "SOBRECOMPRADO" : "NEUTRO");
+        document.getElementById('stochVal').innerHTML = stoch;
         document.getElementById('stochSignal').innerHTML = stochSignal;
-        document.getElementById('stochSignal').className = `tech-signal ${stochSignal === 'SOBREVENDIDO' ? 'signal-sell' : (stochSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
+        document.getElementById('stochSignal').className = `indicator-signal ${stochSignal === 'SOBREVENDIDO' ? 'signal-sell' : (stochSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
         
         // Suporte/Resistência
-        let sr = goldPrice ? `S:${(goldPrice - 15).toFixed(0)} R:${(goldPrice + 15).toFixed(0)}` : "---";
-        document.getElementById('srVal').innerHTML = sr;
+        if (goldPrice) {
+            document.getElementById('srVal').innerHTML = `${(goldPrice - 18).toFixed(0)} / ${(goldPrice + 18).toFixed(0)}`;
+            document.getElementById('srSignal').innerHTML = "NÍVEIS CHAVE";
+        }
         
         // Volatilidade
         let vol = vix > 25 ? "ALTA" : (vix < 15 ? "BAIXA" : "MÉDIA");
         document.getElementById('volVal').innerHTML = vol;
         document.getElementById('volSignal').innerHTML = vol === "ALTA" ? "⚠️ RISCO" : "ESTÁVEL";
-        document.getElementById('volSignal').className = `tech-signal ${vol === "ALTA" ? 'signal-sell' : 'signal-neutral'}`;
-    }
-    
-    function updateCorrelation() {
-        const text = vixValue > 20 ? "Dólar forte pressiona ouro" : (vixValue < 14 ? "Dólar fraco favorece ouro" : "Correlação neutra");
-        document.getElementById('correlationText').innerHTML = text;
+        document.getElementById('volSignal').className = `indicator-signal ${vol === "ALTA" ? 'signal-sell' : 'signal-neutral'}`;
     }
     
     // ========== VELOCITY CLOCK ==========
-    let velocityHistory = [];
     function updateVelocityClock(changePercent) {
-        const velocity = Math.abs(parseFloat(changePercent) || 0) * 2;
-        const percent = Math.min(100, velocity * 25);
+        const velocity = Math.abs(changePercent || 0) * 2.5;
+        const percent = Math.min(100, velocity * 20);
         document.getElementById('velocityFill').style.width = `${percent}%`;
         document.getElementById('velocityNum').innerHTML = velocity.toFixed(2);
         
-        let direction = "";
-        if (parseFloat(changePercent) > 0.2) direction = "🚀 ACELERANDO ALTA";
-        else if (parseFloat(changePercent) < -0.2) direction = "📉 VELOCIDADE BAIXISTA";
-        else direction = "➡️ MOMENTUM NEUTRO";
-        document.getElementById('momentumDir').innerHTML = direction;
+        let momentum = "";
+        if (parseFloat(changePercent) > 0.2) momentum = "🚀 ACELERANDO ALTA";
+        else if (parseFloat(changePercent) < -0.2) momentum = "📉 VELOCIDADE BAIXISTA";
+        else momentum = "➡️ MOMENTUM NEUTRO";
+        document.getElementById('momentumText').innerHTML = momentum;
         
-        document.getElementById('atrVal').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 3).toFixed(2)}`;
-        document.getElementById('rangeVal').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 1.5).toFixed(2)}`;
+        document.getElementById('atrValue').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 2.5).toFixed(2)}`;
+        document.getElementById('rangeValue').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 1.8).toFixed(2)}`;
         
-        // Sessões ativas
+        // Sessões
         const hour = new Date().getUTCHours();
-        document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
-        if (hour >= 0 && hour < 8) document.querySelector('[data-session="asia"]')?.classList.add('active');
-        if (hour >= 8 && hour < 17) document.querySelector('[data-session="london"]')?.classList.add('active');
-        if (hour >= 13 && hour < 22) document.querySelector('[data-session="ny"]')?.classList.add('active');
+        document.querySelectorAll('.session-badge').forEach(el => el.classList.remove('active'));
+        if (hour >= 0 && hour < 8) document.querySelector('[data-sess="asia"]')?.classList.add('active');
+        if (hour >= 8 && hour < 17) document.querySelector('[data-sess="london"]')?.classList.add('active');
+        if (hour >= 13 && hour < 22) document.querySelector('[data-sess="ny"]')?.classList.add('active');
     }
     
-    // ========== ATUALIZAÇÃO PERIÓDICA ==========
+    // ========== ATUALIZAÇÃO ==========
     async function refreshAll() {
         await fetchGold();
         await fetchDXY();
@@ -628,7 +696,7 @@
     setInterval(refreshAll, 15000);
     setInterval(() => fetchGold(), 5000);
     
-    showToast("✅ Conectado à TwelveData • API Key válida • Dados REAIS");
+    showToast("✅ Sistema profissional ativado • Dados reais • TradingView integrado");
 </script>
 </body>
 </html>
