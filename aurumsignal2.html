@@ -3,404 +3,503 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AURUM EDGE • Professional Gold Dashboard | Velocity & Fear Index</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>AURUM PRO • TradingView Widgets | Gold & Fear Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  :root {
-    --bg-primary: #050a12;
-    --bg-card: #0c1122;
-    --bg-elevated: #10172a;
-    --border-gold: rgba(212, 175, 90, 0.35);
-    --gold: #d4af5a;
-    --gold-glow: #e9cf8b;
-    --green-bull: #2ad48b;
-    --red-bear: #e6676f;
-    --text-primary: #f0f3fa;
-    --text-secondary: #8e9cbb;
-    --accent-blue: #3b82f6;
-    --shadow-sm: 0 8px 20px rgba(0,0,0,0.4);
-  }
+:root {
+  --bg-deep: #04070c;
+  --bg-card: #0b0f19;
+  --bg-elevated: #111827;
+  --border-dim: rgba(76, 95, 120, 0.25);
+  --border-gold: rgba(196, 154, 82, 0.4);
+  --gold: #d4af5a;
+  --gold-glow: #e6c87a;
+  --green-bull: #2ad48b;
+  --red-bear: #e35f6b;
+  --text-main: #edf2fb;
+  --text-dim: #8f9bb3;
+}
 
-  body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.45;
-    overflow-x: hidden;
-  }
+body {
+  background: radial-gradient(circle at 20% 30%, #03070e, #000000);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-x: hidden;
+}
 
-  /* Header premium com relógio e valores destacados (estilo Trade Winner) */
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 28px;
-    background: rgba(5, 10, 18, 0.92);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border-gold);
-    position: sticky;
-    top: 0;
-    z-index: 110;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .logo-area {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-  }
-  .logo {
-    font-weight: 900;
-    font-size: 1.6rem;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 20%, var(--gold) 80%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .badge-pro {
-    background: rgba(212,175,90,0.15);
-    padding: 4px 12px;
-    border-radius: 60px;
-    font-size: 9px;
-    font-weight: 700;
-    border: 0.5px solid var(--border-gold);
-  }
-  .live-digital-clock {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 24px;
-    font-weight: 600;
-    background: #00000040;
-    padding: 6px 16px;
-    border-radius: 40px;
-    letter-spacing: 1px;
-    border: 0.5px solid var(--border-gold);
-  }
-  .gold-dxy-area {
-    display: flex;
-    gap: 28px;
-    background: #0a0f1a80;
-    padding: 6px 20px;
-    border-radius: 60px;
-    backdrop-filter: blur(8px);
-  }
-  .gold-spot {
-    font-size: 28px;
-    font-weight: 800;
-    font-family: monospace;
-    color: var(--gold-glow);
-  }
-  .dxy-spot {
-    font-size: 20px;
-    font-weight: 700;
-    font-family: monospace;
-  }
-  .change-badge {
-    font-weight: 700;
-    font-size: 14px;
-    margin-left: 8px;
-  }
-  .up { color: var(--green-bull); }
-  .dn { color: var(--red-bear); }
+/* HEADER premium */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 28px;
+  background: rgba(4,7,12,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-gold);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-  /* Ticker rotativo estilo Bloomberg */
-  .ticker-container {
-    background: #03070e;
-    border-bottom: 1px solid #1e293b;
-    padding: 6px 0;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .ticker-track {
-    display: inline-block;
-    animation: scrollTicker 38s linear infinite;
-  }
-  .ticker-item {
-    display: inline-flex;
-    gap: 12px;
-    margin-right: 36px;
-    background: #0f172a;
-    padding: 4px 18px;
-    border-radius: 32px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  @keyframes scrollTicker {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+.logo span { color: var(--gold); }
+.badge { font-size: 9px; background: #1e293b; padding: 2px 10px; border-radius: 40px; }
 
-  /* main layout */
-  .dashboard {
-    max-width: 1600px;
-    margin: 24px auto;
-    padding: 0 24px;
-  }
-  .grid-main {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 26px;
-  }
-  @media (max-width: 1000px) {
-    .grid-main { grid-template-columns: 1fr; }
-  }
+.live-price-area {
+  display: flex;
+  gap: 32px;
+  align-items: baseline;
+  background: #0a0f1a80;
+  padding: 6px 20px;
+  border-radius: 60px;
+}
+.price-block { display: flex; align-items: baseline; gap: 8px; }
+.price-label { font-size: 11px; color: var(--text-dim); }
+.xau-big {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: monospace;
+  color: var(--gold-glow);
+}
+.dxy-big-header {
+  font-size: 22px;
+  font-weight: 800;
+  font-family: monospace;
+}
+.up { color: var(--green-bull); }
+.dn { color: var(--red-bear); }
+.update-tag { font-size: 10px; background: var(--bg-elevated); padding: 4px 12px; border-radius: 30px; }
 
-  /* cards globais */
-  .glass-card {
-    background: var(--bg-card);
-    border-radius: 32px;
-    border: 1px solid rgba(212,175,90,0.2);
-    backdrop-filter: blur(2px);
-    transition: all 0.2s;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
+/* container */
+.container {
+  max-width: 1600px;
+  margin: 20px auto;
+  padding: 0 24px;
+}
 
-  /* velocity clock */
-  .velocity-section {
-    padding: 22px 26px;
-  }
-  .gauge-bg {
-    background: #1a1f2e;
-    border-radius: 80px;
-    height: 12px;
-    margin: 14px 0;
-  }
-  .gauge-fill {
-    width: 42%;
-    height: 100%;
-    background: linear-gradient(90deg, #e6676f, #f5b042, #2ad48b);
-    border-radius: 80px;
-    transition: width 0.45s;
-  }
-  .momentum-digits {
-    font-size: 42px;
-    font-weight: 800;
-    font-family: monospace;
-  }
+/* TradingView Ticker Tape Container */
+.ticker-container {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+}
 
-  /* indices grid */
-  .indices-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-    margin-top: 14px;
-  }
-  .indice-tile {
-    background: var(--bg-elevated);
-    border-radius: 24px;
-    padding: 12px 8px;
-    text-align: center;
-  }
+/* Grid principal */
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+}
+@media(max-width: 1000px) {
+  .two-columns { grid-template-columns: 1fr; }
+}
 
-  /* notícias classificadas 1-5 */
-  .news-tabs {
-    display: flex;
-    background: #0a1020;
-    gap: 2px;
-    padding: 6px 8px 0;
-  }
-  .tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-weight: 700;
-    font-size: 11px;
-    padding: 10px 0;
-    cursor: pointer;
-    border-radius: 20px 20px 0 0;
-    transition: 0.2s;
-  }
-  .tab-btn.active {
-    color: var(--gold);
-    border-bottom: 2px solid var(--gold);
-    background: #d4af5a0c;
-  }
-  .news-pane {
-    display: none;
-    max-height: 520px;
-    overflow-y: auto;
-  }
-  .news-pane.active { display: block; }
-  .news-item {
-    padding: 14px 18px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    cursor: pointer;
-  }
-  .news-item:hover { background: #d4af5a08; }
-  .strength-tag {
-    font-size: 9px;
-    font-weight: 800;
-    padding: 2px 10px;
-    border-radius: 30px;
-    background: #00000070;
-  }
-  .bull-4, .bull-5 { border-left: 3px solid #2ad48b; }
-  .bear-4, .bear-5 { border-left: 3px solid #e6676f; }
+/* Velocity Clock */
+.velocity-card {
+  background: var(--bg-card);
+  border-radius: 28px;
+  border: 1px solid var(--border-dim);
+  padding: 18px 24px;
+  margin-bottom: 24px;
+}
+.clock-meter {
+  background: #1a1f2c;
+  border-radius: 60px;
+  height: 14px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.clock-fill {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, #e35f6b, #ffaa44, #2ad48b);
+  border-radius: 60px;
+  transition: width 0.4s ease;
+}
+.velocity-value {
+  font-size: 42px;
+  font-weight: 800;
+  font-family: monospace;
+  display: inline-block;
+  margin-right: 8px;
+}
+.session-pill {
+  background: #0f1420;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 600;
+  border-left: 2px solid var(--text-dim);
+}
+.session-pill.active {
+  border-left-color: var(--green-bull);
+  background: rgba(42,212,139,0.12);
+  color: var(--green-bull);
+}
 
-  /* Fear & Greed */
-  .fear-modern {
-    background: linear-gradient(145deg, #0c1122, #050a14);
-    border-radius: 28px;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .fear-progress {
-    background: #19233c;
-    border-radius: 40px;
-    height: 12px;
-    margin: 14px 0;
-  }
-  .fear-fill {
-    width: 48%;
-    height: 100%;
-    background: linear-gradient(90deg, #2e7d32, #f9a825, #c62828);
-    border-radius: 40px;
-    transition: width 0.3s;
-  }
+/* TradingView Chart Widget */
+.tv-chart-container {
+  background: var(--bg-card);
+  border-radius: 28px;
+  border: 1px solid var(--border-dim);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.chart-header {
+  padding: 12px 20px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-dim);
+  font-weight: 600;
+  font-size: 12px;
+}
 
-  /* toast */
-  .toast-premium {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #0f172ad9;
-    backdrop-filter: blur(12px);
-    border-left: 4px solid var(--gold);
-    padding: 10px 20px;
-    border-radius: 40px;
-    font-size: 12px;
-    z-index: 1200;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: 0.2s;
-    pointer-events: none;
-  }
-  .toast-premium.show { transform: translateY(0); opacity: 1; }
+/* Fear Gauge Circular */
+.fear-gauge-container {
+  background: linear-gradient(145deg, #0c1122, #050a14);
+  border-radius: 32px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.gauge-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+}
+.gauge-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+.gauge-bg {
+  stroke: #1e293b;
+  stroke-width: 18;
+  fill: none;
+}
+.gauge-fill {
+  stroke: url(#gaugeGradient);
+  stroke-width: 18;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s ease;
+}
+.gauge-needle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 70px;
+  background: linear-gradient(180deg, var(--gold-glow), #ffdd88);
+  border-radius: 4px;
+  transform-origin: 50% 0%;
+  transform: translateX(-50%) rotate(0deg);
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+  box-shadow: 0 0 8px rgba(212,175,90,0.6);
+}
+.gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--gold);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--gold);
+}
+.fear-value-large {
+  font-size: 48px;
+  font-weight: 900;
+  font-family: monospace;
+  color: var(--gold-glow);
+}
+.fear-label {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 4px 16px;
+  border-radius: 40px;
+  display: inline-block;
+}
+.fear-label.extreme-fear { background: #8b000050; color: #ff6b6b; }
+.fear-label.fear { background: #ff6b6b30; color: #ffaa88; }
+.fear-label.neutral { background: #d4af5a30; color: var(--gold); }
+.fear-label.greed { background: #2ad48b30; color: #2ad48b; }
+.fear-label.extreme-greed { background: #00ffaa30; color: #00ffaa; }
+
+/* Right panel cards */
+.dxy-card, .global-card {
+  background: var(--bg-card);
+  border-radius: 24px;
+  border: 1px solid var(--border-dim);
+  padding: 18px;
+  margin-bottom: 20px;
+}
+.index-ticker {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.micro-index {
+  background: var(--bg-elevated);
+  border-radius: 20px;
+  padding: 8px;
+  text-align: center;
+  flex: 1;
+}
+.toast-gold {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0f172a;
+  border-left: 4px solid var(--gold);
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-size: 12px;
+  z-index: 1000;
+  transform: translateY(30px);
+  opacity: 0;
+  transition: 0.25s;
+  pointer-events: none;
+}
+.toast-gold.show { transform: translateY(0); opacity: 1; }
+@keyframes flashGold { 0%{text-shadow:0 0 0}50%{text-shadow:0 0 8px #d4af5a;color:#ffe1a0} }
+.flash-gold { animation: flashGold 0.4s ease; }
 </style>
 </head>
 <body>
 
-<!-- HEADER: valores destacados ouro e dolar + relógio digital -->
-<div class="top-bar">
-  <div class="logo-area">
-    <div class="logo">⚡ AURUM EDGE</div>
-    <div class="badge-pro">PROFESSIONAL DASHBOARD</div>
-  </div>
-  <div class="live-digital-clock" id="digitalClock">--:--:--</div>
-  <div class="gold-dxy-area">
-    <div><span style="font-size:12px;">XAU/USD</span> <span class="gold-spot" id="goldTopPrice">$—</span> <span id="goldTopChange" class="change-badge up">0.00%</span></div>
-    <div><span style="font-size:12px;">DXY</span> <span class="dxy-spot" id="dxyTopValue">—</span> <span id="dxyTopChange" class="change-badge up">0.00%</span></div>
+<div class="header">
+  <div class="logo">⚡ AURUM <span>PRO</span> <span class="badge">TRADINGVIEW</span></div>
+  <div class="live-price-area">
+    <div class="price-block">
+      <span class="price-label">XAU/USD</span>
+      <span class="xau-big" id="xauPrice">$—.——</span>
+      <span class="xau-change" id="xauChange" style="font-size:14px;">0.00%</span>
+    </div>
+    <div class="price-block">
+      <span class="price-label">DXY</span>
+      <span class="dxy-big-header" id="dxyHeaderPrice">—.——</span>
+      <span class="dxy-change-header" id="dxyHeaderChange" style="font-size:12px;">0.00%</span>
+    </div>
+    <span class="update-tag"><span id="liveIcon">🔴</span> <span id="refreshTimer">AO VIVO</span></span>
   </div>
 </div>
 
-<!-- Ticker rotativo (índices globais) -->
+<!-- TRADINGVIEW TICKER TAPE (FAIXA ROTATIVA) -->
 <div class="ticker-container">
-  <div class="ticker-track" id="tickerRoll"></div>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget/ticker-tape.js" async>
+    {
+      "symbols": [
+        { "proName": "OANDA:XAUUSD", "title": "OURO (XAUUSD)" },
+        { "proName": "OANDA:XAGUSD", "title": "PRATA (XAGUSD)" },
+        { "proName": "OANDA:SPX500USD", "title": "S&P 500" },
+        { "proName": "OANDA:NAS100USD", "title": "NASDAQ 100" },
+        { "proName": "OANDA:US30USD", "title": "DOW JONES" },
+        { "proName": "FX_IDC:USDJPY", "title": "USD/JPY" },
+        { "proName": "FX_IDC:GBPUSD", "title": "GBP/USD" },
+        { "proName": "TVC:DXY", "title": "DXY" },
+        { "proName": "BITSTAMP:BTCUSD", "title": "BITCOIN" }
+      ],
+      "showSymbolLogo": false,
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "displayMode": "adaptive",
+      "locale": "br"
+    }
+    </script>
+  </div>
 </div>
 
-<div class="dashboard">
-  <div class="grid-main">
-    <!-- COLUNA ESQUERDA -->
+<div class="container">
+  <!-- VELOCITY CLOCK -->
+  <div class="velocity-card">
+    <div style="display:flex; justify-content: space-between;">
+      <span>📈 VELOCITY CLOCK • MOMENTUM RADAR</span>
+      <span>FORÇA DIRECIONAL</span>
+    </div>
+    <div class="clock-meter">
+      <div class="clock-fill" id="velocityFill" style="width: 50%;"></div>
+    </div>
     <div>
-      <!-- VELOCITY CLOCK (relógio de velocidade) -->
-      <div class="glass-card velocity-section">
-        <div style="display: flex; justify-content: space-between;"><span>⚡ VELOCITY CLOCK • MOMENTUM RADAR</span><span>FORÇA DIRECIONAL</span></div>
-        <div class="gauge-bg"><div class="gauge-fill" id="gaugeFillMain"></div></div>
-        <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
-          <span class="momentum-digits" id="velocityNumber">0.00</span><span>pts / minuto</span>
-          <span id="momentumDirText" style="font-weight:800; background:#0f172a; padding:4px 12px; border-radius:24px;">➡️ NEUTRO</span>
-        </div>
-        <div style="margin-top: 12px; display: flex; gap: 20px; font-size:11px;">
-          <span>📊 ATR: <strong id="atrValueReal">$—</strong></span><span>📈 Amplitude: <strong id="rangeValueReal">$—</strong></span>
-        </div>
-        <div id="sessionRow" style="display: flex; gap: 12px; margin-top: 18px;">
-          <div class="session-chip" data-sess="asia">🇯🇵 TÓQUIO</div>
-          <div class="session-chip" data-sess="london">🇬🇧 LONDRES</div>
-          <div class="session-chip" data-sess="ny">🇺🇸 NY</div>
-        </div>
-      </div>
+      <span class="velocity-value" id="velocityValue">0.00</span>
+      <span>pts / minuto</span>
+      <span id="directionText" style="margin-left: 12px; font-weight:700;">NEUTRO</span>
+    </div>
+    <div style="margin-top:12px; display:flex; gap:14px; font-size:11px;">
+      <span>⚡ ATR: <strong id="atrValue">—</strong></span>
+      <span>📊 Amplitude: <strong id="rangeValue">—</strong></span>
+    </div>
+    <div style="display:flex; gap:12px; margin-top:16px;">
+      <div class="session-pill" data-session="asia">🇯🇵 TÓQUIO</div>
+      <div class="session-pill" data-session="london">🇬🇧 LONDRES</div>
+      <div class="session-pill" data-session="ny">🇺🇸 NOVA YORK</div>
+    </div>
+  </div>
 
-      <!-- INDICES GLOBAIS que influenciam ouro -->
-      <div class="glass-card" style="padding: 20px;">
-        <div style="display: flex; justify-content: space-between;"><span>🌍 ÍNDICES & CORRELAÇÃO OURO</span><span id="lastUpdateTime">AO VIVO</span></div>
-        <div class="indices-grid" id="globalIndicesGrid"></div>
-      </div>
-
-      <!-- NOTÍCIAS CLASSIFICADAS 1-5 (TOURO/URSO) -->
-      <div class="glass-card">
-        <div class="news-tabs">
-          <button class="tab-btn active" data-pane="all">📰 TODAS</button>
-          <button class="tab-btn" data-pane="bull">🐂 TOURO ★1-5</button>
-          <button class="tab-btn" data-pane="bear">🐻 URSO ★1-5</button>
-          <button class="tab-btn" data-pane="impact">⚠️ IMPACTO FORTE</button>
+  <div class="two-columns">
+    <!-- COLUNA ESQUERDA: GRÁFICO DO OURO TRADINGVIEW -->
+    <div>
+      <div class="tv-chart-container">
+        <div class="chart-header">
+          <span>📊 GOLD CHART (XAUUSD) • TEMPO REAL</span>
         </div>
-        <div id="newsAllPane" class="news-pane active"><div style="padding: 40px; text-align:center;">📡 Carregando notícias com classificação de força...</div></div>
-        <div id="newsBullPane" class="news-pane"></div>
-        <div id="newsBearPane" class="news-pane"></div>
-        <div id="newsImpactPane" class="news-pane"></div>
+        <div class="tradingview-widget-container" style="height:450px;">
+          <div id="tv-chart-widget" style="height:100%; width:100%;"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script>
+            // Inicializa o gráfico da TradingView
+            new TradingView.widget({
+              "width": "100%",
+              "height": 450,
+              "symbol": "OANDA:XAUUSD",
+              "interval": "15",
+              "timezone": "America/Sao_Paulo",
+              "theme": "dark",
+              "style": "1",
+              "locale": "br",
+              "toolbar_bg": "#0b0f19",
+              "enable_publishing": false,
+              "hide_top_toolbar": false,
+              "allow_symbol_change": true,
+              "container_id": "tv-chart-widget"
+            });
+          </script>
+        </div>
       </div>
     </div>
 
-    <!-- COLUNA DIREITA: FEAR & GREED + OUTROS -->
+    <!-- COLUNA DIREITA: VELOCÍMETRO DO MEDO + DXY + INDICES -->
     <div>
-      <div class="fear-modern">
-        <div style="display: flex; justify-content: space-between;"><span>😨 VELOCÍMETRO DO MEDO</span><span>VIX / CNN</span></div>
-        <div class="fear-progress"><div class="fear-fill" id="fearFill"></div></div>
-        <div style="display: flex; justify-content: space-between;"><span class="fear-score" id="fearScoreValue" style="font-size: 32px; font-weight:800;">52</span><span id="fearLabelText" style="font-weight:700;">NEUTRO</span></div>
-        <div style="font-size: 10px; margin-top: 12px;">⚠️ Medo extremo → demanda por ouro | Ganância excessiva → correção</div>
+      <!-- VELOCÍMETRO CIRCULAR DO MEDO -->
+      <div class="fear-gauge-container">
+        <div style="display:flex; justify-content: space-between; margin-bottom:8px;">
+          <span>😨 VELOCÍMETRO DO MEDO</span>
+          <span>FEAR & GREED</span>
+        </div>
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#2e7d32"/>
+                <stop offset="25%" stop-color="#8bc34a"/>
+                <stop offset="50%" stop-color="#f9a825"/>
+                <stop offset="75%" stop-color="#ff7043"/>
+                <stop offset="100%" stop-color="#c62828"/>
+              </linearGradient>
+            </defs>
+            <circle class="gauge-bg" cx="100" cy="100" r="82" />
+            <circle class="gauge-fill" id="gaugeFillCircle" cx="100" cy="100" r="82" stroke-dasharray="515" stroke-dashoffset="257.5" />
+          </svg>
+          <div class="gauge-needle" id="fearNeedle"></div>
+          <div class="gauge-center"></div>
+        </div>
+        <div>
+          <span class="fear-value-large" id="fearValueDisplay">48</span>
+          <span> / 100</span>
+        </div>
+        <div id="fearStatusBadge" class="fear-label neutral">NEUTRO</div>
+        <div style="font-size: 10px; margin-top: 12px;">⚠️ Medo extremo → busca por ouro | Ganância → correção</div>
       </div>
-      <div class="glass-card" style="padding: 20px;">
-        <div>💵 DXY – DÓLAR INDEX (inversa)</div>
-        <div style="font-size: 28px; font-family: monospace; font-weight:700;" id="dxyCardValue">—</div>
-        <div id="dxyCardChange" class="up">0.00%</div>
-        <div style="font-size: 11px; margin-top: 6px;">📉 Leitura: <span id="dxyInsightText">—</span></div>
+
+      <div class="dxy-card">
+        <div>💵 DXY - DÓLAR INDEX</div>
+        <div style="font-size:32px; font-family:monospace; font-weight:700;" id="dxySpot">—</div>
+        <div id="dxyChange" class="up">0.00%</div>
+        <div style="margin-top:6px; font-size:11px;">Correlação: <span id="corrHint">—</span></div>
       </div>
-      <div class="glass-card" style="padding: 20px;">
-        <div>🏦 TESOURO 10Y (juros)</div>
-        <div><span id="tnxYieldValue" style="font-size: 28px; font-weight:800;">—</span><span>%</span> <span id="tnxDirection"></span></div>
-        <div style="font-size: 11px;">Rendimento elevado → pressão sobre ouro</div>
-        <div style="margin-top: 12px;"><span>⚡ VIX (volatilidade)</span> <strong id="vixLiveCard">—</strong></div>
+
+      <div class="global-card">
+        <div>🌍 INDICES & RISCO</div>
+        <div class="index-ticker">
+          <div class="micro-index"><span>🇺🇸 S&P500</span><br><strong id="spxVal">—</strong><span id="spxChg">0%</span></div>
+          <div class="micro-index"><span>📉 VIX</span><br><strong id="vixVal">—</strong></div>
+          <div class="micro-index"><span>⛏️ GDX</span><br><strong id="gdxVal">—</strong><span id="gdxChg">0%</span></div>
+        </div>
+        <div class="index-ticker" style="margin-top:8px;">
+          <div class="micro-index"><span>🇨🇳 CNY</span><br><strong id="cnyVal">—</strong><span id="cnyChg">—%</span></div>
+          <div class="micro-index"><span>🛢️ WTI</span><br><strong id="wtiVal">—</strong><span id="wtiChg">—%</span></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div id="toastMsg" class="toast-premium">✨ Dados sincronizados</div>
+<div id="toastMessage" class="toast-gold">📊 Dados atualizados via Yahoo Finance</div>
 
 <script>
-  // ====================== ESTADO GLOBAL + DADOS REAIS via PROXY ==================
-  const PROXY = "https://api.allorigins.win/raw?url=";
-  let goldPrice = 2745.20, prevGoldPrice = 2742.10;
-  let dxy = 103.38;
-  let fearGreed = 52;
-  let velocityValue = 0.34;
-  let newsDatabase = [];
+// ========== BUSCA DADOS REAIS VIA YAHOO FINANCE ==========
+const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+let goldPrice = 2745.50;
+let prevGoldPrice = 2743.20;
+let dxyValue = 103.35;
+let fearGreed = 48;
+let velocity = 0.28;
 
-  function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2700); }
+function updateFearGauge(value) {
+  const clampedValue = Math.min(100, Math.max(0, value));
+  const angle = -90 + (clampedValue / 100) * 180;
+  document.getElementById('fearNeedle').style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  
+  const circumference = 2 * Math.PI * 82;
+  const dashOffset = circumference * (1 - (clampedValue / 100));
+  document.getElementById('gaugeFillCircle').style.strokeDashoffset = dashOffset;
+  
+  document.getElementById('fearValueDisplay').innerText = Math.round(clampedValue);
+  
+  let status = '', statusClass = '';
+  if (clampedValue <= 25) { status = 'MEDO EXTREMO'; statusClass = 'extreme-fear'; }
+  else if (clampedValue <= 45) { status = 'MEDO'; statusClass = 'fear'; }
+  else if (clampedValue <= 55) { status = 'NEUTRO'; statusClass = 'neutral'; }
+  else if (clampedValue <= 80) { status = 'GANÂNCIA'; statusClass = 'greed'; }
+  else { status = 'GANÂNCIA EXTREMA'; statusClass = 'extreme-greed'; }
+  
+  const badge = document.getElementById('fearStatusBadge');
+  badge.innerText = status;
+  badge.className = `fear-label ${statusClass}`;
+}
 
-  // RELÓGIO DIGITAL
-  function updateClock() {
-    const now = new Date(); const str = now.toLocaleTimeString('pt-BR'); document.getElementById('digitalClock').innerHTML = str;
-  }
-  setInterval(updateClock, 1000); updateClock();
+function updateFearFromVix(vix) {
+  let newFear = 50;
+  if (vix > 30) newFear = 15;
+  else if (vix > 25) newFear = 25;
+  else if (vix > 22) newFear = 32;
+  else if (vix > 18) newFear = 42;
+  else if (vix < 14) newFear = 68;
+  else if (vix < 12) newFear = 82;
+  else if (vix < 10) newFear = 92;
+  fearGreed = Math.min(98, Math.max(5, newFear));
+  updateFearGauge(fearGreed);
+}
 
-  // Buscar cotações reais (OURO, DXY, VIX, SPX, GDX, TNX, USDCNH, WTI)
-  async function fetchRealMarket() {
-    const symbols = ['GC=F', 'DX-Y.NYB', '^VIX', '^GSPC', 'GDX', '^TNX', 'USDCNH=X', 'CL=F'];
+async function fetchMarketData() {
+  try {
+    const symbols = ['GC=F', 'DX-Y.NYB', '^GSPC', '^VIX', 'GDX', 'USDCNH=X', 'CL=F'];
     const results = {};
-    for (let sym of symbols) {
+    
+    for (const sym of symbols) {
       try {
         const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=5m&range=1d`;
-        const resp = await fetch(PROXY + encodeURIComponent(url));
+        const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
         const data = await resp.json();
         if (!data.chart?.result?.[0]) continue;
         const quote = data.chart.result[0].indicators.quote[0];
@@ -410,151 +509,97 @@
         const prevClose = closes[closes.length-2] || last;
         const changePct = ((last - prevClose)/prevClose)*100;
         results[sym] = { last, changePct };
-      } catch(e) { console.warn(sym, e); }
+      } catch(e) { console.warn(`${sym} error`); }
     }
-    return results;
-  }
-
-  // Atualizar interface com dados reais
-  async function refreshAllData() {
-    const market = await fetchRealMarket();
-    if (market['GC=F']) {
-      goldPrice = market['GC=F'].last;
-      const chg = market['GC=F'].changePct;
-      document.getElementById('goldTopPrice').innerHTML = `$${goldPrice.toFixed(2)}`;
-      const topChangeSpan = document.getElementById('goldTopChange');
-      topChangeSpan.innerHTML = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`;
-      topChangeSpan.className = `change-badge ${chg >= 0 ? 'up' : 'dn'}`;
-    }
-    if (market['DX-Y.NYB']) {
-      dxy = market['DX-Y.NYB'].last;
-      const dxyChg = market['DX-Y.NYB'].changePct;
-      document.getElementById('dxyTopValue').innerHTML = dxy.toFixed(2);
-      const dxyTopChg = document.getElementById('dxyTopChange');
-      dxyTopChg.innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
-      dxyTopChg.className = `change-badge ${dxyChg >= 0 ? 'up' : 'dn'}`;
-      document.getElementById('dxyCardValue').innerHTML = dxy.toFixed(2);
-      document.getElementById('dxyCardChange').innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
-      document.getElementById('dxyCardChange').className = dxyChg >= 0 ? 'up' : 'dn';
-      document.getElementById('dxyInsightText').innerText = dxyChg > 0.1 ? "Dólar forte pressiona ouro" : dxyChg < -0.1 ? "Dólar fraco suporta ouro" : "Neutro";
-    }
-    if (market['^VIX']) {
-      let vix = market['^VIX'].last;
-      document.getElementById('vixLiveCard').innerHTML = vix.toFixed(2);
-      let newFear = 50;
-      if (vix > 28) newFear = 18; else if (vix > 22) newFear = 30; else if (vix > 18) newFear = 40; else if (vix < 14) newFear = 70; else if (vix < 12) newFear = 85;
-      fearGreed = newFear;
-      document.getElementById('fearFill').style.width = `${fearGreed}%`;
-      document.getElementById('fearScoreValue').innerHTML = fearGreed;
-      let label = fearGreed <= 25 ? "MEDO EXTREMO" : fearGreed <= 45 ? "MEDO" : fearGreed <= 65 ? "NEUTRO" : fearGreed <= 85 ? "GANÂNCIA" : "GANÂNCIA EXTREMA";
-      document.getElementById('fearLabelText').innerHTML = label;
-    }
-    if (market['^TNX']) { let tnx = market['^TNX'].last; document.getElementById('tnxYieldValue').innerHTML = tnx.toFixed(2); document.getElementById('tnxDirection').innerHTML = market['^TNX'].changePct >= 0 ? "▲" : "▼"; }
     
-    // Grid indices
-    const spx = market['^GSPC'] || { last: 5420, changePct: 0.2 };
-    const gdx = market['GDX'] || { last: 37.5, changePct: 0.5 };
-    const usdcnh = market['USDCNH=X'] || { last: 7.252, changePct: 0.03 };
-    const wti = market['CL=F'] || { last: 78.4, changePct: 0.4 };
-    const indicesHtml = `
-      <div class="indice-tile"><div>🇺🇸 S&P500</div><div style="font-weight:800;">${spx.last.toFixed(1)}</div><div class="${spx.changePct>=0?'up':'dn'}">${spx.changePct>=0?'+':''}${spx.changePct.toFixed(2)}%</div></div>
-      <div class="indice-tile"><div>⛏️ GDX (mineração)</div><div style="font-weight:800;">${gdx.last.toFixed(2)}</div><div class="${gdx.changePct>=0?'up':'dn'}">${gdx.changePct>=0?'+':''}${gdx.changePct.toFixed(2)}%</div></div>
-      <div class="indice-tile"><div>🇨🇳 USD/CNH</div><div style="font-weight:800;">${usdcnh.last.toFixed(4)}</div><div>${usdcnh.changePct>=0?'+':''}${usdcnh.changePct.toFixed(2)}%</div></div>
-      <div class="indice-tile"><div>🛢️ WTI Crude</div><div style="font-weight:800;">${wti.last.toFixed(2)}</div><div class="${wti.changePct>=0?'up':'dn'}">${wti.changePct>=0?'+':''}${wti.changePct.toFixed(2)}%</div></div>
-    `;
-    document.getElementById('globalIndicesGrid').innerHTML = indicesHtml;
+    if (results['GC=F']) {
+      goldPrice = results['GC=F'].last;
+      const chg = results['GC=F'].changePct;
+      document.getElementById('xauPrice').innerHTML = `$${goldPrice.toFixed(2)}`;
+      const chEl = document.getElementById('xauChange');
+      chEl.innerHTML = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`;
+      chEl.className = `xau-change ${chg >= 0 ? 'up' : 'dn'}`;
+      document.getElementById('xauPrice').classList.add('flash-gold');
+      setTimeout(() => document.getElementById('xauPrice').classList.remove('flash-gold'), 400);
+    }
+    
+    if (results['DX-Y.NYB']) {
+      dxyValue = results['DX-Y.NYB'].last;
+      const dxyChg = results['DX-Y.NYB'].changePct;
+      document.getElementById('dxyHeaderPrice').innerHTML = dxyValue.toFixed(2);
+      document.getElementById('dxyHeaderChange').innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
+      document.getElementById('dxyHeaderChange').className = `dxy-change-header ${dxyChg >= 0 ? 'up' : 'dn'}`;
+      document.getElementById('dxySpot').innerHTML = dxyValue.toFixed(2);
+      document.getElementById('dxyChange').innerHTML = `${dxyChg >= 0 ? '+' : ''}${dxyChg.toFixed(2)}%`;
+      document.getElementById('dxyChange').className = dxyChg >= 0 ? 'up' : 'dn';
+      const corrMsg = dxyChg > 0.1 ? "Dólar forte → Ouro sob pressão" : dxyChg < -0.1 ? "Dólar fraco → Ouro ganha" : "Neutro";
+      document.getElementById('corrHint').innerText = corrMsg;
+    }
+    
+    if (results['^GSPC']) {
+      document.getElementById('spxVal').innerHTML = results['^GSPC'].last.toFixed(1);
+      document.getElementById('spxChg').innerHTML = `${results['^GSPC'].changePct >= 0 ? '+' : ''}${results['^GSPC'].changePct.toFixed(2)}%`;
+    }
+    
+    if (results['^VIX']) {
+      const vix = results['^VIX'].last;
+      document.getElementById('vixVal').innerHTML = vix.toFixed(2);
+      updateFearFromVix(vix);
+    }
+    
+    if (results['GDX']) {
+      document.getElementById('gdxVal').innerHTML = results['GDX'].last.toFixed(2);
+      document.getElementById('gdxChg').innerHTML = `${results['GDX'].changePct >= 0 ? '+' : ''}${results['GDX'].changePct.toFixed(2)}%`;
+    }
+    
+    if (results['USDCNH=X']) {
+      document.getElementById('cnyVal').innerHTML = results['USDCNH=X'].last.toFixed(4);
+      document.getElementById('cnyChg').innerHTML = `${results['USDCNH=X'].changePct >= 0 ? '+' : ''}${results['USDCNH=X'].changePct.toFixed(2)}%`;
+    }
+    
+    if (results['CL=F']) {
+      document.getElementById('wtiVal').innerHTML = results['CL=F'].last.toFixed(2);
+      document.getElementById('wtiChg').innerHTML = `${results['CL=F'].changePct >= 0 ? '+' : ''}${results['CL=F'].changePct.toFixed(2)}%`;
+    }
+    
+  } catch(e) { console.warn('Erro fetch:', e); }
+}
 
-    // Velocity clock
-    const delta = goldPrice - prevGoldPrice;
-    velocityValue = Math.min(3.4, Math.abs(delta) * 1.1 + Math.random() * 0.12);
-    const percent = Math.min(100, (velocityValue / 2.7) * 100);
-    document.getElementById('gaugeFillMain').style.width = `${percent}%`;
-    document.getElementById('velocityNumber').innerHTML = velocityValue.toFixed(2);
-    let dirText = delta > 0.25 ? "🚀 ACELERANDO ALTA" : delta < -0.25 ? "📉 VELOCIDADE BAIXISTA" : "➡️ MOMENTUM NEUTRO";
-    document.getElementById('momentumDirText').innerHTML = dirText;
-    document.getElementById('atrValueReal').innerHTML = `$${(Math.abs(delta)*1.4 + 12).toFixed(2)}`;
-    document.getElementById('rangeValueReal').innerHTML = `$${(Math.abs(delta)*1.7).toFixed(2)}`;
-    prevGoldPrice = goldPrice;
+function updateVelocityClock() {
+  const priceChange = goldPrice - prevGoldPrice;
+  velocity = Math.abs(priceChange) * 1.2 + 0.1;
+  velocity = Math.min(3.5, velocity);
+  const percentSpeed = Math.min(100, (velocity / 2.8) * 100);
+  document.getElementById('velocityFill').style.width = `${percentSpeed}%`;
+  document.getElementById('velocityValue').innerHTML = velocity.toFixed(2);
+  
+  let direction = priceChange > 0.25 ? "🚀 ACELERANDO ALTA" : priceChange < -0.25 ? "📉 VELOCIDADE BAIXISTA" : "➡️ MOMENTUM NEUTRO";
+  let colorDir = priceChange > 0 ? "var(--green-bull)" : priceChange < 0 ? "var(--red-bear)" : "var(--gold)";
+  document.getElementById('directionText').innerHTML = direction;
+  document.getElementById('directionText').style.color = colorDir;
+  document.getElementById('atrValue').innerHTML = `$${(12 + Math.abs(priceChange) * 3).toFixed(2)}`;
+  document.getElementById('rangeValue').innerHTML = `$${(Math.abs(priceChange) * 1.8).toFixed(2)}`;
+  prevGoldPrice = goldPrice;
+  
+  const hourUTC = new Date().getUTCHours();
+  document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
+  if (hourUTC >= 0 && hourUTC < 8) document.querySelector('[data-session="asia"]')?.classList.add('active');
+  if (hourUTC >= 8 && hourUTC < 17) document.querySelector('[data-session="london"]')?.classList.add('active');
+  if (hourUTC >= 13 && hourUTC < 22) document.querySelector('[data-session="ny"]')?.classList.add('active');
+}
 
-    // Sessões ativas
-    const hora = new Date().getUTCHours();
-    document.querySelectorAll('.session-chip').forEach(c => c.classList.remove('active'));
-    if (hora >= 0 && hora < 8) document.querySelector('[data-sess="asia"]')?.classList.add('active');
-    if (hora >= 8 && hora < 17) document.querySelector('[data-sess="london"]')?.classList.add('active');
-    if (hora >= 13 && hora < 22) document.querySelector('[data-sess="ny"]')?.classList.add('active');
+async function fullRefresh() {
+  await fetchMarketData();
+  updateVelocityClock();
+  document.getElementById('refreshTimer').innerHTML = new Date().toLocaleTimeString('pt-BR');
+  const toast = document.getElementById('toastMessage');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
 
-    document.getElementById('lastUpdateTime').innerHTML = new Date().toLocaleTimeString('pt-BR');
-    showToast(`🟡 Ouro $${goldPrice.toFixed(2)} | Velocidade ${velocityValue.toFixed(2)} pts`);
-    // Ticker rotativo
-    const tickerItems = [`DXY ${dxy.toFixed(2)}`, `S&P ${spx.last.toFixed(0)}`, `GDX ${gdx.last.toFixed(2)}`, `VIX ${(market['^VIX']?.last||15).toFixed(2)}`, `WTI ${wti.last.toFixed(2)}`, `USD/CNH ${usdcnh.last.toFixed(4)}`];
-    let tickerHtml = "";
-    for (let i=0;i<2;i++) tickerItems.forEach(t => { tickerHtml += `<div class="ticker-item">${t}</div>`; });
-    document.getElementById('tickerRoll').innerHTML = tickerHtml;
-  }
-
-  // NOTÍCIAS CLASSIFICADAS 1-5 (FORÇA TOURO/URSO) + FALLBACK REALISTA
-  async function buildClassifiedNews() {
-    const fallback = [
-      { title:"Fed sugere corte de juros em setembro, ouro dispara", summary:"Expectativa de política expansionista derruba dólar", source:"Reuters", link:"#", bullBias:5 },
-      { title:"CPI acima do consenso: dólar forte e ouro em queda livre", summary:"Taxas de juros pressionam metal", source:"Bloomberg", link:"#", bearBias:5 },
-      { title:"Tensões geopolíticas elevam demanda por ouro", summary:"Compra de bancos centrais acelera", source:"FT", link:"#", bullBias:4 },
-      { title:"ETF de ouro tem saída recorde semanal", summary":"Investidores reduzem exposição", source:"CNBC", link:"#", bearBias:4 },
-      { title:"China anuncia novos estímulos, commodities sobem", summary:"Ouro acompanha alta geral", source:"SCMP", link:"#", bullBias:3 }
-    ];
-    newsDatabase = fallback.map(art => {
-      let sentiment = 'NEUTRAL', strength = 2;
-      if (art.bullBias && art.bullBias >= 3) { sentiment = 'BULL'; strength = art.bullBias; }
-      else if (art.bearBias && art.bearBias >= 3) { sentiment = 'BEAR'; strength = art.bearBias; }
-      else {
-        const text = (art.title + " " + art.summary).toLowerCase();
-        if (text.includes('alta') || text.includes('sobe') || text.includes('estímulo')) sentiment = 'BULL';
-        else if (text.includes('queda') || text.includes('pressão')) sentiment = 'BEAR';
-        strength = sentiment === 'BULL' ? 3 : (sentiment === 'BEAR' ? 3 : 2);
-      }
-      return { ...art, sentiment, strength, time: new Date().toLocaleTimeString('pt-BR') };
-    });
-    renderNewsPanes();
-  }
-
-  function renderNewsPanes() {
-    const allHtml = [], bullHtml = [], bearHtml = [], impactHtml = [];
-    newsDatabase.forEach(n => {
-      const strengthClass = n.sentiment === 'BULL' ? `bull-${n.strength}` : (n.sentiment === 'BEAR' ? `bear-${n.strength}` : '');
-      const strengthText = n.sentiment === 'BULL' ? `🐂 TOURO FORÇA ${n.strength}/5` : (n.sentiment === 'BEAR' ? `🐻 URSO FORÇA ${n.strength}/5` : `⚖️ NEUTRO`);
-      const html = `<div class="news-item" onclick="window.open('${n.link}','_blank')"><div style="display:flex; justify-content:space-between;"><span class="strength-tag ${strengthClass}">${strengthText}</span><span>${n.time}</span></div><div style="font-weight:600; margin:6px 0;">${n.title}</div><div style="font-size:11px; color:#8e9cbb;">${n.summary}<span style="margin-left:8px; background:#00000050; padding:2px 6px; border-radius:12px;">${n.source}</span></div></div>`;
-      allHtml.push(html);
-      if (n.sentiment === 'BULL') bullHtml.push(html);
-      if (n.sentiment === 'BEAR') bearHtml.push(html);
-      if ((n.sentiment === 'BULL' && n.strength >= 4) || (n.sentiment === 'BEAR' && n.strength >= 4)) impactHtml.push(html);
-    });
-    document.getElementById('newsAllPane').innerHTML = allHtml.length ? allHtml.join('') : '<div style="padding:20px;">Sem notícias</div>';
-    document.getElementById('newsBullPane').innerHTML = bullHtml.length ? bullHtml.join('') : '<div style="padding:20px;">Nenhuma notícia de touro forte</div>';
-    document.getElementById('newsBearPane').innerHTML = bearHtml.length ? bearHtml.join('') : '<div>Sem notícias baixistas</div>';
-    document.getElementById('newsImpactPane').innerHTML = impactHtml.length ? impactHtml.join('') : '<div>Eventos de alto impacto aparecerão aqui</div>';
-  }
-
-  function initTabs() {
-    const btns = document.querySelectorAll('.tab-btn');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const pane = btn.dataset.pane;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.news-pane').forEach(p => p.classList.remove('active'));
-        document.getElementById(`news${pane.charAt(0).toUpperCase() + pane.slice(1)}Pane`).classList.add('active');
-      });
-    });
-  }
-
-  // Inicialização e loops automáticos
-  async function start() {
-    await refreshAllData();
-    await buildClassifiedNews();
-    initTabs();
-    setInterval(refreshAllData, 28000);
-    setInterval(() => refreshAllData(), 5000);
-  }
-  start();
+fullRefresh();
+setInterval(fullRefresh, 30000);
+setInterval(updateVelocityClock, 3000);
 </script>
 </body>
 </html>
