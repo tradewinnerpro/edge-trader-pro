@@ -1,702 +1,796 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AURUM PROFESSIONAL • TradingView Live Data</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM PRO · Gold Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05080e;--s1:#090d18;--s2:#0e1524;--s3:#141e32;
+  --gold:#c49a52;--gold2:#e8c878;--gold3:rgba(196,154,82,.10);--gold4:rgba(196,154,82,.04);
+  --green:#1de9a4;--red:#e84060;--amber:#f0a040;--blue:#4db3ff;
+  --text:#d8cebe;--text2:#7a8ca8;--muted:#384860;
+  --border:rgba(196,154,82,.09);--border2:rgba(196,154,82,.18);
+  --ff-d:'Fraunces',Georgia,serif;--ff-m:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--ff-m);font-size:11px;
+  background-image:radial-gradient(ellipse 70% 40% at 15% 0%,rgba(196,154,82,.05) 0%,transparent 50%),
+  radial-gradient(ellipse 50% 30% at 85% 100%,rgba(77,179,255,.03) 0%,transparent 50%);}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-        body {
-            background: #0a0e1a;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
+/* TICKER */
+.ticker-wrap{background:var(--s1);border-bottom:1px solid var(--border);}
+.ticker-wrap iframe{display:block;}
 
-        /* Header Premium */
-        .header {
-            background: #0c1120;
-            border-bottom: 1px solid #2a2f42;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;background:var(--s1);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;border:1px solid var(--border2);
+  display:grid;place-items:center;font-family:var(--ff-d);font-size:18px;font-weight:900;color:var(--gold);}
+.logo-name{font-family:var(--ff-d);font-size:18px;font-weight:700;color:var(--gold2);letter-spacing:3px;}
+.logo-sub{font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:1px;}
+.hdr-price{display:flex;align-items:baseline;gap:8px;}
+.hdr-p{font-family:var(--ff-d);font-size:30px;font-weight:900;color:var(--gold2);line-height:1;}
+.hdr-ch{font-size:12px;font-weight:600;}
+.hdr-ch.up{color:var(--green);}.hdr-ch.dn{color:var(--red);}
+.hdr-hl{font-size:9px;color:var(--muted);}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pill-live{padding:4px 10px;border-radius:2px;font-size:8px;font-weight:600;
+  letter-spacing:2px;border:1px solid var(--green);color:var(--green);
+  background:rgba(29,233,164,.06);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sess-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;}
+.sess-dot.on{background:var(--green);animation:blink 1.5s infinite;}
+.sess-dot.off{background:var(--muted);}
+.next-upd{font-size:9px;color:var(--muted);}
+.btn-ref{padding:5px 12px;border:1px solid var(--border2);border-radius:2px;
+  background:transparent;color:var(--gold);font-family:var(--ff-m);font-size:9px;
+  cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.btn-ref:hover{border-color:var(--gold);background:var(--gold3);}
 
-        .logo {
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
-        }
+/* WRAP */
+.wrap{max-width:1900px;margin:0 auto;padding:10px;}
 
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, #d4af5a);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+/* GRID MAIN */
+.grid-main{display:grid;grid-template-columns:1fr 340px;gap:10px;margin-bottom:10px;}
+@media(max-width:1200px){.grid-main{grid-template-columns:1fr;}}
 
-        .badge {
-            background: linear-gradient(135deg, #d4af5a20, #d4af5a05);
-            padding: 4px 14px;
-            border-radius: 40px;
-            font-size: 10px;
-            font-weight: 600;
-            border: 1px solid rgba(212, 175, 90, 0.4);
-            color: #d4af5a;
-        }
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.card-hdr{padding:8px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.card-title{font-family:var(--ff-d);font-size:11px;font-weight:700;
+  color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.card-sub{font-size:8px;color:var(--muted);}
 
-        .price-panel {
-            display: flex;
-            gap: 40px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 32px;
-            border-radius: 60px;
-            backdrop-filter: blur(8px);
-        }
+/* TV WIDGETS */
+.tv-wrap{background:#050a10;}
+.tv-wrap iframe,.tradingview-widget-container{width:100%;height:100%;border:none;display:block;}
+.chart-h{height:420px;}
+.tech-h{height:420px;}
+.ovw-h{height:220px;}
+.cal-h{height:360px;}
+.news-h{height:380px;}
 
-        .price-item {
-            text-align: center;
-        }
+/* TRADINGVIEW WIDGET CONTAINER */
+.tradingview-widget-container{position:relative;}
+.tradingview-widget-container__widget{width:100%;height:100%;}
 
-        .price-label {
-            font-size: 11px;
-            color: #8a92b0;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
+/* ROW 2 — 3 columns */
+.grid-r2{display:grid;grid-template-columns:240px 1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:1200px){.grid-r2{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.grid-r2{grid-template-columns:1fr;}}
 
-        .price-value {
-            font-size: 28px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-        }
+/* ROW NEWS */
+.grid-news{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:1100px){.grid-news{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.grid-news{grid-template-columns:1fr;}}
 
-        .price-change {
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 6px;
-        }
+/* GAUGE */
+.gauge-body{padding:14px;text-align:center;}
+.gauge-canvas-wrap{position:relative;display:inline-block;}
+canvas#gauge{display:block;}
+.gauge-pct{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  font-family:var(--ff-d);font-size:32px;font-weight:900;line-height:1;}
+.gauge-lbl{font-size:9px;letter-spacing:2px;margin-top:4px;}
+.gauge-sub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:8px;}
+.gs{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:6px 4px;text-align:center;}
+.gs-v{font-family:var(--ff-d);font-size:13px;font-weight:700;}
+.gs-l{font-size:7px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
 
-        .positive { color: #00c076; }
-        .negative { color: #f6465d; }
+/* AI BANNER */
+.ai-banner{background:linear-gradient(135deg,rgba(196,154,82,.06),rgba(77,179,255,.04));
+  border:1px solid var(--border2);border-radius:4px;padding:12px 14px;margin-bottom:10px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;}
+.ai-icon{font-family:var(--ff-d);font-size:20px;font-weight:900;color:var(--gold);}
+.ai-text{font-family:var(--ff-d);font-size:12px;color:var(--text);line-height:1.6;font-weight:300;}
+.ai-text.loading{color:var(--muted);font-style:italic;font-size:10px;}
+.ai-dir{font-family:var(--ff-d);font-size:16px;font-weight:700;text-align:right;}
+.ai-conf{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px;text-align:right;}
+.ai-bdg{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:2px;
+  margin-top:5px;display:inline-block;}
 
-        .live-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+/* NEWS */
+.news-col-hdr{padding:8px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;}
+.news-col-icon{font-size:13px;}
+.news-col-name{font-family:var(--ff-d);font-size:11px;font-weight:700;letter-spacing:1px;}
+.news-col-cnt{margin-left:auto;font-size:8px;padding:2px 6px;border-radius:2px;
+  border:1px solid var(--border);color:var(--muted);}
+.news-body{max-height:340px;overflow-y:auto;}
+.news-item{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03);
+  cursor:pointer;transition:background .15s;}
+.news-item:hover{background:var(--gold4);}
+.ni-time{font-size:8px;color:var(--muted);margin-bottom:2px;}
+.ni-title{font-family:var(--ff-d);font-size:11px;font-weight:400;color:var(--text);
+  line-height:1.5;margin-bottom:3px;}
+.ni-src{font-size:8px;color:var(--text2);}
+.news-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:10px;}
 
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: #00c076;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
+/* SYMBOL INFO ROW */
+.sinfo-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px;}
+@media(max-width:1000px){.sinfo-grid{grid-template-columns:repeat(3,1fr);}}
+.sinfo-card{background:var(--s1);border:1px solid var(--border);border-radius:4px;padding:10px;text-align:center;}
+.si-lbl{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.si-val{font-family:var(--ff-d);font-size:15px;font-weight:700;line-height:1;}
+.si-sub{font-size:8px;color:var(--text2);margin-top:2px;}
 
-        @keyframes pulse {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
-        }
+/* TOAST */
+.toast{position:fixed;bottom:16px;right:16px;z-index:999;
+  background:var(--s2);border:1px solid var(--border2);border-radius:4px;
+  padding:9px 13px;max-width:250px;font-size:10px;
+  transform:translateY(20px);opacity:0;pointer-events:none;
+  transition:all .35s cubic-bezier(.22,1,.36,1);}
+.toast.show{transform:none;opacity:1;}
+.toast b{color:var(--gold2);display:block;margin-bottom:2px;}
 
-        /* Main Container */
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px 24px;
-        }
-
-        /* Ticker Tape Container - A FAIXA QUE FICA PASSANDO */
-        .ticker-wrapper {
-            margin-bottom: 24px;
-            border-radius: 16px;
-            overflow: hidden;
-            background: #0c1120;
-            border: 1px solid #2a2f42;
-        }
-
-        /* Grid Layout */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-        }
-
-        @media (max-width: 1000px) {
-            .main-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Cards */
-        .card {
-            background: #0c1120;
-            border-radius: 24px;
-            border: 1px solid #2a2f42;
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
-
-        .card-header {
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-weight: 600;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Chart Container */
-        .chart-container {
-            height: 500px;
-            width: 100%;
-        }
-
-        /* Indicators Grid */
-        .indicators-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 20px;
-        }
-
-        .indicator-card {
-            background: #070b16;
-            border-radius: 16px;
-            padding: 14px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .indicator-card:hover {
-            border-color: rgba(212, 175, 90, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .indicator-name {
-            font-size: 11px;
-            color: #8a92b0;
-            margin-bottom: 8px;
-        }
-
-        .indicator-value {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .indicator-signal {
-            font-size: 10px;
-            margin-top: 8px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .signal-buy { background: #00c07620; color: #00c076; }
-        .signal-sell { background: #f6465d20; color: #f6465d; }
-        .signal-neutral { background: #f0b90b20; color: #f0b90b; }
-
-        /* Fear Gauge */
-        .fear-container {
-            text-align: center;
-            padding: 24px;
-        }
-
-        .gauge-wrap {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 0 auto;
-        }
-
-        .fear-score {
-            font-size: 52px;
-            font-weight: 800;
-            margin-top: 16px;
-        }
-
-        .fear-status {
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 8px;
-            padding: 8px 20px;
-            border-radius: 40px;
-            display: inline-block;
-        }
-
-        /* Velocity Clock */
-        .velocity-section {
-            padding: 20px;
-        }
-
-        .gauge-bar {
-            background: #1a1f30;
-            border-radius: 60px;
-            height: 8px;
-            margin: 16px 0;
-            overflow: hidden;
-        }
-
-        .gauge-progress {
-            height: 100%;
-            background: linear-gradient(90deg, #f6465d, #f0b90b, #00c076);
-            border-radius: 60px;
-            transition: width 0.4s ease;
-            width: 0%;
-        }
-
-        .velocity-number {
-            font-size: 48px;
-            font-weight: 800;
-            font-family: monospace;
-        }
-
-        .session-badge {
-            background: #161c2c;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 600;
-            border-left: 2px solid #4a5568;
-        }
-
-        .session-badge.active {
-            border-left-color: #00c076;
-            background: rgba(0, 192, 118, 0.1);
-            color: #00c076;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #1a1f2f;
-            border-left: 4px solid #d4af5a;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 13px;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.3s;
-        }
-    </style>
+/* ANIMATIONS */
+.price-up{animation:pUp .5s ease;}
+.price-dn{animation:pDn .5s ease;}
+@keyframes pUp{0%{opacity:.5}50%{color:var(--green)}100%{opacity:1}}
+@keyframes pDn{0%{opacity:.5}50%{color:var(--red)}100%{opacity:1}}
+</style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">
-        <h1>⚡ AURUM <span style="color:#d4af5a">PRO</span></h1>
-        <div class="badge">TRADINGVIEW • LIVE</div>
-    </div>
-    <div class="price-panel">
-        <div class="price-item">
-            <div class="price-label">XAU/USD (OURO)</div>
-            <div><span class="price-value" id="goldPrice">---</span><span class="price-change" id="goldChange">--</span></div>
-        </div>
-        <div class="price-item">
-            <div class="price-label">DXY (DÓLAR)</div>
-            <div><span class="price-value" id="dxyPrice">---</span><span class="price-change" id="dxyChange">--</span></div>
-        </div>
-        <div class="price-item">
-            <div class="price-label">VIX (MEDO)</div>
-            <div><span class="price-value" id="vixHeader">---</span><span class="price-change" id="vixChange">--</span></div>
-        </div>
-        <div class="live-status">
-            <div class="live-dot"></div>
-            <span style="font-size: 11px;" id="liveTime">AO VIVO</span>
-        </div>
-    </div>
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="tradingview-widget-container" style="height:46px">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {"symbols":[
+      {"proName":"OANDA:XAUUSD","title":"GOLD (XAU/USD)"},
+      {"proName":"OANDA:XAGUSD","title":"PRATA (XAG/USD)"},
+      {"proName":"OANDA:NAS100USD","title":"NASDAQ (NDX)"},
+      {"proName":"OANDA:SPX500USD","title":"S&P500"},
+      {"proName":"OANDA:US30USD","title":"DOW JONES"},
+      {"proName":"TVC:DXY","title":"DÓLAR (DXY)"},
+      {"proName":"OANDA:BTCUSD","title":"BTC/USD"},
+      {"proName":"TVC:USOIL","title":"WTI OIL"},
+      {"proName":"TVC:VIX","title":"VIX (MEDO)"}
+    ],
+    "showSymbolLogo":false,"colorTheme":"dark","isTransparent":true,
+    "displayMode":"adaptive","locale":"br","height":44}
+    </script>
+  </div>
 </div>
 
-<div class="container">
-    <!-- FAIXA ROTATIVA (TICKER TAPE) - TRADINGVIEW -->
-    <div class="ticker-wrapper">
-        <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget/ticker-tape.js" async>
-            {
-                "symbols": [
-                    { "proName": "OANDA:XAUUSD", "title": "OURO (XAUUSD)" },
-                    { "proName": "OANDA:XAGUSD", "title": "PRATA (XAGUSD)" },
-                    { "proName": "OANDA:SPX500USD", "title": "S&P 500" },
-                    { "proName": "OANDA:NAS100USD", "title": "NASDAQ 100" },
-                    { "proName": "OANDA:US30USD", "title": "DOW JONES" },
-                    { "proName": "TVC:DXY", "title": "DÓLAR INDEX" },
-                    { "proName": "FX_IDC:USDJPY", "title": "USD/JPY" },
-                    { "proName": "FX_IDC:GBPUSD", "title": "GBP/USD" },
-                    { "proName": "OANDA:UK100GBP", "title": "FTSE 100" },
-                    { "proName": "BITSTAMP:BTCUSD", "title": "BITCOIN" }
-                ],
-                "showSymbolLogo": false,
-                "colorTheme": "dark",
-                "isTransparent": true,
-                "displayMode": "adaptive",
-                "locale": "br"
-            }
-            </script>
-        </div>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-mark">A</div>
+    <div>
+      <div class="logo-name">AURUM PRO</div>
+      <div class="logo-sub">Gold Intelligence · XAU/USD · Real Time</div>
     </div>
-
-    <div class="main-grid">
-        <!-- COLUNA ESQUERDA -->
-        <div>
-            <!-- GRÁFICO TRADINGVIEW -->
-            <div class="card">
-                <div class="card-header">
-                    <span>📊 XAUUSD - GRÁFICO PROFISSIONAL</span>
-                    <span style="font-size: 11px; color: #8a92b0;">Dados em tempo real • TradingView</span>
-                </div>
-                <div class="chart-container">
-                    <div class="tradingview-widget-container" style="height: 100%;">
-                        <div id="tv-chart" style="height: 100%;"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                        <script>
-                            new TradingView.widget({
-                                "width": "100%",
-                                "height": "100%",
-                                "symbol": "OANDA:XAUUSD",
-                                "interval": "5",
-                                "timezone": "America/Sao_Paulo",
-                                "theme": "dark",
-                                "style": "1",
-                                "locale": "br",
-                                "toolbar_bg": "#0c1120",
-                                "enable_publishing": false,
-                                "hide_top_toolbar": false,
-                                "allow_symbol_change": true,
-                                "container_id": "tv-chart"
-                            });
-                        </script>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VELOCITY CLOCK -->
-            <div class="card velocity-section">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span>⚡ VELOCITY CLOCK</span>
-                    <span id="momentumText" style="font-weight: 600;">➡️ NEUTRO</span>
-                </div>
-                <div class="gauge-bar">
-                    <div class="gauge-progress" id="velocityFill"></div>
-                </div>
-                <div>
-                    <span class="velocity-number" id="velocityNum">0.00</span>
-                    <span style="font-size: 13px;"> pontos / minuto</span>
-                </div>
-                <div style="display: flex; gap: 24px; margin: 16px 0; font-size: 12px;">
-                    <span>📊 ATR: <strong id="atrValue">---</strong></span>
-                    <span>📈 AMPLITUDE: <strong id="rangeValue">---</strong></span>
-                </div>
-                <div style="display: flex; gap: 12px; margin-top: 8px;" id="sessionsContainer">
-                    <div class="session-badge" data-sess="asia">🇯🇵 TÓQUIO (ASIA)</div>
-                    <div class="session-badge" data-sess="london">🇬🇧 LONDRES</div>
-                    <div class="session-badge" data-sess="ny">🇺🇸 NOVA YORK</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- COLUNA DIREITA -->
-        <div>
-            <!-- INDICADORES TÉCNICOS -->
-            <div class="card">
-                <div class="card-header">📈 ANÁLISE TÉCNICA</div>
-                <div class="indicators-grid">
-                    <div class="indicator-card">
-                        <div class="indicator-name">RSI (14)</div>
-                        <div class="indicator-value" id="rsiVal">--</div>
-                        <div class="indicator-signal" id="rsiSignal">--</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-name">MACD</div>
-                        <div class="indicator-value" id="macdVal">--</div>
-                        <div class="indicator-signal" id="macdSignal">--</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-name">MÉDIAS MÓVEIS</div>
-                        <div class="indicator-value" id="maVal">--</div>
-                        <div class="indicator-signal" id="maSignal">--</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-name">ESTOCÁSTICO</div>
-                        <div class="indicator-value" id="stochVal">--</div>
-                        <div class="indicator-signal" id="stochSignal">--</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-name">SUPORTE/RESISTÊNCIA</div>
-                        <div class="indicator-value" id="srVal">--</div>
-                        <div class="indicator-signal" id="srSignal">--</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-name">VOLATILIDADE</div>
-                        <div class="indicator-value" id="volVal">--</div>
-                        <div class="indicator-signal" id="volSignal">--</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FEAR & GREED GAUGE -->
-            <div class="card fear-container">
-                <div class="card-header">😨 FEAR & GREED INDEX</div>
-                <div class="gauge-wrap">
-                    <canvas id="fearCanvas" width="220" height="220"></canvas>
-                </div>
-                <div class="fear-score" id="fearScore">--</div>
-                <div class="fear-status" id="fearStatus">--</div>
-                <div style="font-size: 11px; margin-top: 16px; color: #8a92b0;">Baseado no VIX • Fonte: Dados reais</div>
-            </div>
-        </div>
-    </div>
+  </div>
+  <div class="hdr-price">
+    <span class="hdr-p" id="hP">$—.——</span>
+    <span class="hdr-ch" id="hCh">——</span>
+    <span class="hdr-hl" id="hHL">H: — · L: —</span>
+  </div>
+  <div class="hdr-right">
+    <span style="font-size:9px;color:var(--muted)">
+      <span class="sess-dot" id="sdAsia"></span>ASIA
+      <span class="sess-dot" style="margin-left:8px" id="sdLdn"></span>LONDON
+      <span class="sess-dot" style="margin-left:8px" id="sdNY"></span>NY
+    </span>
+    <span class="next-upd">↻ <strong id="cdT">60</strong>s</span>
+    <button class="btn-ref" onclick="fetchAll()">ATUALIZAR</button>
+    <span class="pill-live" id="liveP">CARREGANDO</span>
+  </div>
 </div>
 
-<div class="toast" id="toastMsg">🟢 Sistema conectado • Dados em tempo real</div>
+<!-- TOAST -->
+<div class="toast" id="toast"><b id="tT"></b><span id="tD"></span></div>
+
+<div class="wrap">
+
+  <!-- MAIN GRID: Chart + Technical Analysis -->
+  <div class="grid-main">
+
+    <!-- CHART -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Gráfico · XAU/USD</span>
+        <span class="card-sub" id="chartSrc">OANDA · TradingView</span>
+      </div>
+      <div class="tv-wrap chart-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {"autosize":true,"symbol":"OANDA:XAUUSD","interval":"15","timezone":"America/Sao_Paulo",
+          "theme":"dark","style":"1","locale":"br","allow_symbol_change":false,
+          "calendar":false,"support_host":"https://www.tradingview.com",
+          "studies":["STD;RSI","STD;MACD","STD;Bollinger_Bands"],
+          "backgroundColor":"#050a10","gridColor":"rgba(196,154,82,0.04)"}
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Technical Analysis widget -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Análise Técnica · XAU/USD</span>
+        <span class="card-sub">Osciladores · MMs · Sumário</span>
+      </div>
+      <div class="tv-wrap tech-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+          {"interval":"15m","width":"100%","isTransparent":true,"height":"100%",
+          "symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"multiple",
+          "locale":"br","colorTheme":"dark"}
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYMBOL OVERVIEW — performance with time range buttons -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-hdr">
+      <span class="card-title">Desempenho · XAU/USD</span>
+      <span class="card-sub">1D · 5D · 1M · 6M · YTD · 1A · 5A · 10A</span>
+    </div>
+    <div class="tv-wrap ovw-h">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+        {"symbols":[["OANDA:XAUUSD|1D"],["OANDA:XAGUSD|1D"],["TVC:DXY|1D"]],"chartOnly":false,
+        "width":"100%","height":"100%","locale":"br","colorTheme":"dark","autosize":true,
+        "showVolume":false,"showMA":false,"hideDateRanges":false,"hideMarketStatus":false,
+        "hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":
+        "JetBrains Mono, monospace","fontSize":"10","noTimeScale":false,"valuesTracking":"1",
+        "changeMode":"price-and-percent","chartType":"area","maLineColor":"#2962FF",
+        "maLineWidth":1,"maLength":9,"lineWidth":2,"lineType":0,"dateRanges":
+        ["1d|1","5d|5","1m|30","6m|1W","12m|1M","60m|1M","all|1M"]}
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYMBOL INFO STATS (custom fetched) -->
+  <div class="sinfo-grid">
+    <div class="sinfo-card">
+      <div class="si-lbl">ABERTURA</div>
+      <div class="si-val" id="siOpen" style="color:var(--text)">—</div>
+      <div class="si-sub">dia atual</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">FECHAMENTO ANT.</div>
+      <div class="si-val" id="siPrev" style="color:var(--text)">—</div>
+      <div class="si-sub">ontem</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">MÁXIMA</div>
+      <div class="si-val" id="siH" style="color:var(--green)">—</div>
+      <div class="si-sub">hoje</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">MÍNIMA</div>
+      <div class="si-val" id="siL" style="color:var(--red)">—</div>
+      <div class="si-sub">hoje</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">ATR · 14</div>
+      <div class="si-val" id="siATR" style="color:var(--gold)">—</div>
+      <div class="si-sub">volatilidade</div>
+    </div>
+    <div class="sinfo-card">
+      <div class="si-lbl">VARIAÇÃO</div>
+      <div class="si-val" id="siVar">—%</div>
+      <div class="si-sub">no dia</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Probability + Calendar + AI -->
+  <div class="grid-r2">
+
+    <!-- GAUGE -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Probabilidade</span></div>
+      <div class="gauge-body">
+        <div class="gauge-canvas-wrap">
+          <canvas id="gauge" width="200" height="110"></canvas>
+          <div class="gauge-pct" id="gPct" style="color:var(--muted)">—%</div>
+        </div>
+        <div class="gauge-lbl" id="gLbl" style="color:var(--muted)">CALCULANDO</div>
+        <div class="gauge-sub">
+          <div class="gs"><div class="gs-v" id="gsTech" style="color:var(--muted)">—</div><div class="gs-l">TÉCNICO</div></div>
+          <div class="gs"><div class="gs-v" id="gsSent" style="color:var(--muted)">—</div><div class="gs-l">NOTÍCIAS</div></div>
+          <div class="gs"><div class="gs-v" id="gsCal" style="color:var(--muted)">—</div><div class="gs-l">AGENDA</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR (TradingView Events) -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Calendário Econômico</span>
+        <span class="card-sub">Eventos USD · Alto Impacto</span>
+      </div>
+      <div class="tv-wrap cal-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+          {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%",
+          "locale":"br","importanceFilter":"0,1","countryFilter":"us,eu,gb,jp,cn"}
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET OVERVIEW (correlações) -->
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">Mercados Correlatos</span>
+        <span class="card-sub">DXY · VIX · Oil · Prata</span>
+      </div>
+      <div class="tv-wrap cal-h">
+        <div class="tradingview-widget-container" style="height:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          {"colorTheme":"dark","dateRange":"1D","showChart":true,"locale":"br",
+          "largeChartUrl":"","isTransparent":true,"showSymbolLogo":false,
+          "showFloatingTooltip":false,"width":"100%","height":"100%","plotLineColorGrowing":"#1de9a4",
+          "plotLineColorFalling":"#e84060","gridLineColor":"rgba(196,154,82,0.04)",
+          "scaleFontColor":"#7a8ca8","belowLineFillColorGrowing":"rgba(29,233,164,0.05)",
+          "belowLineFillColorFalling":"rgba(232,64,96,0.05)",
+          "belowLineFillColorGrowingBottom":"transparent",
+          "belowLineFillColorFallingBottom":"transparent","symbolActiveColor":"rgba(196,154,82,0.1)",
+          "tabs":[
+            {"title":"Commodities","symbols":[
+              {"s":"TVC:GOLD","d":"Ouro (XAU)"},{"s":"OANDA:XAGUSD","d":"Prata (XAG)"},
+              {"s":"TVC:USOIL","d":"Petróleo WTI"},{"s":"TVC:NATURALGAS","d":"Gás Natural"}
+            ],"originalTitle":"Commodities"},
+            {"title":"Dólar","symbols":[
+              {"s":"TVC:DXY","d":"Índice Dólar"},{"s":"FX:EURUSD","d":"EUR/USD"},
+              {"s":"FX:USDJPY","d":"USD/JPY"},{"s":"TVC:US10Y","d":"Treasury 10Y"}
+            ],"originalTitle":"Dollar"},
+            {"title":"Índices","symbols":[
+              {"s":"OANDA:SPX500USD","d":"S&P 500"},{"s":"OANDA:NAS100USD","d":"Nasdaq"},
+              {"s":"TVC:VIX","d":"VIX"},{"s":"OANDA:US30USD","d":"Dow Jones"}
+            ],"originalTitle":"Indices"}
+          ]}
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI PREDICTION BANNER -->
+  <div class="ai-banner" id="aiBanner">
+    <div class="ai-icon">◆</div>
+    <div class="ai-text loading" id="aiText">Aguardando dados para análise de inteligência artificial…</div>
+    <div>
+      <div class="ai-dir" id="aiDir" style="color:var(--muted)">—</div>
+      <div class="ai-conf" id="aiConf">PERSPECTIVA IA</div>
+      <div class="ai-bdg" id="aiBdg" style="border:1px solid var(--muted);color:var(--muted)">IA INATIVA</div>
+    </div>
+  </div>
+
+  <!-- NEWS COLUMNS -->
+  <div class="grid-news">
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">🐂</span>
+        <span class="news-col-name" style="color:var(--green)">ALTA · TOUROS</span>
+        <span class="news-col-cnt" id="cBull">0</span>
+      </div>
+      <div class="news-body" id="nBull"><div class="news-empty">Carregando…</div></div>
+    </div>
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">🐻</span>
+        <span class="news-col-name" style="color:var(--red)">BAIXA · URSOS</span>
+        <span class="news-col-cnt" id="cBear">0</span>
+      </div>
+      <div class="news-body" id="nBear"><div class="news-empty">Carregando…</div></div>
+    </div>
+    <div class="card">
+      <div class="news-col-hdr">
+        <span class="news-col-icon">⚡</span>
+        <span class="news-col-name" style="color:var(--amber)">ALTO IMPACTO</span>
+        <span class="news-col-cnt" id="cImpact">0</span>
+      </div>
+      <div class="news-body" id="nImpact"><div class="news-empty">Carregando…</div></div>
+    </div>
+  </div>
+
+  <!-- NEWS TIMELINE (TradingView) -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-hdr">
+      <span class="card-title">Feed de Notícias · TradingView</span>
+      <span class="card-sub">XAU/USD · Gold · Commodities</span>
+    </div>
+    <div class="tv-wrap news-h">
+      <div class="tradingview-widget-container" style="height:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+        {"feedMode":"symbol","symbol":"OANDA:XAUUSD","isTransparent":true,
+        "displayMode":"regular","width":"100%","height":"100%",
+        "colorTheme":"dark","locale":"br"}
+        </script>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
 
 <script>
-    // ============================================================
-    // API TWELVEDATA - CHAVE REAL
-    // ============================================================
-    const API_KEY = "2cbc4b9c3c6f492e98c365d1c5ca0bb6";
-    
-    let goldPrice = 0;
-    let previousGoldPrice = 0;
-    let dxyValue = 0;
-    let vixValue = 15;
-    
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerHTML = msg;
-        toast.style.opacity = "1";
-        setTimeout(() => toast.style.opacity = "0", 2500);
-    }
-    
-    // ========== BUSCAR OURO ==========
-    async function fetchGold() {
-        try {
-            const response = await fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${API_KEY}`);
-            const data = await response.json();
-            if (data.price && data.price !== "None") {
-                previousGoldPrice = goldPrice;
-                goldPrice = parseFloat(data.price);
-                updateGoldDisplay();
-                return;
-            }
-        } catch(e) { console.warn("Erro TwelveData:", e); }
-        
-        // Fallback Yahoo
-        try {
-            const proxy = "https://api.allorigins.win/raw?url=";
-            const resp = await fetch(proxy + encodeURIComponent("https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1m&range=1d"));
-            const data = await resp.json();
-            if (data.chart?.result?.[0]) {
-                const closes = data.chart.result[0].indicators.quote[0].close.filter(v => v !== null);
-                if (closes.length) {
-                    previousGoldPrice = goldPrice;
-                    goldPrice = closes[closes.length - 1];
-                    updateGoldDisplay();
-                }
-            }
-        } catch(e) { console.error("Fallback erro:", e); }
-    }
-    
-    function updateGoldDisplay() {
-        const change = previousGoldPrice ? ((goldPrice - previousGoldPrice) / previousGoldPrice * 100).toFixed(2) : 0;
-        document.getElementById('goldPrice').innerHTML = `$${goldPrice.toFixed(2)}`;
-        const changeSpan = document.getElementById('goldChange');
-        changeSpan.innerHTML = `${change >= 0 ? '+' : ''}${change}%`;
-        changeSpan.className = `price-change ${change >= 0 ? 'positive' : 'negative'}`;
-        updateVelocityClock(parseFloat(change));
-    }
-    
-    // ========== BUSCAR DXY ==========
-    async function fetchDXY() {
-        try {
-            const response = await fetch(`https://api.twelvedata.com/price?symbol=DXY&apikey=${API_KEY}`);
-            const data = await response.json();
-            if (data.price && data.price !== "None") {
-                dxyValue = parseFloat(data.price);
-                document.getElementById('dxyPrice').innerHTML = dxyValue.toFixed(2);
-                document.getElementById('dxyChange').innerHTML = "LIVE";
-            }
-        } catch(e) { console.warn("Erro DXY:", e); }
-    }
-    
-    // ========== BUSCAR VIX ==========
-    async function fetchVIX() {
-        try {
-            const response = await fetch(`https://api.twelvedata.com/quote?symbol=VIX&apikey=${API_KEY}`);
-            const data = await response.json();
-            if (data.close) {
-                vixValue = parseFloat(data.close);
-                document.getElementById('vixHeader').innerHTML = vixValue.toFixed(2);
-                updateFearGauge(vixValue);
-                updateTechnicalSignals(vixValue);
-            }
-        } catch(e) { console.warn("Erro VIX:", e); }
-    }
-    
-    // ========== FEAR & GREED GAUGE ==========
-    function updateFearGauge(vix) {
-        let score = 50;
-        let status = "";
-        if (vix > 30) { score = 15; status = "MEDO EXTREMO"; }
-        else if (vix > 25) { score = 28; status = "MEDO FORTE"; }
-        else if (vix > 20) { score = 40; status = "MEDO"; }
-        else if (vix > 17) { score = 50; status = "NEUTRO"; }
-        else if (vix > 14) { score = 60; status = "NEUTRO"; }
-        else if (vix > 12) { score = 72; status = "GANÂNCIA"; }
-        else if (vix > 10) { score = 85; status = "GANÂNCIA FORTE"; }
-        else { score = 92; status = "GANÂNCIA EXTREMA"; }
-        
-        document.getElementById('fearScore').innerHTML = score;
-        document.getElementById('fearStatus').innerHTML = status;
-        drawFearCanvas(score);
-    }
-    
-    function drawFearCanvas(value) {
-        const canvas = document.getElementById('fearCanvas');
-        const ctx = canvas.getContext('2d');
-        const w = 220, h = 220;
-        canvas.width = w; canvas.height = h;
-        ctx.clearRect(0, 0, w, h);
-        
-        const startAngle = -0.8 * Math.PI;
-        const endAngle = 0.8 * Math.PI;
-        const radius = 85;
-        const cx = w/2, cy = h/2;
-        
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, startAngle, endAngle);
-        ctx.strokeStyle = '#2a2f42';
-        ctx.lineWidth = 16;
-        ctx.stroke();
-        
-        const percent = Math.min(1, Math.max(0, value / 100));
-        const fillAngle = startAngle + (endAngle - startAngle) * percent;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, startAngle, fillAngle);
-        
-        const gradient = ctx.createLinearGradient(40, 40, w-40, h-40);
-        gradient.addColorStop(0, '#00c076');
-        gradient.addColorStop(0.5, '#f0b90b');
-        gradient.addColorStop(1, '#f6465d');
-        ctx.strokeStyle = gradient;
-        ctx.stroke();
-        
-        const needleAngle = startAngle + (endAngle - startAngle) * percent;
-        const needleX = cx + Math.cos(needleAngle) * (radius - 12);
-        const needleY = cy + Math.sin(needleAngle) * (radius - 12);
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(needleX, needleY);
-        ctx.strokeStyle = '#d4af5a';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
-        ctx.fillStyle = '#d4af5a';
-        ctx.fill();
-    }
-    
-    // ========== INDICADORES TÉCNICOS ==========
-    function updateTechnicalSignals(vix) {
-        // RSI
-        let rsi = 50, rsiSignal = "";
-        if (vix > 25) { rsi = 32; rsiSignal = "SOBREVENDIDO"; }
-        else if (vix > 20) { rsi = 45; rsiSignal = "NEUTRO"; }
-        else if (vix < 13) { rsi = 72; rsiSignal = "SOBRECOMPRADO"; }
-        else { rsi = 55; rsiSignal = "NEUTRO"; }
-        document.getElementById('rsiVal').innerHTML = rsi;
-        document.getElementById('rsiSignal').innerHTML = rsiSignal;
-        document.getElementById('rsiSignal').className = `indicator-signal ${rsiSignal === 'SOBREVENDIDO' ? 'signal-sell' : (rsiSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
-        
-        // MACD
-        let macd = vix > 22 ? "BAIXISTA" : (vix < 14 ? "ALTA" : "NEUTRO");
-        document.getElementById('macdVal').innerHTML = macd;
-        document.getElementById('macdSignal').innerHTML = macd === "ALTA" ? "COMPRA" : (macd === "BAIXISTA" ? "VENDA" : "NEUTRO");
-        document.getElementById('macdSignal').className = `indicator-signal ${macd === "ALTA" ? 'signal-buy' : (macd === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
-        
-        // Médias Móveis
-        let ma = vix > 24 ? "BAIXISTA" : (vix < 15 ? "ALTA" : "NEUTRO");
-        document.getElementById('maVal').innerHTML = ma;
-        document.getElementById('maSignal').innerHTML = ma === "ALTA" ? "COMPRA" : (ma === "BAIXISTA" ? "VENDA" : "NEUTRO");
-        document.getElementById('maSignal').className = `indicator-signal ${ma === "ALTA" ? 'signal-buy' : (ma === "BAIXISTA" ? 'signal-sell' : 'signal-neutral')}`;
-        
-        // Estocástico
-        let stoch = vix > 23 ? 25 : (vix < 14 ? 75 : 50);
-        let stochSignal = stoch < 30 ? "SOBREVENDIDO" : (stoch > 70 ? "SOBRECOMPRADO" : "NEUTRO");
-        document.getElementById('stochVal').innerHTML = stoch;
-        document.getElementById('stochSignal').innerHTML = stochSignal;
-        document.getElementById('stochSignal').className = `indicator-signal ${stochSignal === 'SOBREVENDIDO' ? 'signal-sell' : (stochSignal === 'SOBRECOMPRADO' ? 'signal-buy' : 'signal-neutral')}`;
-        
-        // Suporte/Resistência
-        if (goldPrice) {
-            document.getElementById('srVal').innerHTML = `${(goldPrice - 18).toFixed(0)} / ${(goldPrice + 18).toFixed(0)}`;
-            document.getElementById('srSignal').innerHTML = "NÍVEIS CHAVE";
-        }
-        
-        // Volatilidade
-        let vol = vix > 25 ? "ALTA" : (vix < 15 ? "BAIXA" : "MÉDIA");
-        document.getElementById('volVal').innerHTML = vol;
-        document.getElementById('volSignal').innerHTML = vol === "ALTA" ? "⚠️ RISCO" : "ESTÁVEL";
-        document.getElementById('volSignal').className = `indicator-signal ${vol === "ALTA" ? 'signal-sell' : 'signal-neutral'}`;
-    }
-    
-    // ========== VELOCITY CLOCK ==========
-    function updateVelocityClock(changePercent) {
-        const velocity = Math.abs(changePercent || 0) * 2.5;
-        const percent = Math.min(100, velocity * 20);
-        document.getElementById('velocityFill').style.width = `${percent}%`;
-        document.getElementById('velocityNum').innerHTML = velocity.toFixed(2);
-        
-        let momentum = "";
-        if (parseFloat(changePercent) > 0.2) momentum = "🚀 ACELERANDO ALTA";
-        else if (parseFloat(changePercent) < -0.2) momentum = "📉 VELOCIDADE BAIXISTA";
-        else momentum = "➡️ MOMENTUM NEUTRO";
-        document.getElementById('momentumText').innerHTML = momentum;
-        
-        document.getElementById('atrValue').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 2.5).toFixed(2)}`;
-        document.getElementById('rangeValue').innerHTML = `$${(Math.abs(goldPrice - previousGoldPrice) * 1.8).toFixed(2)}`;
-        
-        // Sessões
-        const hour = new Date().getUTCHours();
-        document.querySelectorAll('.session-badge').forEach(el => el.classList.remove('active'));
-        if (hour >= 0 && hour < 8) document.querySelector('[data-sess="asia"]')?.classList.add('active');
-        if (hour >= 8 && hour < 17) document.querySelector('[data-sess="london"]')?.classList.add('active');
-        if (hour >= 13 && hour < 22) document.querySelector('[data-sess="ny"]')?.classList.add('active');
-    }
-    
-    // ========== ATUALIZAÇÃO ==========
-    async function refreshAll() {
-        await fetchGold();
-        await fetchDXY();
-        await fetchVIX();
-        document.getElementById('liveTime').innerHTML = new Date().toLocaleTimeString('pt-BR');
-        showToast(`🟢 Atualizado • Ouro: $${goldPrice.toFixed(2)} | VIX: ${vixValue.toFixed(2)}`);
-    }
-    
-    // Inicialização
-    refreshAll();
-    setInterval(refreshAll, 15000);
-    setInterval(() => fetchGold(), 5000);
-    
-    showToast("✅ Sistema profissional ativado • Dados reais • TradingView integrado");
+(function(){
+'use strict';
+
+// ── STATE ───────────────────────────────────────────────
+let candles=[], newsItems=[], calEvents=[];
+let techScore=50, sentScore=50, calScore=50;
+let lastPrice=0, countdown=60, cdInt=null, toastTO=null;
+
+// ── SENTIMENT WORDS ─────────────────────────────────────
+const BULL=['surge','surges','rises','rise','rally','gain','safe haven','inflation',
+  'rate cut','dovish','crisis','war','tension','recession','fear','uncertainty',
+  'weak dollar','etf inflow','central bank buy','demand','record','hedge',
+  'gold climbs','bullion','xau up','geopolit'];
+const BEAR=['falls','drops','declines','rate hike','hawkish','strong dollar',
+  'yields rise','risk-on','recovery','strong jobs','gold slides','retreats',
+  'selloff','correction','outflow','profit taking','xau down'];
+const HIGH_IMP=['fomc','federal reserve','powell','rate decision','cpi','nfp',
+  'non-farm','gdp','inflation data','jobs report','fed minutes','rate hike',
+  'rate cut','interest rate','breaking'];
+
+const EVENT_BIAS=[
+  {keys:['Non-Farm','NFP','Payroll'],         bias:'BEAR',note:'Emprego forte → USD sobe → Ouro cai'},
+  {keys:['CPI','Consumer Price','Inflation'],  bias:'BULL',note:'Inflação alta → Ouro protege'},
+  {keys:['PPI','Producer Price'],              bias:'BULL',note:'Inflação produtora → alta Ouro'},
+  {keys:['FOMC','Federal Funds','Rate Decision'],bias:'WATCH',note:'Depende da decisão'},
+  {keys:['Powell','Fed Chair'],                bias:'WATCH',note:'Discurso movimenta fortemente'},
+  {keys:['GDP','Gross Domestic'],              bias:'BEAR', note:'PIB forte → risk-on → pressão Ouro'},
+  {keys:['Jobless Claims'],                    bias:'BULL', note:'Desemprego → safe haven'},
+  {keys:['ISM','PMI'],                         bias:'BEAR', note:'Manufatura forte → USD sobe'},
+  {keys:['Retail Sales'],                      bias:'BEAR', note:'Consumo forte → USD sobe'},
+];
+
+function classifyEvent(title=''){
+  const t=title.toLowerCase();
+  for(const ev of EVENT_BIAS) if(ev.keys.some(k=>t.includes(k.toLowerCase()))) return ev;
+  return {bias:'WATCH',note:'Evento de impacto moderado'};
+}
+
+function scoreNews(title=''){
+  const t=title.toLowerCase();
+  let s=0;
+  BULL.forEach(w=>{if(t.includes(w))s+=2;});
+  BEAR.forEach(w=>{if(t.includes(w))s-=2;});
+  const hi=HIGH_IMP.some(w=>t.includes(w));
+  return {bias:s>3?'BULL':s<-3?'BEAR':'NEUTRAL',score:s,hi};
+}
+
+// ── INDICATORS ──────────────────────────────────────────
+function ema(d,p){const k=2/(p+1);const r=[d[0]];for(let i=1;i<d.length;i++)r.push(d[i]*k+r[i-1]*(1-k));return r;}
+
+function calcRSI(c,p=14){
+  if(c.length<p+2)return null;
+  let ag=0,al=0;
+  for(let i=1;i<=p;i++){const d=c[i]-c[i-1];ag+=Math.max(d,0);al+=Math.max(-d,0);}
+  ag/=p;al/=p;
+  for(let i=p+1;i<c.length;i++){const d=c[i]-c[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p;}
+  return al===0?100:100-100/(1+ag/al);
+}
+
+function calcMACD(c){
+  const e12=ema(c,12),e26=ema(c,26);
+  const ln=e12.map((v,i)=>v-e26[i]);
+  const sg=ema(ln.slice(-9),9);
+  return{hist:ln[ln.length-1]-sg[sg.length-1],line:ln[ln.length-1]};
+}
+
+function calcATR(cds,p=14){
+  let s=0;const n=Math.min(p,cds.length-1);
+  for(let i=cds.length-n;i<cds.length;i++){
+    const tr=Math.max(cds[i].high-cds[i].low,
+      Math.abs(cds[i].high-cds[i-1].close),Math.abs(cds[i].low-cds[i-1].close));
+    s+=tr;
+  }
+  return s/n;
+}
+
+function analyzeCandles(cds){
+  if(cds.length<30)return null;
+  const cl=cds.map(c=>c.close);
+  const price=cl[cl.length-1];
+  const rsi=calcRSI(cl,14);
+  const e200=ema(cl,Math.min(200,cl.length-1));
+  const macd=calcMACD(cl);
+  const atr=calcATR(cds,14);
+  const e200v=e200[e200.length-1];
+  let score=50;
+  if(rsi<30)score+=15;else if(rsi<40)score+=8;else if(rsi>70)score-=15;else if(rsi>60)score-=8;
+  if(price>e200v)score+=12;else score-=12;
+  if(macd.hist>0)score+=10;else score-=10;
+  return{price,rsi,e200v,macd,atr,score:Math.min(100,Math.max(0,score))};
+}
+
+// ── GAUGE ────────────────────────────────────────────────
+function drawGauge(pct){
+  const cv=document.getElementById('gauge');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,cx=W/2,cy=H-10,r=H-22;
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);
+  ctx.lineWidth=13;ctx.strokeStyle='rgba(255,255,255,.05)';ctx.stroke();
+  const col=pct>=65?'#1de9a4':pct>=45?'#c49a52':'#e84060';
+  const gr=ctx.createLinearGradient(0,0,W,0);
+  if(pct>=65){gr.addColorStop(0,'#e84060');gr.addColorStop(.5,'#c49a52');gr.addColorStop(1,'#1de9a4');}
+  else if(pct>=45){gr.addColorStop(0,'#e84060');gr.addColorStop(1,'#c49a52');}
+  else{gr.addColorStop(0,'#5a0015');gr.addColorStop(1,'#e84060');}
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+(pct/100)*Math.PI,false);
+  ctx.lineWidth=13;ctx.lineCap='round';ctx.strokeStyle=gr;ctx.stroke();
+  for(let i=0;i<=10;i++){
+    const a=Math.PI+(i/10)*Math.PI;
+    const x1=cx+Math.cos(a)*(r-16),y1=cy+Math.sin(a)*(r-16);
+    const x2=cx+Math.cos(a)*(r-7),y2=cy+Math.sin(a)*(r-7);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+    ctx.strokeStyle=i%5===0?'rgba(196,154,82,.4)':'rgba(255,255,255,.1)';
+    ctx.lineWidth=i%5===0?1.5:1;ctx.stroke();
+  }
+  const gp=document.getElementById('gPct');
+  gp.textContent=pct+'%';gp.style.color=col;
+  const gl=document.getElementById('gLbl');
+  if(pct>=70){gl.textContent='🐂 VIÉS ALTISTA';gl.style.color='var(--green)';}
+  else if(pct>=55){gl.textContent='🟡 LEVEMENTE ALTISTA';gl.style.color='var(--gold)';}
+  else if(pct>=45){gl.textContent='⚖️ NEUTRO';gl.style.color='var(--muted)';}
+  else if(pct>=30){gl.textContent='🟠 LEVEMENTE BAIXISTA';gl.style.color='var(--amber)';}
+  else{gl.textContent='🐻 VIÉS BAIXISTA';gl.style.color='var(--red)';}
+}
+
+function calcProbability(){
+  if(newsItems.length>0){
+    let st=0;newsItems.forEach(n=>{const s=scoreNews(n.title||'');st+=s.score;});
+    sentScore=Math.min(100,Math.max(0,50+(st/newsItems.length)*5));
+  }
+  const tech=candles.length>20?analyzeCandles(candles):null;
+  if(tech) techScore=tech.score;
+  const final=Math.round((techScore*.45)+(sentScore*.35)+(calScore*.20));
+  return{prob:final,tech};
+}
+
+// ── RENDER PRICE ─────────────────────────────────────────
+function renderPrice(){
+  if(candles.length<2)return;
+  const last=candles[candles.length-1];
+  const first=candles.find(c=>new Date(c.ts).toDateString()===new Date().toDateString())||candles[0];
+  const prev=candles[0];
+  const pct=((last.close-first.close)/first.close)*100;
+  const dayH=Math.max(...candles.slice(-80).map(c=>c.high));
+  const dayL=Math.min(...candles.slice(-80).map(c=>c.low));
+  const atr=analyzeCandles(candles)?.atr||0;
+
+  const el=document.getElementById('hP');
+  el.classList.remove('price-up','price-dn');
+  void el.offsetWidth;
+  el.classList.add(last.close>lastPrice&&lastPrice>0?'price-up':'price-dn');
+  el.textContent='$'+last.close.toFixed(2);
+  lastPrice=last.close;
+
+  const ch=document.getElementById('hCh');
+  ch.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  ch.className='hdr-ch '+(pct>=0?'up':'dn');
+  document.getElementById('hHL').textContent='H: $'+dayH.toFixed(2)+' · L: $'+dayL.toFixed(2);
+
+  document.getElementById('siOpen').textContent='$'+first.close.toFixed(2);
+  document.getElementById('siPrev').textContent='$'+prev.close.toFixed(2);
+  document.getElementById('siH').textContent='$'+dayH.toFixed(2);
+  document.getElementById('siL').textContent='$'+dayL.toFixed(2);
+  document.getElementById('siATR').textContent='$'+atr.toFixed(2);
+  const varEl=document.getElementById('siVar');
+  varEl.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  varEl.style.color=pct>=0?'var(--green)':'var(--red)';
+
+  const h=new Date().getUTCHours();
+  document.getElementById('sdAsia').className='sess-dot '+(h>=0&&h<7?'on':'off');
+  document.getElementById('sdLdn').className='sess-dot '+(h>=7&&h<13?'on':'off');
+  document.getElementById('sdNY').className='sess-dot '+(h>=13&&h<20?'on':'off');
+}
+
+function renderScores(){
+  const tc=document.getElementById('gsTech');
+  const sc=document.getElementById('gsSent');
+  tc.textContent=techScore.toFixed(0)+'%';
+  sc.textContent=sentScore.toFixed(0)+'%';
+  tc.style.color=techScore>60?'var(--green)':techScore<40?'var(--red)':'var(--gold)';
+  sc.style.color=sentScore>60?'var(--green)':sentScore<40?'var(--red)':'var(--gold)';
+  document.getElementById('gsCal').textContent=calScore.toFixed(0)+'%';
+  document.getElementById('gsCal').style.color=calScore>60?'var(--green)':calScore<40?'var(--red)':'var(--gold)';
+}
+
+// ── RENDER NEWS ───────────────────────────────────────────
+function renderNews(){
+  const bull=[],bear=[],imp=[];
+  let st=0;
+  newsItems.forEach(n=>{
+    const s=scoreNews(n.title||'');
+    st+=s.score;
+    const age=n.providerPublishTime?tAgo(n.providerPublishTime*1000):'—';
+    const src=n.publisher||'Yahoo Finance';
+    const url=n.link||'#';
+    const h=`<div class="news-item" onclick="window.open('${url}','_blank')">
+      <div class="ni-time">${age} · ${src}</div>
+      <div class="ni-title">${n.title||'—'}</div>
+    </div>`;
+    if(s.hi) imp.push(h);
+    if(s.bias==='BULL') bull.push(h);
+    else if(s.bias==='BEAR') bear.push(h);
+  });
+  if(newsItems.length>0) sentScore=Math.min(100,Math.max(0,50+(st/newsItems.length)*5));
+
+  const fill=(id,items,cntId)=>{
+    document.getElementById(id).innerHTML=items.length?items.join(''):'<div class="news-empty">Sem notícias classificadas</div>';
+    document.getElementById(cntId).textContent=items.length;
+  };
+  fill('nBull',bull,'cBull');
+  fill('nBear',bear,'cBear');
+  fill('nImpact',imp,'cImpact');
+}
+
+function tAgo(ts){
+  const d=(Date.now()-ts)/1000;
+  if(d<60)return Math.round(d)+'s';
+  if(d<3600)return Math.round(d/60)+'min';
+  if(d<86400)return Math.round(d/3600)+'h';
+  return Math.round(d/86400)+'d';
+}
+
+// ── AI PREDICTION ─────────────────────────────────────────
+async function getAI(prob,tech){
+  const aiText=document.getElementById('aiText');
+  const aiBdg=document.getElementById('aiBdg');
+  const aiDir=document.getElementById('aiDir');
+  aiText.textContent='Analisando dados…';aiText.className='ai-text loading';
+  aiBdg.textContent='IA PROCESSANDO';
+  aiBdg.style.cssText='border:1px solid var(--amber);color:var(--amber)';
+
+  const price=candles.length?candles[candles.length-1].close.toFixed(2):'N/A';
+  const topN=newsItems.slice(0,4).map(n=>n.title).join('; ');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`Analista XAU/USD. Responda APENAS JSON puro:
+{"prediction":"...","direction":"ALTA|BAIXA|NEUTRO","confidence":75,"catalyst":"..."}
+
+Dados: Preço=$${price}, Prob=${prob}%, RSI=${tech?.rsi?.toFixed(1)||'--'}, MACD=${tech?.macd?.hist>0?'positivo':'negativo'}, EMA200=${tech?.price>tech?.e200v?'acima':'abaixo'}, Notícias: ${topN}
+
+"prediction": máximo 55 palavras em português, tom profissional. "catalyst": principal catalisador.`}]})
+    });
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+    const r=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    aiText.textContent=r.prediction;aiText.className='ai-text';
+    const col=r.direction==='ALTA'?'var(--green)':r.direction==='BAIXA'?'var(--red)':'var(--gold)';
+    aiDir.textContent=r.direction;aiDir.style.color=col;
+    document.getElementById('aiConf').textContent=`CONFIANÇA ${r.confidence}% · ${r.catalyst||''}`;
+    aiBdg.textContent='◆ IA AURUM ATIVA';
+    aiBdg.style.cssText=`border:1px solid ${col};color:${col}`;
+  }catch(e){
+    const dir=prob>60?'ALTA':prob<40?'BAIXA':'NEUTRO';
+    const col=prob>60?'var(--green)':prob<40?'var(--red)':'var(--gold)';
+    aiText.textContent=`Probabilidade ${prob}% ${dir.toLowerCase()} baseada em ${newsItems.length} notícias e indicadores técnicos.`;
+    aiText.className='ai-text';aiDir.textContent=dir;aiDir.style.color=col;
+    aiBdg.textContent='ANÁLISE LOCAL';aiBdg.style.cssText='border:1px solid var(--muted);color:var(--muted)';
+  }
+}
+
+// ── DATA FETCH ────────────────────────────────────────────
+function fw(url,ms){
+  const c=new AbortController();const id=setTimeout(()=>c.abort(),ms||10000);
+  return fetch(url,{signal:c.signal}).finally(()=>clearTimeout(id));
+}
+
+async function fetchPrice(){
+  const yu='https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=15m&range=5d';
+  const pxs=[`https://api.allorigins.win/get?url=${encodeURIComponent(yu)}`,
+              `https://api.allorigins.win/raw?url=${encodeURIComponent(yu)}`,
+              `https://corsproxy.io/?url=${encodeURIComponent(yu)}`];
+  for(const px of pxs){
+    try{
+      const r=await fw(px,9000);if(!r.ok)continue;
+      const t=await r.text();let j=JSON.parse(t);
+      if(j.contents)try{j=JSON.parse(j.contents);}catch{}
+      const res=j?.chart?.result?.[0];if(!res)continue;
+      const q=res.indicators.quote[0];const ts=res.timestamp;
+      const out=[];
+      for(let i=0;i<ts.length;i++){if(q.close[i]==null)continue;
+        out.push({ts:ts[i]*1000,open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]});}
+      if(out.length>10){candles=out.slice(-200);return true;}
+    }catch(e){continue;}
+  }
+  return false;
+}
+
+async function fetchNews(){
+  const yu=`https://query1.finance.yahoo.com/v1/finance/search?q=gold%20XAU%20price&newsCount=18&enableNavLinks=false`;
+  const pxs=[`https://api.allorigins.win/get?url=${encodeURIComponent(yu)}`,
+              `https://corsproxy.io/?url=${encodeURIComponent(yu)}`];
+  for(const px of pxs){
+    try{
+      const r=await fw(px,9000);if(!r.ok)continue;
+      const t=await r.text();let j=JSON.parse(t);
+      if(j.contents)try{j=JSON.parse(j.contents);}catch{}
+      const news=j?.news||[];if(news.length>0){newsItems=news;return true;}
+    }catch(e){continue;}
+  }
+  return false;
+}
+
+function toast(title,desc){
+  document.getElementById('tT').textContent=title;
+  document.getElementById('tD').textContent=desc;
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(toastTO);
+  toastTO=setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+async function fetchAll(){
+  document.getElementById('liveP').textContent='BUSCANDO…';
+  document.getElementById('liveP').style.borderColor='var(--amber)';
+  document.getElementById('liveP').style.color='var(--amber)';
+
+  const[priceOk,newsOk]=await Promise.all([fetchPrice(),fetchNews()]);
+
+  if(priceOk){renderPrice();}
+  if(newsOk){renderNews();}
+
+  const{prob,tech}=calcProbability();
+  drawGauge(prob);renderScores();
+  getAI(prob,tech);
+
+  document.getElementById('liveP').textContent='AO VIVO';
+  document.getElementById('liveP').style.borderColor='var(--green)';
+  document.getElementById('liveP').style.color='var(--green)';
+  document.getElementById('chartSrc').textContent='Yahoo Finance · '+new Date().toLocaleTimeString('pt-BR');
+  countdown=60;
+  toast('◆ Dados atualizados',`Preço + ${newsItems.length} notícias classificadas`);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+drawGauge(50);
+fetchAll();
+cdInt=setInterval(()=>{
+  countdown--;
+  document.getElementById('cdT').textContent=Math.max(0,countdown);
+  if(countdown<=0){countdown=60;fetchAll();}
+},1000);
+
+})();
 </script>
 </body>
 </html>
