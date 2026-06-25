@@ -317,6 +317,8 @@ td{padding:10px;vertical-align:middle;font-size:12px}
 .footer-quote p{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:6px}
 .footer-quote strong{color:var(--gold)}
 .footer-meta{font-size:10px;color:var(--muted);letter-spacing:1px}
+.ciclo-card-edit-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text2);padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--font-m);transition:all .2s;margin-top:8px}
+.ciclo-card-edit-btn:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.form-group.wider{grid-column:span 1}.brand-name{font-size:16px}.stat-value{font-size:18px}.edu-panel{width:100vw}.weekly-grid{grid-template-columns:1fr}.btn-actions-row{justify-content:center}.chart-wrap{height:180px !important}.chart-empty{height:180px !important}}
 @media print{.btn-manage-ticker,.btn-sm,.btn-actions-row,.action-cell,.filter-row,.form-card,.insights-bar,.sessao-row,.rules-section,.resultado-real-section,.loading-overlay,.modal-overlay,.edu-overlay,.edu-panel,.btn-edu,.weekly-card,.meta-bar,.streak-badge,.periodo-row,.btn-fechar-mes,.btn-retirada,thead th:last-child,tbody td:last-child{display:none !important}*{color:black !important;background:white !important;border-color:#ccc !important;box-shadow:none !important;animation:none !important}body{font-family:Arial,sans-serif;font-size:11px}body::before{display:none}.shell{padding:0;max-width:100%}.header{border-bottom:2px solid #333 !important;margin-bottom:12px}.account-tabs{display:none !important}.stats-row{grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:10px}.stat{border:1px solid #ccc !important;padding:6px 8px !important}.stat-value{font-size:13px !important}.analytics-grid{grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}.analytics-card{border:1px solid #ccc !important;padding:8px !important}.charts-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;page-break-inside:avoid}.chart-card{border:1px solid #ccc !important;padding:8px !important;page-break-inside:avoid;overflow:hidden}.ticker-outer{display:none !important}.table-wrap{border:1px solid #ccc !important}.table-scroll{overflow:visible}table{min-width:auto !important;width:100%;border-collapse:collapse}thead th{background:#f0f0f0 !important;font-size:8px !important;padding:4px;border:1px solid #ccc !important}tbody td{font-size:9px !important;padding:4px;border:1px solid #eee !important}.footer-quote{border:1px solid #ccc !important;border-left:3px solid #b8860b !important}@page{size:A4 landscape;margin:10mm}}
@@ -405,6 +407,30 @@ td{padding:10px;vertical-align:middle;font-size:12px}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn" style="background:linear-gradient(135deg,var(--orange),#c87800);color:var(--bg)" id="btnConfirmarRetirada">Confirmar Retirada</button>
       <button class="btn btn-cancel" id="btnCancelarRetirada">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL EDITAR CICLO -->
+<div class="modal-overlay" id="editCicloModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title" style="color:var(--purple)">Editar Ciclo Fechado</div>
+    <div class="modal-sub">Corrija nome, datas ou valores do ciclo selecionado.</div>
+    <div class="form-group" style="margin-bottom:14px"><label>Nome do Ciclo</label><input type="text" id="editCicloNome"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="form-group"><label>Inicio</label><input type="date" id="editCicloInicio"></div>
+      <div class="form-group"><label>Fim</label><input type="date" id="editCicloFim"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="form-group"><label>Capital Inicial ($)</label><input type="number" id="editCicloCapInicial" step="0.01"></div>
+      <div class="form-group"><label>Resultado ($)</label><input type="number" id="editCicloResultado" step="0.01"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="form-group"><label>Saque ($)</label><input type="number" id="editCicloSaque" step="0.01" min="0"></div>
+      <div class="form-group"><label>Capital Proximo ($)</label><input type="number" id="editCicloCapProximo" step="0.01" min="0" style="border-color:rgba(167,139,250,.4)"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="background:linear-gradient(135deg,var(--purple),#7c3aed)" id="btnSalvarEditCiclo">Salvar Alteracoes</button>
+      <button class="btn btn-cancel" id="btnCancelarEditCiclo">Cancelar</button>
     </div>
   </div>
 </div>
@@ -524,12 +550,7 @@ td{padding:10px;vertical-align:middle;font-size:12px}
     </div>
     <div id="historicoCiclos"><div style="color:var(--muted);text-align:center;padding:24px;font-size:12px">Nenhum ciclo fechado ainda. Use <strong style="color:var(--gold)">Fechar Mes</strong> para arquivar o periodo atual.</div></div>
     <div id="historicoRetiradas"></div>
-    <div style="margin-top:14px;background:rgba(77,184,255,.06);border:1px solid rgba(77,184,255,.15);border-radius:10px;padding:12px 14px;font-size:10px;color:var(--text2);line-height:1.7">
-      <strong style="color:var(--blue)">SQL Supabase (execute no SQL Editor):</strong><br>
-      <code style="color:var(--gold);font-size:9px;display:block;margin-top:4px;background:var(--bg);padding:8px;border-radius:6px;white-space:pre-wrap">CREATE TABLE ciclos(id bigserial PRIMARY KEY,conta_tipo text,nome text,data_inicio date,data_fim date,capital_inicial numeric DEFAULT 0,resultado numeric DEFAULT 0,saque numeric DEFAULT 0,capital_proximo numeric DEFAULT 0,total_ops int DEFAULT 0,wins int DEFAULT 0,losses int DEFAULT 0,win_rate numeric DEFAULT 0,created_at timestamptz DEFAULT now());
-CREATE TABLE config(chave text NOT NULL,conta_tipo text NOT NULL DEFAULT 'demo',valor text,updated_at timestamptz DEFAULT now(),PRIMARY KEY(chave,conta_tipo));
-CREATE TABLE retiradas(id bigserial PRIMARY KEY,conta_tipo text,valor numeric,nota text,created_at timestamptz DEFAULT now());</code>
-    </div>
+
   </div>
   <!-- FORMULARIO -->
   <div class="form-card">
@@ -859,8 +880,10 @@ async function confirmarFecharMes(){
     cicloAtualInicio[currentAccount]=nextStr;localStorage.setItem('ciclo_inicio_'+currentAccount,nextStr);
   }finally{showLoading(false);}
   gid('capitalInput').value=novoCapital;closeModal('fecharMesModal');updateCicloBadge();
+  // Reset meta para novo ciclo
+  metaMensal=0;gid('metaInput').value='';var sm=JSON.parse(localStorage.getItem(META_KEY)||'{}');sm[currentAccount]=0;localStorage.setItem(META_KEY,JSON.stringify(sm));
   if(ok)await fetchCiclos();else renderHistoricoCiclos();
-  renderAll();showToast('Ciclo fechado! Novo capital: $ '+novoCapital.toFixed(2));
+  renderAll();setPeriodo('ciclo_atual');showToast('Ciclo fechado! Novo capital: $ '+novoCapital.toFixed(2)+'. Meta zerada para novo ciclo.');
 }
 function renderHistoricoCiclos(){
   var el=gid('historicoCiclos');if(!el)return;
@@ -881,8 +904,46 @@ function renderHistoricoCiclos(){
       +'<div class="ciclo-stat"><span class="cs-label">Prox. Ciclo</span><span class="cs-val" style="color:var(--blue)">$'+(c.capital_proximo||0).toFixed(2)+'</span></div>'
       +'<div class="ciclo-stat"><span class="cs-label">Operacoes</span><span class="cs-val">'+(c.total_ops||0)+'</span></div>'
       +'<div class="ciclo-stat"><span class="cs-label">Win Rate</span><span class="cs-val" style="color:'+((c.win_rate||0)>=50?'var(--green)':'var(--red)')+'">'+((c.win_rate||0)).toFixed(1)+'%</span></div>'
-      +'</div></div>';
+      +'<div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="ciclo-card-edit-btn" data-cid="'+c.id+'">Editar Ciclo</button></div>'
+    +'</div></div>';
   }).join('');
+  el.querySelectorAll('.ciclo-card-edit-btn').forEach(function(btn){btn.addEventListener('click',function(){abrirEditarCiclo(btn.dataset.cid);});});
+}
+// EDITAR CICLO
+var _editingCicloId=null;
+function abrirEditarCiclo(idCiclo){
+  var cicloObj=ciclos.find(function(x){return String(x.id)===String(idCiclo);});
+  if(!cicloObj){showToast('Ciclo nao encontrado.','warn');return;}
+  _editingCicloId=idCiclo;
+  gid('editCicloNome').value=cicloObj.nome||'';
+  gid('editCicloInicio').value=cicloObj.data_inicio||'';
+  gid('editCicloFim').value=cicloObj.data_fim||'';
+  gid('editCicloCapInicial').value=cicloObj.capital_inicial||0;
+  gid('editCicloResultado').value=cicloObj.resultado||0;
+  gid('editCicloSaque').value=cicloObj.saque||0;
+  gid('editCicloCapProximo').value=cicloObj.capital_proximo||0;
+  openModal('editCicloModal');
+}
+async function salvarEdicaoCiclo(){
+  if(_editingCicloId===null)return;
+  var payload={
+    nome:gid('editCicloNome').value.trim(),
+    data_inicio:gid('editCicloInicio').value,
+    data_fim:gid('editCicloFim').value,
+    capital_inicial:parseFloat(gid('editCicloCapInicial').value)||0,
+    resultado:parseFloat(gid('editCicloResultado').value)||0,
+    saque:parseFloat(gid('editCicloSaque').value)||0,
+    capital_proximo:parseFloat(gid('editCicloCapProximo').value)||0
+  };
+  var isLocal=String(_editingCicloId).startsWith('loc_');
+  showLoading(true);
+  try{
+    if(!isLocal){var res=await sb.from('ciclos').update(payload).eq('id',parseInt(_editingCicloId));if(res.error)throw res.error;}
+    ciclos=ciclos.map(function(x){return String(x.id)===String(_editingCicloId)?Object.assign({},x,payload):x;});
+    var loc=JSON.parse(localStorage.getItem('twp_ciclos_v5')||'[]');
+    localStorage.setItem('twp_ciclos_v5',JSON.stringify(loc.map(function(x){return String(x.id)===String(_editingCicloId)?Object.assign({},x,payload):x;})));
+  }catch(e){showToast('Erro: '+e.message,'warn');}finally{showLoading(false);}
+  closeModal('editCicloModal');renderHistoricoCiclos();showToast('Ciclo atualizado!');
 }
 // RETIRADAS
 function abrirRetirada(){
@@ -1012,7 +1073,13 @@ async function insertTrade(p){showLoading(true);try{var res=await sb.from('trade
 async function updateTradeDB(id,p){showLoading(true);try{var res=await sb.from('trades').update(p).eq('id',id);if(res.error)throw res.error;}catch(e){alert('Erro: '+e.message);}finally{showLoading(false);}}
 async function deleteTradeDB(id){if(!confirm('Confirmar exclusao?'))return;showLoading(true);try{var res=await sb.from('trades').delete().eq('id',id);if(res.error)throw res.error;await fetchTrades();}catch(e){alert(e.message);showLoading(false);}}
 // RENDER ALL
-function renderAll(){var acct=trades.filter(function(t){return(t.conta_tipo||'demo')===currentAccount;}),acctF=filterByPeriodo(acct);updateStats(acctF);renderTable(acctF);renderEquity(acctF);renderCandles(acctF);updateCapitalBadge(acct);renderAnalytics(acctF);updateStreak(acctF);updateMetaProgress(acctF);updatePeriodoInfo();}
+function renderAll(){
+  var acct=trades.filter(function(t){return(t.conta_tipo||'demo')===currentAccount;}),acctF=filterByPeriodo(acct);
+  var ini=cicloAtualInicio[currentAccount];
+  var acctCiclo=ini?acct.filter(function(t){return new Date(t.date_time_raw||t.created_at)>=new Date(ini+'T00:00:00');}):acct;
+  updateStats(acctF);renderTable(acctF);renderEquity(acctF);renderCandles(acctF);
+  updateCapitalBadge(acctCiclo);renderAnalytics(acctF);updateStreak(acctF);updateMetaProgress(acctCiclo);updatePeriodoInfo();
+}
 function updateCapitalBadge(acct){var cap=currentAccount==='demo'?capitalDemo:capitalReal;var net=acct.reduce(function(a,t){return a+(t.resultado_real!=null?t.resultado_real:(t.resultado||0));},0);var saldo=cap+net,pct=cap>0?(net/cap*100).toFixed(2):0;gid('saldoAtual').textContent='$ '+saldo.toFixed(2);gid('saldoAtual').className=net>=0?'pos':'neg';gid('rendTotal').textContent=(net>=0?'+':'')+pct+'%';gid('rendTotal').className=net>=0?'pos':'neg';}
 function updateStats(acct){var total=acct.length;gid('sTotalOps').textContent=total;if(!total){['sWinRate','sPayoff','sExpect','sNet','sRegras','sScore'].forEach(function(id){gid(id).textContent='-';gid(id).className='stat-value';});return;}var fn=function(t){return t.resultado_real!=null?t.resultado_real:(t.resultado||0);};var wins=acct.filter(function(t){return fn(t)>0;}),losses=acct.filter(function(t){return fn(t)<0;});var wr=acct.length?(wins.length/acct.length)*100:0;var avgG=wins.length?wins.reduce(function(a,b){return a+fn(b);},0)/wins.length:0;var avgL=losses.length?Math.abs(losses.reduce(function(a,b){return a+fn(b);},0)/losses.length):0;var payoff=avgL?avgG/avgL:(avgG>0?999:0);var expect=(wr/100)*avgG-((100-wr)/100)*avgL;var net=acct.reduce(function(a,b){return a+fn(b);},0);var totalReg=acct.filter(function(t){return t.regras_quebradas&&t.regras_quebradas.length>0;}).length;var ws=acct.filter(function(t){return t.score&&t.score>0;});var avgSc=ws.length?(ws.reduce(function(a,b){return a+b.score;},0)/ws.length).toFixed(1):null;gid('sWinRate').textContent=wr.toFixed(1)+'%';gid('sWinRate').className='stat-value '+(wr>=50?'pos':'neg');gid('sPayoff').textContent=payoff.toFixed(2)+'R';gid('sPayoff').className='stat-value '+(payoff>=1?'pos':'neg');gid('sExpect').textContent='$ '+expect.toFixed(2);gid('sExpect').className='stat-value '+(expect>=0?'pos':'neg');gid('sNet').textContent='$ '+net.toFixed(2);gid('sNet').className='stat-value '+(net>=0?'pos':'neg');gid('sRegras').textContent=totalReg;gid('sRegras').className='stat-value '+(totalReg>0?'neg':'pos');gid('sScore').textContent=avgSc?avgSc+' estrelas':'-';gid('sScore').className='stat-value';}
 // GRAFICOS
@@ -1044,6 +1111,9 @@ document.addEventListener('DOMContentLoaded',function(){
   gid('cicloNovoCapital').addEventListener('input',atualizarCapProximo);
   gid('cicloDataInicio').addEventListener('change',function(){_cicloData=null;gid('cicloResumo').innerHTML='';gid('cicloNovoCapital').value='';gid('cicloCapProximoLabel').textContent='$ -';});
   gid('cicloDataFim').addEventListener('change',function(){_cicloData=null;gid('cicloResumo').innerHTML='';gid('cicloNovoCapital').value='';gid('cicloCapProximoLabel').textContent='$ -';});
+  // EDITAR CICLO
+  gid('btnSalvarEditCiclo').addEventListener('click',salvarEdicaoCiclo);
+  gid('btnCancelarEditCiclo').addEventListener('click',function(){closeModal('editCicloModal');});
   // RETIRADA
   gid('btnRetirada').addEventListener('click',abrirRetirada);
   gid('btnConfirmarRetirada').addEventListener('click',confirmarRetirada);
