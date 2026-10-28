@@ -313,8 +313,8 @@
                         </select>
                     </div>
                     <div class="control-group">
-                        <label for="api-key">Twelve Data API Key</label>
-                        <input id="api-key" type="password" placeholder="Cole sua chave" value="7afd8a367e1349f98657d3c136a4f663" />
+                        <label>Fonte</label>
+                        <input type="text" value="Stooq (XAUUSD)" disabled style="opacity: 0.6;" />
                     </div>
                     <div class="control-group">
                         <label for="refresh">Atualizar (seg)</label>
@@ -331,7 +331,7 @@
         <section class="card">
             <div class="card-header">
                 <h2>Sinal Atual</h2>
-                <span style="color: var(--subtext); font-size: 0.875rem;">EMA 9/21 + ATR 14</span>
+                <span style="color: var(--subtext); font-size: 0.875rem;">EMA 9/21 + ATR 14 | Dados Stooq</span>
             </div>
             <div class="signal-panel">
                 <article class="signal-card neutral" id="signal-card">
@@ -393,7 +393,7 @@
     </main>
 
     <footer>
-        Feito para uso pessoal. Os sinais são gerados automaticamente com base em cálculos técnicos, não são recomendações financeiras.
+        Feito para uso pessoal. Os sinais são gerados automaticamente com base em cálculos técnicos, não são recomendações financeiras. (Dados Stooq)
     </footer>
 
     <script>
@@ -493,45 +493,50 @@
             setStatus('Buscando dados...', 'neutral');
 
             try {
-                const url = `https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${interval}&outputsize=100&apikey=${apiKey}`;
-                // Try direct first, then fallback proxies
+                setStatus('Buscando dados do Stooq...', 'neutral');
+                
+                // Stooq gives daily data for XAUUSD
+                const url = `https://stooq.com/q/d/l/?s=xauusd&i=d`;
+                
                 let res;
-                try {
-                    res = await fetch(url);
-                } catch (e) {
+                const proxies = [
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                    `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+                ];
+                
+                for (let i = 0; i < proxies.length; i++) {
                     try {
-                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                        res = await fetch(proxyUrl);
-                    } catch (e2) {
-                        const proxyUrl2 = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                        res = await fetch(proxyUrl2);
+                        setStatus(`Tentando conexão ${i + 1}/3...`, 'neutral');
+                        res = await fetch(proxies[i]);
+                        if (res.ok) break;
+                    } catch (e) {
+                        if (i === proxies.length - 1) throw e;
                     }
                 }
-                const data = await res.json();
-                console.log('TwelveData response:', data);
-
-                if (data.status === 'error') {
-                    setStatus(data.message || 'Erro na API', 'error');
+                
+                const text = await res.text();
+                console.log('Stooq response:', text.substring(0, 200));
+                
+                const lines = text.trim().split('\n');
+                candles = [];
+                for (let i = 1; i < lines.length && candles.length < 100; i++) {
+                    const parts = lines[i].split(',');
+                    if (parts.length < 5) continue;
+                    const date = parts[0];
+                    const open = parseFloat(parts[1]);
+                    const high = parseFloat(parts[2]);
+                    const low = parseFloat(parts[3]);
+                    const close = parseFloat(parts[4]);
+                    if (isNaN(open) || isNaN(close)) continue;
+                    const time = Math.floor(new Date(date).getTime() / 1000);
+                    candles.push({ time, open, high, low, close });
+                }
+                candles = candles.reverse().slice(-100);
+                if (candles.length < 20) {
+                    setStatus('Poucos dados', 'error');
                     return;
                 }
-
-                if (data.code && data.message) {
-                    setStatus(data.message, 'error');
-                    return;
-                }
-
-                if (!data.values) {
-                    setStatus('Sem dados retornados - verifique console (F12)', 'error');
-                    return;
-                }
-
-                candles = data.values.reverse().map(c => ({
-                    time: new Date(c.datetime).getTime() / 1000,
-                    open: parseFloat(c.open),
-                    high: parseFloat(c.high),
-                    low: parseFloat(c.low),
-                    close: parseFloat(c.close),
-                }));
 
                 candlestickSeries.setData(candles);
                 chart.timeScale().fitContent();
@@ -542,15 +547,15 @@
                 atr = calculateATR(candles, 14);
 
                 analyze();
-                setStatus('Conectado - Atualizando', 'active');
+                setStatus('Conectado - XAUUSD (Diário)', 'active');
             } catch (err) {
-                setStatus('Erro de conexão', 'error');
+                setStatus('Erro ao carregar', 'error');
                 console.error(err);
             }
         }
 
         function analyze() {
-            if (candles.length < 30) return;
+            if (candles.length < 20) return;
 
             const currentPrice = candles[candles.length - 1].close;
             const prevPrice = candles[candles.length - 2].close;
@@ -643,11 +648,9 @@
 
         // Auto-connect on load
         window.addEventListener('load', () => {
-            if (document.getElementById('api-key').value.trim()) {
-                setTimeout(() => {
-                    document.getElementById('connect-btn').click();
-                }, 1000);
-            }
+            setTimeout(() => {
+                document.getElementById('connect-btn').click();
+            }, 500);
         });
 
         document.getElementById('account-balance').addEventListener('input', analyze);
