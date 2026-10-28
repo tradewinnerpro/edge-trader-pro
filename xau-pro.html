@@ -245,22 +245,13 @@
 
         async function fetchData() {
             try {
-                const url = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=5m&range=2d';
-                const proxies = [
-                    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-                    'https://corsproxy.io/?' + encodeURIComponent(url)
-                ];
-                let json;
-                for(let i=0;i<proxies.length;i++) {
-                    try {
-                        const res = await fetch(proxies[i]);
-                        if(!res.ok) continue;
-                        const text = await res.text();
-                        json = JSON.parse(text);
-                        break;
-                    } catch(e) { continue; }
-                }
-                if(!json || !json.chart?.result?.[0]) throw new Error('no data');
+                document.getElementById('status').textContent = 'CARREGANDO';
+                const url = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=5m&range=1d';
+                const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+                if(!res.ok) throw new Error('bad');
+                const outer = await res.json();
+                const json = JSON.parse(outer.contents);
+                if(!json.chart?.result?.[0]) throw new Error('no result');
                 const r = json.chart.result[0];
                 const q = r.indicators.quote[0];
                 const t = r.timestamp;
@@ -269,13 +260,14 @@
                     if(q.open[i]==null || q.close[i]==null) continue;
                     candles.push({
                         time: t[i],
-                        open: q.open[i],
-                        high: q.high[i],
-                        low: q.low[i],
-                        close: q.close[i]
+                        open: Number(q.open[i]),
+                        high: Number(q.high[i]),
+                        low: Number(q.low[i]),
+                        close: Number(q.close[i])
                     });
                 }
-                candles = candles.slice(-100);
+                candles = candles.filter(c => c.open && c.close).slice(-80);
+                if(candles.length < 20) throw new Error('few');
                 series.setData(candles);
                 chart.timeScale().fitContent();
                 analyze();
@@ -283,7 +275,7 @@
                 document.getElementById('status').classList.add('on');
                 document.getElementById('connectBtn').textContent = 'ATUALIZANDO';
             } catch(e) {
-                console.error(e);
+                console.error('ERR', e);
                 document.getElementById('status').textContent = 'ERRO';
             }
         }
@@ -355,7 +347,9 @@
             timer = setInterval(fetchData, 60000);
         }
 
-        window.addEventListener('load', connect);
+        window.addEventListener('load', () => {
+            setTimeout(connect, 1000);
+        });
     </script>
 </body>
 </html>
